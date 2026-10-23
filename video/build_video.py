@@ -30,7 +30,7 @@ CACHE, OUT = os.path.join(HERE, "cache"), os.path.join(HERE, "out")
 MODEL_DIR = os.environ.get("KOKORO_DIR", "/tmp/kokoro")
 VOICE, SPEED, LANG = "bm_george", 0.9, "en-gb"
 SR, W, H = 24000, V.W, V.H
-LEAD, TAIL, GAP, PARA_GAP, FADE = 0.5, 0.6, 0.30, 0.75, 0.45
+LEAD, TAIL, GAP, PARA_GAP, FADE, XFADE = 0.5, 0.6, 0.30, 0.75, 0.45, 0.9
 FPS = 24
 
 PRONOUNCE = [(r"\bCO2\b", "C O two"), (r"\bLEED\b", "Leed"), (r"\bEDGE\b", "Edge"), (r"\bIGBC\b", "I G B C"),
@@ -213,11 +213,21 @@ def draw_act_title(img, sc, t):
     d.text((84, 88), sc["act_title"][1], font=V.F(26, "Medium"), fill=V.mix((0, 0, 0), V.INK, a))
 
 
-def frame(sc, t):
-    img = V.RENDER[sc["kind"]](sc, t)
-    f = min(1, t / FADE, (sc["dur"] - t) / FADE) if sc["kind"] not in ("black",) else 1
-    if f < 1:
-        img = Image.blend(Image.new("RGB", img.size, (0, 0, 0)), img, max(0, f))
+HARD_CUT = ("title", "black", "endcard")
+
+
+def frame(sc, t, prev=None, nxt=None):
+    """One frame. Scenes cross-dissolve: the first XFADE seconds blend in the previous scene running on
+    past its end; scenes next to a title/black/end card dip to black instead."""
+    img = V.render(sc, t)
+    if t < XFADE and prev is not None and sc["kind"] not in HARD_CUT and prev["kind"] not in HARD_CUT:
+        img = Image.blend(V.render(prev, prev["dur"] + t), img, V.ease(t / XFADE))
+    else:
+        f_in = 1 if prev is not None and prev["kind"] not in HARD_CUT and sc["kind"] not in HARD_CUT else t / FADE
+        f_out = 1 if nxt is not None and nxt["kind"] not in HARD_CUT and sc["kind"] not in HARD_CUT else (sc["dur"] - t) / FADE
+        f = min(1, f_in, f_out) if sc["kind"] != "black" else 1
+        if f < 1:
+            img = Image.blend(Image.new("RGB", img.size, (0, 0, 0)), img, max(0, f))
     draw_act_title(img, sc, t)
     draw_caption(img, sc, t)
     return img
@@ -226,13 +236,15 @@ def frame(sc, t):
 def render_scene(args):
     i, fps, scale = args
     sc = SCENES[i]
+    prev = SCENES[i - 1] if i > 0 else None
+    nxt = SCENES[i + 1] if i + 1 < len(SCENES) else None
     seg = os.path.join(OUT, f"seg_{i:03d}.mp4")
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(fps),
            "-i", "-", "-vf", f"scale={int(W * scale)}:{int(H * scale)}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
            "-pix_fmt", "yuv420p", seg]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     for k in range(round(sc["dur"] * fps)):
-        p.stdin.write(frame(sc, k / fps).tobytes())
+        p.stdin.write(frame(sc, k / fps, prev, nxt).tobytes())
     p.stdin.close()
     p.wait()
     return i, seg
@@ -265,6 +277,9 @@ def main():
     total, chunks = timeline(scenes)
     print(f"{len(scenes)} scenes, {total / 60:.1f} min", flush=True)
     srt(scenes, os.path.join(OUT, "captions.srt"))
+    if V.credits():
+        with open(os.path.join(OUT, "credits.txt"), "w", encoding="utf-8") as fh:
+            fh.write("Photos via Wikimedia Commons:\n" + "\n".join(V.credits()) + "\n")
     for i, sc in enumerate(scenes):
         print(f"{i:2} {sc['start']:7.1f}s {sc['dur']:5.1f}s {sc['kind']}")
 
