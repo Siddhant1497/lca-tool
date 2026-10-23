@@ -8,16 +8,21 @@ and upload.wikimedia.org.
   python3 fetch_images.py              # fetch every scene that has no photo yet
   python3 fetch_images.py --force      # re-fetch everything
   python3 fetch_images.py --only timber --count 3
+  python3 fetch_images.py --from-credits   # re-download the exact files listed in assets/credits.json
+                                           # (needs only upload.wikimedia.org)
 
 Your own photos work too: drop them in assets/ named by key (e.g. retrofit_1.jpg); see visuals.PHOTO_KEYS.
 """
 import argparse
 import glob
+import hashlib
 import html
 import json
 import os
 import re
+import time
 import urllib.parse
+import urllib.error
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,15 +104,50 @@ def fetch(key, queries, count, credits):
     return got
 
 
+def original_url(name, width=1920):
+    """upload.wikimedia.org path for a Commons file name (MD5-based), as a thumbnail of `width`."""
+    n = name.removeprefix("File:").replace(" ", "_")
+    h = hashlib.md5(n.encode()).hexdigest()
+    q = urllib.parse.quote(n)
+    base = f"https://upload.wikimedia.org/wikipedia/commons/thumb/{h[0]}/{h[:2]}/{q}"
+    return f"{base}/{width}px-{q}", f"https://upload.wikimedia.org/wikipedia/commons/{h[0]}/{h[:2]}/{q}"
+
+
+def from_credits(credits):
+    for c in credits:
+        dest = os.path.join(ASSETS, c["file"])
+        if os.path.exists(dest):
+            continue
+        for attempt in range(4):
+            try:
+                for url in original_url(c["title"]):
+                    try:
+                        with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
+                            data = r.read()
+                        break
+                    except urllib.error.HTTPError as e:
+                        if e.code == 429:
+                            raise
+                open(dest, "wb").write(data)
+                print("ok", c["file"])
+                break
+            except urllib.error.HTTPError:  # rate limited: back off
+                time.sleep(20 * (attempt + 1))
+        time.sleep(6)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--only")
     ap.add_argument("--count", type=int)
+    ap.add_argument("--from-credits", action="store_true")
     args = ap.parse_args()
     os.makedirs(ASSETS, exist_ok=True)
     cpath = os.path.join(ASSETS, "credits.json")
     credits = json.load(open(cpath, encoding="utf-8")) if os.path.exists(cpath) else []
+    if args.from_credits:
+        return from_credits(credits)
     for key, (queries, count) in QUERIES.items():
         if args.only and key != args.only:
             continue

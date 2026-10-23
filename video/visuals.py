@@ -791,7 +791,16 @@ def credits():
     path = os.path.join(ASSETS, "credits.json")
     if not os.path.exists(path):
         return ()
-    return tuple(f"{c['author']} ({c['license']})" for c in json.load(open(path, encoding="utf-8")))
+    out = []
+    for c in json.load(open(path, encoding="utf-8")):
+        s = c["title"].removeprefix("File:").rsplit(".", 1)[0]
+        if not c["author"].startswith("see"):
+            s += f" by {c['author']}"
+        if not c["license"].startswith("see"):
+            s += f" ({c['license']})"
+        if s not in out:
+            out.append(s)
+    return tuple(out)
 
 
 def r_endcard(sc, t):
@@ -801,10 +810,8 @@ def r_endcard(sc, t):
     pill(img, W / 2, 340, "SUBSCRIBE", 24, (6, 8, 14), AMBER, a)
     text(img, (W / 2, 415), "What Happens When Every Building on Earth Has to Hit Net Zero?", 18, DIM, "Regular", "mm", a * 0.8)
     if credits():
-        d = ImageDraw.Draw(img)
-        lines = wrap(d, "Photos via Wikimedia Commons: " + "; ".join(credits()), F(13), 1100)[:6]
-        for i, ln in enumerate(lines):
-            text(img, (W / 2, 520 + i * 20), ln, 13, DIM, "Regular", "mm", a * 0.8)
+        text(img, (W / 2, 560), "Photos: Wikimedia Commons contributors (CC0 / CC BY / CC BY-SA)", 15, DIM, "Regular", "mm", a * 0.8)
+        text(img, (W / 2, 584), "Full photo credits in the description", 15, DIM, "Regular", "mm", a * 0.8)
     return img
 
 

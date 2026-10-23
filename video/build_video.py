@@ -12,6 +12,7 @@ Needs: pip install kokoro-onnx soundfile pillow numpy ; ffmpeg ; Kokoro model fi
 """
 import argparse
 import hashlib
+import json
 import math
 import os
 import re
@@ -279,7 +280,9 @@ def main():
     srt(scenes, os.path.join(OUT, "captions.srt"))
     if V.credits():
         with open(os.path.join(OUT, "credits.txt"), "w", encoding="utf-8") as fh:
-            fh.write("Photos via Wikimedia Commons:\n" + "\n".join(V.credits()) + "\n")
+            fh.write("Photos via Wikimedia Commons:\n")
+            for c in json.load(open(os.path.join(V.ASSETS, "credits.json"), encoding="utf-8")):
+                fh.write(f"- {c['title']} — {c['author']} — {c['license']} — {c['page']}\n")
     for i, sc in enumerate(scenes):
         print(f"{i:2} {sc['start']:7.1f}s {sc['dur']:5.1f}s {sc['kind']}")
 
