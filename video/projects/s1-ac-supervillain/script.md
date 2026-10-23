@@ -10,7 +10,7 @@ music: pulse
 > hook: Your AC is lying to you.
 Your air conditioner is lying to you right now. It's acting innocent. It is not.
 
-# scene photos=hot_city grade=day
+# scene photos=india_skyline:1 grade=day
 > stat: ~30% | of the world's final energy is used to run buildings | IEA @ thirty percent
 Running buildings uses about thirty percent of the world's final energy.
 

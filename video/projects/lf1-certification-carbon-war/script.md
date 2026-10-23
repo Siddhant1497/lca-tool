@@ -23,11 +23,11 @@ LEED was created by the U.S. Green Building Council. It's the most international
 It's point-based and comprehensive, which is also its challenge. A scoring system born in the American market has to stretch to fit a monsoon climate in Mumbai or a desert site in the Gulf.
 It works, but sometimes it works like a translated document. You can tell it wasn't first written in the local language.
 
-# scene photos=mumbai_monsoon,dubai_construction grade=day
+# scene photos=india_skyline:1,cement_plant:2 grade=day
 (pause 0.8)
 That isn't a criticism of LEED so much as a fact of geography. Climate, construction practice, and energy prices change what "efficient" even means.
 
-# scene photos=emerging_housing grade=day
+# scene photos=subcontractors:2 grade=day
 > label: EDGE · IFC, World Bank Group
 > item: ≥20% less energy @ energy
 > item: ≥20% less water @ water
@@ -35,7 +35,7 @@ That isn't a criticism of LEED so much as a fact of geography. Climate, construc
 EDGE exists because of that gap. It was created by IFC, part of the World Bank Group, to make green certification fast and affordable in emerging markets.
 It strips the question down to three numbers that matter most in cost-sensitive construction. Energy. Water. And the embodied energy in materials. To be certified, a building has to beat a local baseline by at least twenty percent on all three.
 
-# scene photos=developing_construction grade=day
+# scene photos=site_walk grade=day
 > stat: 100M+ m² | of floor space certified by EDGE (reported 2025) | IFC / press reports @ hundred million
 It's less famous outside the industry. But by 2025, more than a hundred million square metres of floor space had reportedly been certified, much of it in places the older systems rarely reached.
 
@@ -45,7 +45,7 @@ It's less famous outside the industry. But by 2025, more than a hundred million 
 Then there are the home-grown systems. IGBC, the Indian Green Building Council, set up by the Confederation of Indian Industry. And GRIHA, developed by TERI and adopted as India's national rating system.
 Both are built around Indian codes and climate zones in a way an international system structurally can't be. GRIHA is even required for many central government buildings.
 
-# scene photos=india_gov grade=day
+# scene photos=india_skyline:2 grade=day
 The trade-off is recognition. A GRIHA rating carries real weight with an Indian regulator or developer, and much less with an international investor comparing a portfolio across three continents.
 
 # scene photos=lobby grade=night dim=0.45

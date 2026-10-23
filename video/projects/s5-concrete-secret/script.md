@@ -25,7 +25,7 @@ And it happens before day one. The building has spent a big chunk of its lifetim
 # scene photos=solar_roof grade=day
 This is embodied carbon, and most "net zero" marketing leaves it out. Solar panels make a better photo than a spreadsheet about fly ash.
 
-# scene photos=timber,scrap_steel grade=day
+# scene photos=cement_plant:1,scrap_steel grade=day
 > item: Blended cements with fly ash or slag @ blended
 > item: Mass timber, where it fits @ timber
 > item: Recycled steel @ recycled

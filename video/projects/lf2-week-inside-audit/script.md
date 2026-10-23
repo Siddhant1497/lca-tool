@@ -22,7 +22,7 @@ It is nothing like that.
 Here's what it actually is. It's forensic.
 You arrive with a stack of drawings and specifications that represent a building's original intentions. Then you spend days finding every place reality quietly drifted from the plan.
 
-# scene photos=ceiling_mep grade=night
+# scene photos=occupancy_sensor grade=night
 > chapter: Day 2 · Walking the site
 > item: Lighting controls on the drawings @ lighting
 > item: …standard switches on the wall @ switches
@@ -67,7 +67,7 @@ But that's the real difference between a certification that means something and 
 <!-- [GENERIC]: add your real number of audits and regions here, e.g. "I've done this on dozens of projects across India". -->
 After enough of these audits, the pattern doesn't really change. The gap between intention and reality is always there. The only question is whether anyone's job is to go looking for it.
 
-# scene photos=sunset_site grade=dawn zoom=out
+# scene photos=pullback:1 grade=dawn zoom=out
 > quote: Not approving buildings. Keeping them honest. @ honest
 That's the job. Not approving buildings. Keeping them honest.
 > cta: Subscribe for more from inside green buildings

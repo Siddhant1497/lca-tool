@@ -241,12 +241,7 @@ def legibility(img, short):
 
 def background(sc, t, W, H):
     attrs = sc["attrs"]
-    keys = [k for k in attrs.get("photos", "").split(",") if k]
-    files = []
-    for k in keys:
-        fs = V.photos(k)
-        if fs:
-            files.append(fs[sc["index"] % len(fs)])
+    files = scene_files(sc)
     grade = attrs.get("grade", "day")
     zoom = attrs.get("zoom", "in" if sc["index"] % 2 == 0 else "out")
     z = (1.0, 1.1) if zoom == "in" else (1.1, 1.0)
@@ -265,6 +260,17 @@ def background(sc, t, W, H):
     if "dim" in attrs:
         img = Image.blend(Image.new("RGB", (W, H)), img, 1 - float(attrs["dim"]))
     return img
+
+
+def scene_files(sc):
+    """Photo files for a scene: `key` picks one of the key's photos (varies by scene), `key:N` pins photo N."""
+    files = []
+    for k in [k for k in sc["attrs"].get("photos", "").split(",") if k]:
+        key, _, n = k.partition(":")
+        fs = V.photos(key)
+        if fs:
+            files.append(fs[(int(n) - 1) % len(fs)] if n else fs[sc["index"] % len(fs)])
+    return files
 
 
 def star(d, cx, cy, r, fill):
@@ -304,8 +310,9 @@ def draw_overlays(img, sc, t, fmt, cfg):
             lines = wrap(d, s, f, W * (0.86 if short else 0.7))
             y0 = (H * (0.24 if kind == "hook" else 0.2)) if short else H * 0.42 - len(lines) * size * 0.6
             y0 += (1 - ease(k / 0.35)) * 30 * u
+            step = size * (1.42 if kind == "hook" else 1.12)
             for i, ln in enumerate(lines):
-                cy = y0 + i * size * 1.12
+                cy = y0 + i * step
                 if kind == "hook":
                     w = d.textlength(ln, font=f)
                     panel(img, (W / 2 - w / 2 - 22 * u, cy - size * 0.62, W / 2 + w / 2 + 22 * u, cy + size * 0.62), a * 0.92,
@@ -508,12 +515,9 @@ def used_credits(scenes):
     allc = {c["file"]: c for c in json.load(open(path, encoding="utf-8"))} if os.path.exists(path) else {}
     files = []
     for sc in scenes:
-        for k in sc["attrs"].get("photos", "").split(","):
-            fs = V.photos(k) if k else ()
-            if fs:
-                f = os.path.basename(fs[sc["index"] % len(fs)])
-                if f not in files:
-                    files.append(f)
+        for f in map(os.path.basename, scene_files(sc)):
+            if f not in files:
+                files.append(f)
     return [allc[f] for f in files if f in allc], [f for f in files if f not in allc]
 
 

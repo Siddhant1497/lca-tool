@@ -17,7 +17,7 @@ Ranking green building certifications like street food stalls.
 > item: The famous place with the queue @ queue
 LEED. By the US Green Building Council, the most recognised name worldwide. The famous biryani place with a queue round the block. Worth it. Bring patience.
 
-# scene photos=emerging_housing grade=day
+# scene photos=site_walk grade=day
 > title: EDGE
 > item: IFC, World Bank Group @ IFC
 > item: ≥20% less energy, water, embodied energy @ twenty
@@ -31,14 +31,14 @@ EDGE. By IFC, part of the World Bank Group, for emerging markets. At least twent
 > item: The hometown favourite @ hometown
 IGBC. The Indian Green Building Council, set up by CII, built around Indian codes and climate. The hometown favourite.
 
-# scene photos=india_gov grade=day
+# scene photos=india_skyline:2 grade=day
 > title: GRIHA
 > item: Developed by TERI @ TERI
 > item: India's national rating system @ national
 > item: Your uncle's pick, annoyingly right @ uncle
 GRIHA. Developed by TERI, and India's national rating system. The place your uncle swears by, and annoyingly, he's usually right.
 
-# scene photos=biryani,sushi grade=day
+# scene photos=street_food:2,street_food:1 grade=day
 > quote: Pick the one that fits the project. @ fits
 None is universally better. Pick the one that fits your project, market and budget. Otherwise it's biryani at a sushi bar. Technically food. Not what you came for.
 > cta: Which one should I break down next?

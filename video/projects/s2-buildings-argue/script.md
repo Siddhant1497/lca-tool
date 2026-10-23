@@ -27,7 +27,7 @@ NEW: Okay. But I have really nice windows.
 > stat: 10–80 yrs | for a new efficient building to offset its construction impacts | Preservation Green Lab, 2011 @ ten to eighty
 Joke aside, this is one of the industry's biggest blind spots. A major US study found a new energy-efficient building can take ten to eighty years to make up for the impacts of building it.
 
-# scene photos=renovation,demolition grade=day
+# scene photos=renovation,subcontractors:2 grade=day
 > item: Reuse and retrofit often win on total carbon @ often
 > item: …depending on the materials the retrofit uses @ depends
 So reusing and retrofitting what's already standing often wins on total carbon. Not always. It depends on what the retrofit uses.

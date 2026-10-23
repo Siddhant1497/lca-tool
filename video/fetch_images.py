@@ -186,8 +186,8 @@ def fetch(key, queries, count, credits, allow_sa):
     return got
 
 
-def backfill(credits):
-    """Fill in author/licence for entries recorded without them."""
+def backfill(credits, save):
+    """Fill in author/licence for entries recorded without them, saving after each batch."""
     todo = [c for c in credits if c["author"].startswith("see") or c["license"].startswith("see")]
     for i in range(0, len(todo), 20):
         batch = todo[i:i + 20]
@@ -200,10 +200,11 @@ def backfill(credits):
             author = clean(m.get("Artist", {}).get("value", "")) or clean(m.get("Credit", {}).get("value", ""))
             lic = clean(m.get("LicenseShortName", {}).get("value", ""))
             if author:
-                c["author"] = author
+                c["author"] = " ".join(author.split("(Original text")[0].split())
             if lic:
                 c["license"] = lic
             print(f"  {c['file']}: {c['author']} ({c['license']})", flush=True)
+        save()
 
 
 def original_url(name, width=1920):
@@ -249,8 +250,7 @@ def main():
     if args.from_credits:
         return from_credits(credits)
     if args.backfill:
-        backfill(credits)
-        return save()
+        return backfill(credits, save)
     for key, (queries, count) in QUERIES.items():
         if args.only and key != args.only:
             continue
