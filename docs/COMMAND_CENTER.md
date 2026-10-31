@@ -21,17 +21,29 @@ What was built, how the 7 dashboard prompts map to it, and what is still sample/
 - **Gap & lever coverage**: required cut from latest year to the target-year pathway value vs. abatement from levers that are *not yet implemented* (implemented levers are already in the actuals, so counting them would double-count).
 - **Certification status**: secured vs. likely vs. target score; "at risk" = secured + likely < target.
 
+## Data Manager (v2)
+
+| Tab | What it does |
+|---|---|
+| GHG inventory | Add/edit/delete years with validation; Scope 2 location- **and** market-based (dual reporting). CSV import accepts an optional `scope2_market` column. |
+| Certifications | Project form with validation; optional category scorecard that rolls up totals. One-click LEED v4/v4.1 BD+C template (110 pts, category maxima only, so you still enter your own points). |
+| Levers | Add/edit/delete; open Scope 1+2 total shown (implemented levers excluded from the gap). |
+| Activity calculator | User-built emission-factor library (every factor must cite a source; **none are prefilled**), activity entries → tCO₂e, per-year roll-up, "Apply to inventory" that overwrites only the scopes the activities cover. |
+| Export & backup | CSV per dataset (activities export includes factor + source for audit trail), JSON backup/restore, clear-all. |
+
+The Command Center has a Scope 2 location/market toggle, print-to-PDF styles, a "needs attention" list, and partial-data handling: each section shows its own empty state when the data for it is missing.
+
 ## Honest limits
 
-- **Sample data is fictional**, and its score thresholds (IGBC, GRIHA, WELL, Fitwel, EDGE) are placeholders. Take real thresholds from the current rating-system guide before using them in a client deliverable.
-- **No emission-factor engine yet.** You import tCO₂e totals; nothing converts activity data (kWh, litres, km, spend) to emissions. Scope 2 is a single number – dual reporting (location- and market-based) is the obvious next addition.
-- **Certification projects and levers are sample-only** – there is no editor yet, so importing a CSV clears them. Data lives in browser `localStorage` only.
-- The LCA pages (embodied carbon, EN 15978, LEED MRc1) are unchanged; the Command Center only echoes the embodied-carbon intensity in its subtitle.
+- **Sample data is fictional**, and its score thresholds (IGBC, GRIHA, WELL, Fitwel, EDGE) are placeholders. Take real thresholds from the current rating-system guide.
+- **No built-in emission factors.** This is deliberate: you add each factor with its source, so every number can be traced. A curated, cited default set can be added once each value is confirmed.
+- Scope 3 is one number per year; there is no 15-category breakdown yet.
+- Data lives in browser `localStorage`, so use the JSON backup to keep it safe or to move between machines.
 
-## Suggested next steps (in value order)
+## Suggested next steps
 
-1. Project / lever editor forms (add, edit, delete) + export to CSV/XLSX.
-2. Activity-data → emissions calculator with a versioned, source-cited emission-factor table (confirm every factor and boundary with the user).
-3. Scope 2 dual reporting; Scope 3 category breakdown (GHG Protocol 15 categories).
-4. Feed LCA embodied carbon into Scope 3 Cat. 1/2 and a per-project carbon budget.
-5. BRSR / CDP / GRI / ISSB data-point checklist driven off the same inventory.
+1. Scope 3 category breakdown (GHG Protocol 15 categories) + feed building-LCA embodied carbon into Cat. 1/2.
+2. Intensity metrics (tCO₂e per m², per employee, per ₹ revenue) for BRSR / GRESB style reporting.
+3. Curated emission-factor packs (e.g. national grid baseline, fuel factors), each value cited and confirmed before inclusion.
+4. BRSR / CDP / GRI / ISSB data-point checklist driven off the same inventory.
+5. XLSX export with formatted sheets.

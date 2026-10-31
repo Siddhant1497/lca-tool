@@ -24,6 +24,15 @@ export const UiProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   useEffect(() => { document.documentElement.dataset.theme = theme; write('ui_theme', theme); }, [theme]);
   useEffect(() => { write('ui_sidebar', collapsed ? 'collapsed' : 'open'); }, [collapsed]);
 
+  // Narrow screens always get the icon rail so content keeps its width.
+  useEffect(() => {
+    const mq = window.matchMedia?.('(max-width: 760px)');
+    if (!mq) return;
+    const h = () => { if (mq.matches) setCollapsed(true); };
+    h(); mq.addEventListener('change', h);
+    return () => mq.removeEventListener('change', h);
+  }, []);
+
   const toggleTheme = useCallback(() => setTheme((t) => (t === 'dark' ? 'light' : 'dark')), []);
   const toggleSidebar = useCallback(() => setCollapsed((c) => !c), []);
 

@@ -89,7 +89,7 @@ const MaterialInventory: React.FC = () => {
       </div>
 
       {tab === 'baseline' && (
-        <div style={{ padding: '9px 13px', background: 'var(--warn-lt)', border: '1px solid #FDE68A', borderRadius: 'var(--r-sm)', marginBottom: '14px', fontSize: '.83rem', color: '#92400E' }}>
+        <div style={{ padding: '9px 13px', background: 'var(--warn-lt)', border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', marginBottom: '14px', fontSize: '.83rem', color: 'var(--text)' }}>
           <strong>Baseline Model:</strong> Define a code-minimum / reference building for LEED MRc1 / BREEAM credit comparison.
         </div>
       )}

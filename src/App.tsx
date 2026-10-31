@@ -12,9 +12,11 @@ import ComplianceReport from './components/pages/ComplianceReport';
 import ExportReport from './components/pages/ExportReport';
 
 const CommandCenter = lazy(() => import('./components/pages/CommandCenter'));
+const DataManager = lazy(() => import('./components/pages/DataManager'));
 
 const PAGE_MAP = {
   hub:        CommandCenter,
+  data:       DataManager,
   dashboard:  Dashboard,
   project:    ProjectSetup,
   materials:  MaterialInventory,

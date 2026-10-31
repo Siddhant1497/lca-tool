@@ -10,12 +10,12 @@ const HubSkeleton: React.FC = () => (
     <div className="ph"><div style={{ width: 280 }}><Bone h={22} w="70%" /><div style={{ height: 8 }} /><Bone h={12} /></div></div>
     <div className="kpi-grid">
       {Array.from({ length: 6 }, (_, i) => (
-        <div className="kpi" key={i}><Bone h={10} w="55%" /><div style={{ height: 12 }} /><Bone h={26} w="70%" /><div style={{ height: 10 }} /><Bone h={10} w="85%" /></div>
+        <div className="kpi" key={i}><div className="row" style={{ gap: 9 }}><Bone h={28} w="28px" r={8} /><Bone h={10} w="50%" /></div><div style={{ height: 12 }} /><Bone h={28} w="65%" /><div style={{ height: 12 }} /><Bone h={14} w="45%" r={999} /></div>
       ))}
     </div>
     <div className="hub-grid">
-      {[0, 1, 2, 3].map((i) => (
-        <div className="card" key={i}><Bone h={14} w="40%" /><div style={{ height: 14 }} /><Bone h={250} r={10} /></div>
+      {['c7', 'c5', 'c7', 'c5'].map((c, i) => (
+        <div className={`card ${c}`} key={i}><div className="row" style={{ gap: 12, marginBottom: 16 }}><Bone h={34} w="34px" r={10} /><div style={{ flex: 1 }}><Bone h={13} w="45%" /><div style={{ height: 6 }} /><Bone h={10} w="65%" /></div></div><Bone h={260} r={10} /></div>
       ))}
     </div>
     <span className="sr-only">Loading…</span>

@@ -6,14 +6,15 @@ import type { HubState } from '../types/hub';
  * thresholds from the current rating-system guide before using them.
  */
 export const SAMPLE: Omit<HubState, 'loaded' | 'isSample'> = {
-  settings: { targetYear: 2030, annualPct: 4.2 },
+  settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location' },
+  factors: [], activities: [],
   ghg: [
     { year: 2019, scope1: 1850, scope2: 4200, scope3: 21500 },
     { year: 2020, scope1: 1700, scope2: 3800, scope3: 19000 },
     { year: 2021, scope1: 1780, scope2: 3900, scope3: 20400 },
-    { year: 2022, scope1: 1720, scope2: 3500, scope3: 20900 },
-    { year: 2023, scope1: 1600, scope2: 3150, scope3: 20100 },
-    { year: 2024, scope1: 1520, scope2: 2700, scope3: 19300 },
+    { year: 2022, scope1: 1720, scope2: 3500, scope2m: 3100, scope3: 20900 },
+    { year: 2023, scope1: 1600, scope2: 3150, scope2m: 2600, scope3: 20100 },
+    { year: 2024, scope1: 1520, scope2: 2700, scope2m: 2050, scope3: 19300 },
   ],
   levers: [
     { id: 'l1', name: 'Open-access solar PPA',        scope: 2, abatement: 520,  status: 'Planned' },
