@@ -166,7 +166,7 @@ export interface ComplianceResult {
   recommendations: string[];
 }
 
-export type AppPage = 'dashboard'|'project'|'materials'|'results'|'compliance'|'export';
+export type AppPage = 'hub'|'dashboard'|'project'|'materials'|'results'|'compliance'|'export';
 
 export interface AppState {
   project: Project | null;
