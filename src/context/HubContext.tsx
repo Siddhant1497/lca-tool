@@ -16,7 +16,7 @@ export type HubAction =
 
 export const EMPTY: HubState = {
   loaded: false, isSample: false, ghg: [], projects: [], levers: [], factors: [], activities: [],
-  settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location' },
+  settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: '' },
 };
 
 const upsert = <T extends { id: string }>(list: T[], item: T) =>

@@ -21,6 +21,10 @@ const Header: React.FC = () => {
         <span className="hide-sm">{sect}</span><Icon name="chevR" size={14} /><b>{label}</b>
       </nav>
       <div className="hdr-right">
+        <button className="hdr-search" aria-label="Open command palette (Ctrl+K)"
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}>
+          <Icon name="search" size={15} /><span>Search or jump to…</span><kbd>Ctrl K</kbd>
+        </button>
         <span className="chip" title={isHub ? 'Portfolio data' : 'Active LCA project'}>
           <span className="dot" style={isHub && hub.isSample ? { background: 'var(--warn)' } : undefined} />
           {isHub ? (hub.isSample ? 'Sample portfolio' : hub.loaded ? 'My portfolio' : 'No data yet') : (state.project?.name ?? 'LCA project')}

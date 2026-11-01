@@ -40,10 +40,19 @@ The Command Center has a Scope 2 location/market toggle, print-to-PDF styles, a 
 - Scope 3 is one number per year; there is no 15-category breakdown yet.
 - Data lives in browser `localStorage`, so use the JSON backup to keep it safe or to move between machines.
 
+## v3 additions
+
+- **Scope 3 by category.** All 15 GHG Protocol categories in the inventory form, a hotspot chart on the dashboard, and category-tagged emission factors so the calculator fills the split. Building-LCA A1–A3 can be added to Cat 2 with one click.
+- **Intensity.** Denominators per year (m², FTE, turnover) with a metric switcher, plus the BRSR per-rupee figure for ₹ units.
+- **Levers.** Delivery year drives a stepped "with dated levers" projection on the pathway. Cost per tonne drives a custom-SVG MACC.
+- **Disclosures page.** GHG Protocol, GRI 305, BRSR P6 and IFRS S2 tables with comparatives, readiness scores and copy-as-table.
+- **Excel workbook.** 9 formatted sheets with numeric cells (not text), lazy-loaded so it costs nothing until used.
+- **Quality.** Command palette (Ctrl/⌘+K), scroll reset between pages, vendor chunking, and 18 unit tests on the calculation logic (`npm test`).
+
 ## Suggested next steps
 
-1. Scope 3 category breakdown (GHG Protocol 15 categories) + feed building-LCA embodied carbon into Cat. 1/2.
-2. Intensity metrics (tCO₂e per m², per employee, per ₹ revenue) for BRSR / GRESB style reporting.
-3. Curated emission-factor packs (e.g. national grid baseline, fuel factors), each value cited and confirmed before inclusion.
-4. BRSR / CDP / GRI / ISSB data-point checklist driven off the same inventory.
-5. XLSX export with formatted sheets.
+1. Curated emission-factor packs (e.g. India CEA grid baseline, fuel factors), each value cited and confirmed before it ships.
+2. Gas-by-gas Scope 1 split (CO₂, CH₄, N₂O, HFCs…) for BRSR E7 and GRI 305-1.
+3. Multi-site inventory (per-building rows rolled up into the organisation).
+4. Project-level LCA results feeding certification credits (LEED MRc Building Life-Cycle Impact Reduction).
+5. Optional cloud sync / team sharing.

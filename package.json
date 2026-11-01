@@ -1,18 +1,20 @@
 {
   "name": "lca-tool",
   "version": "1.0.0",
-  "description": "Life Cycle Assessment tool for buildings – LEED, EN 15978, ISO 14044, BREEAM compliant",
+  "description": "SustainHub: GHG inventory, decarbonisation pathway, certification portfolio and building LCA (LEED, EN 15978, ISO 14044, BREEAM)",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.13.3",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "write-excel-file": "^4.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
@@ -21,6 +23,7 @@
     "@vitejs/plugin-react": "^4.3.3",
     "playwright": "^1.61.1",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "vitest": "^2.1.9"
   }
 }

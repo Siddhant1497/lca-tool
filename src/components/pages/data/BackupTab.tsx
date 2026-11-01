@@ -34,7 +34,12 @@ const BackupTab: React.FC = () => {
 
   return (
     <>
-      <Section title="Export to CSV" sub="Opens in Excel. Use these for client deliverables or to move data into a reporting template.">
+      <Section title="Excel workbook" sub="One formatted .xlsx with Summary, Inventory, Scope 3 categories, Intensity, Disclosures, Certifications, Levers, Emission factors and Activities sheets.">
+        <button className="btn btn-pri" onClick={async () => { try { const { exportWorkbook } = await import('../../../utils/xlsx'); await exportWorkbook(hub); toast('Excel workbook downloaded'); } catch (e) { toast(`Export failed: ${(e as Error).message}`, 'err'); } }}>
+          <Icon name="sheet" size={16} />Export Excel workbook (.xlsx)</button>
+      </Section>
+
+      <Section title="Export to CSV" sub="Plain files for importing into other tools.">
         <div className="tbl-wrap"><table><tbody>
           {exports.map((e) => (
             <tr key={e.label}><td className="cell-main">{e.label}</td><td className="cell-sub">{e.n} row{e.n === 1 ? '' : 's'}</td>

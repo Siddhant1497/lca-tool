@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHub } from '../../../context/HubContext';
-import { uid, fmt, activityT, rollupActivities } from '../../../utils/hub';
+import { uid, fmt, activityT, rollupActivities, s3Sum } from '../../../utils/hub';
+import { S3_CATEGORIES } from '../../../types/hub';
 import type { EmissionFactor, Activity, GhgYear } from '../../../types/hub';
 import Modal from '../../ui/Modal';
 import Icon from '../../ui/Icon';
@@ -8,7 +9,7 @@ import EmptyState from '../../ui/EmptyState';
 import { useToast } from '../../ui/Toast';
 import { Field, Num, Section, n, okNum } from './fields';
 
-type FD = { id: string; name: string; unit: string; kgPerUnit: string; scope: 1 | 2 | 3; s2basis: 'location' | 'market'; source: string };
+type FD = { id: string; name: string; unit: string; kgPerUnit: string; scope: 1 | 2 | 3; s2basis: 'location' | 'market'; s3cat: string; source: string };
 type AD = { id: string; year: string; factorId: string; description: string; quantity: string };
 
 const CalculatorTab: React.FC = () => {
@@ -25,7 +26,7 @@ const CalculatorTab: React.FC = () => {
   const saveF = () => {
     setTried(true);
     if (!f || Object.values(fErr).some(Boolean)) return;
-    const item: EmissionFactor = { id: f.id, name: f.name.trim(), unit: f.unit.trim(), kgPerUnit: n(f.kgPerUnit), scope: f.scope, s2basis: f.scope === 2 ? f.s2basis : undefined, source: f.source.trim() };
+    const item: EmissionFactor = { id: f.id, name: f.name.trim(), unit: f.unit.trim(), kgPerUnit: n(f.kgPerUnit), scope: f.scope, s2basis: f.scope === 2 ? f.s2basis : undefined, s3cat: f.scope === 3 && f.s3cat ? Number(f.s3cat) : undefined, source: f.source.trim() };
     dispatch({ type: 'UPSERT_FACTOR', item }); toast(`Saved factor ${item.name}`); setF(null); setTried(false);
   };
   const saveA = () => {
@@ -42,12 +43,16 @@ const CalculatorTab: React.FC = () => {
   const apply = (r: ReturnType<typeof rollupActivities>[number]) => {
     const cur = hub.ghg.find((g) => g.year === r.year);
     // Only overwrite scopes that this year's activities actually cover; keep the rest.
+    const s3acts = hub.activities.filter((x) => x.year === r.year && fac(x.factorId)?.scope === 3);
+    const allCat = s3acts.length > 0 && s3acts.every((x) => fac(x.factorId)?.s3cat);
+    const s3cats = allCat ? { ...(cur?.s3cats ?? {}), ...r.s3cats } : has(r.year, 3) ? undefined : cur?.s3cats;
     const row: GhgYear = {
       year: r.year,
       scope1: has(r.year, 1) ? r.scope1 : cur?.scope1 ?? 0,
       scope2: has(r.year, 2) ? r.scope2 : cur?.scope2 ?? 0,
       scope2m: has(r.year, 2, true) ? r.scope2m : cur?.scope2m ?? null,
-      scope3: has(r.year, 3) ? r.scope3 : cur?.scope3 ?? 0,
+      scope3: allCat ? s3Sum(s3cats) : has(r.year, 3) ? r.scope3 : cur?.scope3 ?? 0,
+      s3cats, denom: cur?.denom,
     };
     if (cur && !confirm(`Overwrite the covered scopes for ${r.year} in your inventory with the calculated values?`)) return;
     dispatch({ type: 'UPSERT_GHG', row }); toast(`Applied calculated totals to ${r.year}`);
@@ -60,7 +65,7 @@ const CalculatorTab: React.FC = () => {
       </div>
 
       <Section title="Emission factor library" sub="kgCO₂e per activity unit"
-        actions={<button className="btn btn-pri btn-sm" onClick={() => { setTried(false); setF({ id: uid(), name: '', unit: '', kgPerUnit: '', scope: 2, s2basis: 'location', source: '' }); }}><Icon name="plus" size={14} />Add factor</button>}>
+        actions={<button className="btn btn-pri btn-sm" onClick={() => { setTried(false); setF({ id: uid(), name: '', unit: '', kgPerUnit: '', scope: 2, s2basis: 'location', s3cat: '', source: '' }); }}><Icon name="plus" size={14} />Add factor</button>}>
         {hub.factors.length === 0 ? (
           <EmptyState compact icon={<Icon name="calc" size={22} />} title="No factors yet" body="Start with your biggest sources: grid electricity, diesel and natural gas, refrigerant top-ups, then purchased materials." />
         ) : (
@@ -71,12 +76,12 @@ const CalculatorTab: React.FC = () => {
               return (
                 <tr key={x.id}>
                   <td className="cell-main">{x.name}</td>
-                  <td><span className="badge b-na">S{x.scope}{x.scope === 2 ? ` · ${x.s2basis}` : ''}</span></td>
+                  <td><span className="badge b-na">S{x.scope}{x.scope === 2 ? ` · ${x.s2basis}` : x.scope === 3 && x.s3cat ? ` · Cat ${x.s3cat}` : ''}</span></td>
                   <td className="num">{x.kgPerUnit.toLocaleString('en-US', { maximumFractionDigits: 6 })} <span className="cell-sub">/ {x.unit}</span></td>
                   <td className="cell-sub" style={{ maxWidth: 320 }}>{x.source}</td>
                   <td className="num">{used}</td>
                   <td><div className="row-actions">
-                    <button className="icon-btn sm" aria-label={`Edit ${x.name}`} onClick={() => { setTried(false); setF({ ...x, kgPerUnit: String(x.kgPerUnit), s2basis: x.s2basis ?? 'location' }); }}><Icon name="edit" size={15} /></button>
+                    <button className="icon-btn sm" aria-label={`Edit ${x.name}`} onClick={() => { setTried(false); setF({ ...x, kgPerUnit: String(x.kgPerUnit), s2basis: x.s2basis ?? 'location', s3cat: x.s3cat ? String(x.s3cat) : '' }); }}><Icon name="edit" size={15} /></button>
                     <button className="icon-btn sm danger" aria-label={`Delete ${x.name}`} onClick={() => { if (confirm(used ? `Delete ${x.name} and its ${used} activit${used > 1 ? 'ies' : 'y'}?` : `Delete ${x.name}?`)) { dispatch({ type: 'DELETE_FACTOR', id: x.id }); toast('Factor deleted', 'info'); } }}><Icon name="trash" size={15} /></button>
                   </div></td>
                 </tr>);
@@ -134,6 +139,8 @@ const CalculatorTab: React.FC = () => {
           <form className="form-grid" onSubmit={(e) => { e.preventDefault(); saveF(); }}>
             <Field label="Name" className="span2" error={tried && fErr.name}><input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="e.g. Grid electricity – FY2024" /></Field>
             <Field label="Scope"><select value={f.scope} onChange={(e) => setF({ ...f, scope: Number(e.target.value) as 1 | 2 | 3 })}><option value={1}>Scope 1</option><option value={2}>Scope 2</option><option value={3}>Scope 3</option></select></Field>
+            {f.scope === 3 && <Field label="Scope 3 category" hint="Lets the calculator fill the category split"><select value={f.s3cat} onChange={(e) => setF({ ...f, s3cat: e.target.value })}>
+              <option value="">Not specified</option>{S3_CATEGORIES.map((c) => <option key={c.n} value={c.n}>{c.n}. {c.name}</option>)}</select></Field>}
             {f.scope === 2 && <Field label="Scope 2 basis"><select value={f.s2basis} onChange={(e) => setF({ ...f, s2basis: e.target.value as 'location' | 'market' })}><option value="location">Location-based</option><option value="market">Market-based</option></select></Field>}
             <Field label="Activity unit" error={tried && fErr.unit}><input value={f.unit} onChange={(e) => setF({ ...f, unit: e.target.value })} placeholder="kWh" /></Field>
             <Field label="kgCO₂e per unit" error={tried && fErr.kg}><Num value={f.kgPerUnit} step={0.0001} onChange={(v) => setF({ ...f, kgPerUnit: v })} invalid={tried && !!fErr.kg} /></Field>

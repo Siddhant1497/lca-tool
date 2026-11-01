@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
-  ComposedChart, Area, Line, ReferenceLine, Cell, PieChart, Pie,
+  ComposedChart, Area, Line, ReferenceLine, Cell, PieChart, Pie, LineChart,
 } from 'recharts';
 import { useHub } from '../../context/HubContext';
 import { useLCA } from '../../context/LCAContext';
-import { buildPathway, metrics, fmt, total, s2, s12, projectGap, atRisk, onTrack, missingMarket } from '../../utils/hub';
+import { buildPathway, metrics, fmt, total, s2, s12, projectGap, atRisk, onTrack, missingMarket, leverProjection, macc, intensities, s3Rows, hasS3Cats } from '../../utils/hub';
+import Macc from '../ui/Macc';
 import type { CertProject, LeverStatus, CertSystem } from '../../types/hub';
 import CountUp from '../ui/CountUp';
 import EmptyState from '../ui/EmptyState';
@@ -26,7 +27,7 @@ export const SYS_COL: Record<CertSystem, string> = {
   LEED: '#3F8F3A', IGBC: '#0E7490', GRIHA: '#B45309', EDGE: '#2563EB', WELL: '#7C3AED', Fitwel: '#DB2777', Other: '#64748B',
 };
 export const SysTag: React.FC<{ s: CertSystem }> = ({ s }) => (
-  <span className="sys" style={{ color: SYS_COL[s], background: `color-mix(in srgb, ${SYS_COL[s]} 13%, transparent)` }}>{s}</span>
+  <span className="sys" style={{ ['--sys' as string]: SYS_COL[s] }}>{s}</span>
 );
 
 const Card: React.FC<{ title: string; sub?: React.ReactNode; icon: IconName; i: number; span: string; right?: React.ReactNode; children: React.ReactNode }> =
@@ -58,6 +59,7 @@ const CommandCenter: React.FC = () => {
   const { dispatch: lca, results } = useLCA();
   const go = (page: 'data' | 'materials') => lca({ type: 'SET_PAGE', page });
   const S = hub.settings, M = S.s2Method;
+  const [imetric, setImetric] = useState<'perM2' | 'perFte' | 'perRev'>('perM2');
 
   /* ── First run ── */
   if (!hub.loaded) {
@@ -88,7 +90,18 @@ const CommandCenter: React.FC = () => {
   }
 
   const m = metrics(hub.ghg, hub.levers, S);
-  const path = buildPathway(hub.ghg, S);
+  const proj = leverProjection(hub.ghg, hub.levers, S);
+  const path = buildPathway(hub.ghg, S).map((p) => ({ ...p, projected: proj.points.find((q) => q.year === p.year)?.projected ?? null }));
+  const projEnd = proj.points.length ? proj.points[proj.points.length - 1].projected : null;
+  const curve = macc(hub.levers);
+  const ints = intensities(hub.ghg, S);
+  const IMETA = {
+    perM2: { label: 'per m²', unit: 'kgCO₂e/m²', d: 1 }, perFte: { label: 'per FTE', unit: 'tCO₂e/FTE', d: 2 },
+    perRev: { label: `per ${S.revenueUnit}`, unit: `tCO₂e/${S.revenueUnit}`, d: 2 },
+  } as const;
+  const iSeries = ints.filter((x) => x[imetric] != null).map((x) => ({ year: String(x.year), value: x[imetric] as number }));
+  const s3Year = [...hub.ghg].reverse().find(hasS3Cats);
+  const s3 = s3Year ? s3Rows(s3Year) : [];
   const miss = missingMarket(hub.ghg, M);
   const trend = hub.ghg.map((g) => ({ year: String(g.year), 'Scope 1': g.scope1, 'Scope 2': s2(g, M), 'Scope 3': g.scope3 }));
   const levers = [...hub.levers].sort((a, b) => b.abatement - a.abatement);
@@ -196,11 +209,15 @@ const CommandCenter: React.FC = () => {
                 <ReferenceLine x={m.latest.year} stroke="var(--border-strong)" strokeDasharray="2 4" label={{ value: 'Latest', fill: 'var(--subtle)', fontSize: 10, position: 'insideTopRight' }} />
                 <Area name="Actual S1+2" dataKey="actual" stroke="var(--s2)" strokeWidth={2.5} fill="url(#gAct)" dot={{ r: 3, strokeWidth: 0, fill: 'var(--s2)' }} activeDot={{ r: 5 }} connectNulls={false} animationDuration={1100} />
                 <Line name="Pathway" dataKey="pathway" stroke="var(--warn)" strokeWidth={2} strokeDasharray="6 5" dot={false} animationDuration={1100} />
+                {hub.levers.some((l) => l.year && l.scope !== 3 && l.status !== 'Implemented') && (
+                  <Line name="With dated levers" dataKey="projected" type="stepAfter" stroke="var(--acc)" strokeWidth={2} strokeDasharray="2 4" dot={false} connectNulls={false} animationDuration={1300} animationBegin={300} />)}
               </ComposedChart>
             </ResponsiveContainer></div>
             <div className="legend-row">
               <span><span className="sw" style={{ background: 'var(--s2)' }} />Actual Scope 1+2</span>
               <span><span className="sw" style={{ background: 'var(--warn)' }} />Pathway</span>
+              {projEnd != null && proj.points.length > 1 && <span><span className="sw" style={{ background: 'var(--acc)' }} />With dated levers → {fmt(projEnd)} t in {S.targetYear}</span>}
+              {proj.undated > 0 && <span className="muted">· {proj.undated} lever{proj.undated > 1 ? 's' : ''} without a delivery year</span>}
             </div>
             <div className={`insight${m.leverCoverage < 100 ? ' warn' : ''}`}><Icon name={m.leverCoverage < 100 ? 'alert' : 'check'} size={16} />
               <span>{m.gapTarget > 0
@@ -254,13 +271,48 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={9} span="c5" icon="zap" title="Decarbonisation levers" sub="Abatement potential, tCO₂e/yr"
-          right={<button className="btn btn-ghost btn-sm" onClick={() => go('data')}>Edit<Icon name="arrowR" size={14} /></button>}>
-          {levers.length === 0 ? (
-            <EmptyState compact icon={<Icon name="zap" size={22} />} title="No levers yet" body="Add reduction measures (solar PPA, heat pumps, low-carbon concrete…) to see how much of the gap they close.">
-              <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add a lever</button>
+        <Card i={9} span="c5" icon="link" title="Scope 3 hotspots" sub={s3Year ? `${s3Year.year} by GHG Protocol category · ${s3.length} reported` : 'By GHG Protocol category'}>
+          {!s3Year ? (
+            <EmptyState compact icon={<Icon name="link" size={22} />} title="No category split yet"
+              body="Scope 3 is usually 70–90% of a real-estate footprint. Break it into the 15 GHG Protocol categories to see where to act. Cat 2 can take your building LCA A1–A3 result.">
+              <button className="btn btn-pri btn-sm" onClick={() => go('data')}>Add categories</button>
             </EmptyState>
           ) : (<>
+            <div style={{ flex: 1, minHeight: 40 + s3.length * 30 }}><ResponsiveContainer>
+              <BarChart data={s3.map((c) => ({ ...c, label: `${c.n}. ${c.name}` }))} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }} barCategoryGap="22%">
+                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tick={TICK} axisLine={false} tickLine={false} tickFormatter={kfmt} />
+                <YAxis type="category" dataKey="label" width={170} tick={TICK} axisLine={false} tickLine={false} />
+                <Tooltip cursor={{ fill: 'var(--hover)' }} content={({ active, payload }) => active && payload?.length ? (
+                  <div className="chart-tip"><div className="h">Cat {payload[0].payload.n} · {payload[0].payload.name}</div>
+                    <div className="l"><span>{payload[0].payload.stream}</span><b>{fmt(payload[0].payload.value)} tCO₂e</b></div>
+                    <div className="l"><span>Share of Scope 3</span><b>{((payload[0].payload.value / s3Year.scope3) * 100).toFixed(1)}%</b></div></div>) : null} />
+                <Bar dataKey="value" radius={[0, 5, 5, 0]} animationDuration={900}>
+                  {s3.map((c, k) => <Cell key={c.n} fill="var(--s3)" fillOpacity={1 - Math.min(k * 0.09, 0.6)} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer></div>
+            <div className="insight"><Icon name="target" size={16} /><span>
+              Top {Math.min(3, s3.length)} categor{s3.length > 1 ? 'ies' : 'y'} = <b>{((s3.slice(0, 3).reduce((x, c) => x + c.value, 0) / s3Year.scope3) * 100).toFixed(0)}%</b> of Scope 3. Start supplier engagement and low-carbon specification there.
+            </span></div>
+          </>)}
+        </Card>
+
+        <Card i={10} span="c7" icon="zap" title={curve.length ? 'Marginal abatement cost curve' : 'Decarbonisation levers'}
+          sub={curve.length ? `Width = tCO₂e/yr abated · height = ${S.currency}/tCO₂e · open levers, cheapest first` : 'Abatement potential, tCO₂e/yr'}
+          right={<button className="btn btn-ghost btn-sm" onClick={() => go('data')}>Edit<Icon name="arrowR" size={14} /></button>}>
+          {levers.length === 0 ? (
+            <EmptyState compact icon={<Icon name="zap" size={22} />} title="No levers yet" body="Add reduction measures (solar PPA, heat pumps, low-carbon concrete…) with cost per tonne to build a MACC.">
+              <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add a lever</button>
+            </EmptyState>
+          ) : curve.length ? (<>
+            <Macc bars={curve} currency={S.currency} />
+            <div className="legend-row">
+              <span><span className="sw" style={{ background: 'var(--acc)' }} />Net saving</span>
+              <span><span className="sw" style={{ background: 'var(--warn)' }} />Net cost</span>
+              <span className="muted">{fmt(curve.filter((c) => c.cost < 0).reduce((x, c) => x + c.x1 - c.x0, 0))} of {fmt(curve[curve.length - 1].x1)} tCO₂e/yr pays for itself</span>
+            </div>
+          </>) : (<>
             <div style={{ flex: 1, minHeight: 30 + levers.length * 36 }}><ResponsiveContainer>
               <BarChart data={levers} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }} barCategoryGap="22%">
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" horizontal={false} />
@@ -282,7 +334,34 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={10} span="c6" icon="check" title={cat ? `${cat.system} ${cat.version} · credit categories` : 'Credit categories'}
+        <Card i={11} span="c5" icon="trendDown" title="Emissions intensity" sub={`Scope 1+2 ${IMETA[imetric].unit} · ${M}-based`}
+          right={<span className="seg" role="group" aria-label="Intensity metric">
+            {(Object.keys(IMETA) as (keyof typeof IMETA)[]).map((k) => (
+              <button key={k} className={imetric === k ? 'on' : ''} aria-pressed={imetric === k} onClick={() => setImetric(k)}>{k === 'perRev' ? 'Turnover' : IMETA[k].label.replace('per ', '')}</button>))}
+          </span>}>
+          {iSeries.length === 0 ? (
+            <EmptyState compact icon={<Icon name="trendDown" size={22} />} title="No denominators yet" body="Add floor area, employees or turnover to an inventory year to track intensity, which BRSR and GRI 305-4 ask for.">
+              <button className="btn btn-pri btn-sm" onClick={() => go('data')}>Add denominators</button>
+            </EmptyState>
+          ) : (<>
+            <div className="int-head">
+              <div><b className="num">{fmt(iSeries[iSeries.length - 1].value, IMETA[imetric].d)}</b><span>{IMETA[imetric].unit} in {iSeries[iSeries.length - 1].year}</span></div>
+              {iSeries.length > 1 && (() => { const c = ((iSeries[iSeries.length - 1].value - iSeries[0].value) / iSeries[0].value) * 100; return (
+                <span className={`delta ${c <= 0 ? 'good' : 'bad'}`}>{c <= 0 ? '▼' : '▲'} {Math.abs(c).toFixed(1)}% since {iSeries[0].year}</span>); })()}
+            </div>
+            <div style={{ flex: 1, minHeight: 200 }}><ResponsiveContainer>
+              <LineChart data={iSeries} margin={{ top: 8, right: 12, left: -6, bottom: 0 }}>
+                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="year" tick={TICK} axisLine={false} tickLine={false} />
+                <YAxis tick={TICK} axisLine={false} tickLine={false} width={44} domain={['auto', 'auto']} />
+                <Tooltip content={<ChartTip unit={IMETA[imetric].unit} />} />
+                <Line name={`S1+2 ${IMETA[imetric].label}`} dataKey="value" stroke="var(--pri)" strokeWidth={2.5} dot={{ r: 3, strokeWidth: 0, fill: 'var(--pri)' }} activeDot={{ r: 5 }} animationDuration={1000} />
+              </LineChart>
+            </ResponsiveContainer></div>
+          </>)}
+        </Card>
+
+        <Card i={12} span="c6" icon="check" title={cat ? `${cat.system} ${cat.version} · credit categories` : 'Credit categories'}
           sub={cat ? `${cat.name} · target ${cat.targetLabel} (${cat.needed} ${cat.unit})` : 'Scorecard breakdown for a project'}>
           {!cat ? (
             <EmptyState compact icon={<Icon name="check" size={22} />} title="No scorecard yet" body="Give a project a category breakdown (LEED template included) to see secured vs likely points per category.">
@@ -312,7 +391,7 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={11} span="c6" icon="building" title="Certification pipeline" sub="Projects by status">
+        <Card i={13} span="c6" icon="building" title="Certification pipeline" sub="Projects by status">
           {hub.projects.length === 0 ? (
             <EmptyState compact icon={<Icon name="building" size={22} />} title="No projects tracked" body="Add your LEED, IGBC, GRIHA, EDGE, WELL and Fitwel projects to see what needs attention.">
               <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add a project</button>
@@ -360,7 +439,7 @@ const CommandCenter: React.FC = () => {
         </Card>
 
         {hub.projects.length > 0 && (
-          <section className="card rise c12" style={{ ['--i' as string]: 12 }}>
+          <section className="card rise c12" style={{ ['--i' as string]: 14 }}>
             <div className="card-hd">
               <span className="card-ic"><Icon name="file" size={17} /></span>
               <div><div className="t">Certification portfolio</div><div className="s">Secured (solid) and likely (striped) against the target marker</div></div>
