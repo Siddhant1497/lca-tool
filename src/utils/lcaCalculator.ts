@@ -33,12 +33,13 @@ export const percentDiff = (baseline: ImpactValues, proposed: ImpactValues): Par
   return result;
 };
 
-/** Convert entry quantity to kg for calculation */
+/** Convert entry quantity to the material's declared unit (EPD values are per that unit) */
 const toKg = (entry: MaterialEntry): number => {
   const mat = getMaterialById(entry.materialId);
   if (!mat) return 0;
-  if (mat.unit === 'kg') return entry.quantity;
-  if (mat.unit === 'm3' && mat.density) return entry.quantity * mat.density;
+  if (!entry.unit || entry.unit === mat.unit) return entry.quantity;
+  if (entry.unit === 'm3' && mat.unit === 'kg' && mat.density) return entry.quantity * mat.density;
+  if (entry.unit === 'kg' && mat.unit === 'm3' && mat.density) return entry.quantity / mat.density;
   // m2 / m / pcs: impacts declared per functional unit so pass through as-is
   return entry.quantity;
 };
@@ -119,8 +120,9 @@ export const calculateLCA = (entries: MaterialEntry[], project: Project): LCARes
 };
 
 export const formatGWP = (v: number): string => {
-  if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(2)} Mt CO₂ eq`;
-  if (Math.abs(v) >= 1_000)     return `${(v / 1_000).toFixed(1)} t CO₂ eq`;
+  if (Math.abs(v) >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(2)} Mt CO₂ eq`;
+  if (Math.abs(v) >= 1_000_000)     return `${(v / 1_000_000).toFixed(2)} kt CO₂ eq`;
+  if (Math.abs(v) >= 1_000)         return `${(v / 1_000).toFixed(1)} t CO₂ eq`;
   return `${v.toFixed(1)} kg CO₂ eq`;
 };
 

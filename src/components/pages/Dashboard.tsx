@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
   const hasData = results !== null;
 
   const bm = project ? (EMBODIED_CARBON_BENCHMARKS[project.buildingType] ?? EMBODIED_CARBON_BENCHMARKS.other) : null;
-  const gwpM2 = results?.perM2.GWP ?? 0;
+  const gwpM2 = results && project ? results.embodiedCarbon / (project.grossFloorArea || 1) : 0;
   const bmPct = bm && gwpM2 > 0 ? Math.min((gwpM2 / bm.high) * 100, 120) : 0;
 
   const phaseData = hasData
@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
       <div className="kpi-grid">
         {[
           { lbl: 'Total GWP (A–D)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: 'Global Warming Potential', col: '#DC2626' },
-          { lbl: 'Embodied Carbon', val: hasData ? `${results!.perM2.GWP.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA', col: '#1D4ED8' },
+          { lbl: 'Embodied Carbon', val: hasData ? `${gwpM2.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA, excl. operational', col: '#1D4ED8' },
           { lbl: 'GWP Intensity', val: hasData ? `${results!.perM2PerYear.GWP.toFixed(3)} kg/m²/yr` : '—', sub: 'Annual intensity', col: '#059669' },
           { lbl: 'Material Entries', val: String(materialEntries.length), sub: `${new Set(materialEntries.map(e=>e.component)).size} components`, col: '#6B7280' },
           { lbl: 'LEED v4 MRc1', val: leed ? `${leed.creditPoints ?? 0}/3 pts` : '—', sub: leed?.summary ?? 'No data', col: leed?.compliant ? '#059669' : '#DC2626' },
