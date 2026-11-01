@@ -6,7 +6,7 @@ import {
 import { migrate } from '../../context/HubContext';
 import type { GhgYear, HubSettings, Lever, EmissionFactor, Activity, CertProject } from '../../types/hub';
 
-const S: HubSettings = { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: '' };
+const S: HubSettings = { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: '', modules: { certs: true, lca: true }, s3Pct: 2.5, netZeroYear: 2050, nzPct: 90 };
 const G: GhgYear[] = [
   { year: 2019, scope1: 1000, scope2: 4000, scope3: 10000 },
   { year: 2024, scope1: 800, scope2: 3000, scope2m: 2000, scope3: 9000, denom: { area: 50000, fte: 1000, revenue: 500 } },

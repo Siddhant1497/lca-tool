@@ -8,10 +8,13 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 
 | Area | What it does |
 |---|---|
+| **Workspace** | First-run choice: carbon only, or add certifications and/or building LCA. Switch modules on or off any time; hidden modules disappear from the navigation, the dashboard and the Excel export. |
+| **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors **imported from official publisher files** (CEA, UK DESNZ flat file auto-detected, US EPA, IPCC, GHG Protocol GWPs). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
+| **Decarbonisation Strategy** | SBTi-style near-term and net-zero targets (editable), trajectory to net zero, gap by scope, hotspot analysis with a 27-measure library (each linked to the relevant LEED credit), a Now / Next / Later roadmap, residual-emission planning and an auto-written strategy summary. |
 | **Command Center** | KPIs with sparklines, Scope 1+2 against a linear 1.5 °C-aligned pathway with a "with dated levers" projection, scope split, inventory trend, Scope 3 hotspots by GHG Protocol category, MACC, intensity trends (per m², per FTE, per turnover), LEED category scorecard, certification pipeline with a "needs attention" list, and the full portfolio table. Location/market Scope 2 toggle. |
-| **Data Manager** | Validated editors for inventory years (Scope 2 dual reporting, 15 Scope 3 categories, intensity denominators), certification projects (LEED, IGBC, GRIHA, EDGE, WELL, Fitwel; category scorecards with a LEED v4/v4.1 BD+C template), levers (delivery year, cost per tonne), and an **activity calculator** with your own source-cited emission-factor library. |
+| **Data Manager** | Validated editors for inventory years (Scope 2 dual reporting, 15 Scope 3 categories, intensity denominators), certification projects (LEED, IGBC, GRIHA, EDGE, WELL, Fitwel; category scorecards with a LEED v4/v4.1 BD+C template), levers (delivery year, cost per tonne), reporting settings and workspace modules. |
 | **Disclosures** | Report-ready tables for **GHG Protocol, GRI 305, BRSR Principle 6 and IFRS S2**, with previous-year comparatives and an Available / Partial / Missing status on every line. Copy any table straight into Excel or Word. |
-| **Exports** | Formatted multi-sheet **Excel workbook** (Summary, Inventory, Scope 3, Intensity, Disclosures, Certifications, Levers, Factors, Activities), CSVs, JSON backup/restore, print-to-PDF styles. |
+| **Exports** | Formatted multi-sheet **Excel workbook** (Summary, Inventory, Scope 3, Intensity, Disclosures, Strategy, Certifications, Levers, Factors with provenance, Activities by site), CSVs, JSON backup/restore, print-to-PDF styles. |
 | **Building LCA** | Material inventory against EPD data, EN 15978 stages A–D, LEED v4/v4.1 MRc1, BREEAM Mat 01 and ISO 14044 checks. The A1–A3 result can be added to Scope 3 Category 2 (capital goods) with one click. |
 
 Plus: dark mode, a collapsible sidebar (`[`), a **Ctrl/⌘ + K** command palette, skeleton loading, empty states on every panel, a mobile layout, and reduced-motion support.
@@ -21,7 +24,7 @@ Plus: dark mode, a collapsible sidebar (`[`), a **Ctrl/⌘ + K** command palette
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # unit tests for the calculation logic
+npm test           # 33 unit tests: pathway, strategy, factor import, reducers
 npm run build      # production build in dist/
 ```
 
@@ -32,7 +35,8 @@ npm run build      # production build in dist/
 - **MACC.** Open levers with a cost, cheapest first. Bar width is tCO₂e/yr and height is cost per tonne, with negative values for net savings.
 - **Scope 2.** Location- and market-based figures are stored separately. Years without a market-based figure are flagged when you switch to market-based, rather than silently mixed.
 - **Intensity.** Scope 1+2 per m² (kgCO₂e), per FTE and per turnover. BRSR's per-rupee figure appears when turnover is in a ₹ unit.
-- **Emission factors.** None are built in. Each factor you add must cite its source, and the activities export carries the factor and source for the audit trail.
+- **Emission factors.** No values are built into the code. Import them from the publisher's own file (or type them in with a citation), so the edition and row reference travel with every number into the Excel export.
+- **Strategy defaults.** 4.2 %/yr Scope 1+2 (1.5 °C), 2.5 %/yr Scope 3 (well-below 2 °C) and a ≥ 90 % cut by the net-zero year follow SBTi criteria; check them against the current criteria version. Residual emissions are neutralised with removals; offsets are never counted as reductions.
 
 ## Honest limits
 

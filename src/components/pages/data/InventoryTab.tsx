@@ -118,6 +118,14 @@ const InventoryTab: React.FC = () => {
               {REVENUE_UNITS.map((u) => <option key={u.id}>{u.id}</option>)}</select></Field>
           <Field label="Currency for lever costs" hint="Used in the MACC"><input value={S.currency} onChange={(e) => dispatch({ type: 'SET_SETTINGS', settings: { currency: e.target.value } })} /></Field>
         </div>
+        <div className="divider" />
+        <div style={{ marginBottom: 8 }}><b>Workspace modules</b> <span className="cell-sub">carbon accounting, strategy and disclosures are always on</span></div>
+        <div className="row" style={{ gap: 18 }}>
+          {([['certs', 'Green building certifications (LEED, IGBC, GRIHA, EDGE, WELL, Fitwel)'], ['lca', 'Building LCA (EN 15978 / embodied carbon)']] as const).map(([k, l]) => (
+            <label key={k} className="row" style={{ gap: 7, cursor: 'pointer' }}>
+              <input type="checkbox" checked={S.modules[k]} onChange={(e) => dispatch({ type: 'SET_SETTINGS', settings: { modules: { ...S.modules, [k]: e.target.checked } } })} />{l}
+            </label>))}
+        </div>
       </Section>
 
       {edit && d && (
@@ -146,7 +154,7 @@ const InventoryTab: React.FC = () => {
                     <span className="cat-n">{c.n}</span>
                     <span className="cat-name">{c.name}</span>
                     <input className="inp sm num" type="number" min={0} step={0.01} value={d.cats[c.n]} placeholder="—" aria-label={`Category ${c.n} ${c.name}`} onChange={(e) => setCat(c.n, e.target.value)} />
-                    {c.n === 2 && lcaA13 != null && (
+                    {c.n === 2 && lcaA13 != null && S.modules.lca && (
                       <button type="button" className="btn btn-ghost btn-sm cat-lca" title="Use the Building LCA A1–A3 result for capital goods acquired this year"
                         onClick={() => setCat(2, String(+(lcaA13 + (Number(d.cats[2]) || 0)).toFixed(2)))}>+ LCA A1–A3 ({fmt(lcaA13, 1)} t)</button>
                     )}

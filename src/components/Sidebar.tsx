@@ -4,7 +4,7 @@ import { useUi } from '../context/UiContext';
 import { useHub } from '../context/HubContext';
 import { atRisk } from '../utils/hub';
 import Icon from './ui/Icon';
-import { NAV } from './nav';
+import { visibleNav } from './nav';
 
 const Sidebar: React.FC = () => {
   const { state, dispatch } = useLCA();
@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar" aria-label="Primary">
       <nav>
-        {NAV.map((item) => {
+        {visibleNav(hub.settings.modules).map((item) => {
           const active = state.activePage === item.page;
           return (
             <React.Fragment key={item.page}>
@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
                 title={collapsed ? item.label : undefined} onClick={() => dispatch({ type: 'SET_PAGE', page: item.page })}>
                 <span className="ni"><Icon name={item.icon} /></span>
                 <span className="nl">{item.label}</span>
-                {item.page === 'hub' && risk > 0 && <span className="nav-badge" title={`${risk} certification(s) at risk`}>{risk}</span>}
+                {item.page === 'hub' && hub.settings.modules.certs && risk > 0 && <span className="nav-badge" title={`${risk} certification(s) at risk`}>{risk}</span>}
               </button>
             </React.Fragment>
           );

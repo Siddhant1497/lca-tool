@@ -4,7 +4,7 @@ import { useHub } from '../context/HubContext';
 import { useUi } from '../context/UiContext';
 import { useToast } from './ui/Toast';
 import Icon, { type IconName } from './ui/Icon';
-import { NAV } from './nav';
+import { visibleNav } from './nav';
 
 interface Cmd { id: string; label: string; hint: string; icon: IconName; run: () => void }
 
@@ -30,7 +30,7 @@ const CommandPalette: React.FC = () => {
   useEffect(() => { if (open) setTimeout(() => input.current?.focus(), 0); }, [open]);
 
   const cmds = useMemo<Cmd[]>(() => [
-    ...NAV.map((n) => ({ id: n.page, label: n.label, hint: 'Go to page', icon: n.icon, run: () => dispatch({ type: 'SET_PAGE', page: n.page }) })),
+    ...visibleNav(hub.settings.modules).map((n) => ({ id: n.page, label: n.label, hint: 'Go to page', icon: n.icon, run: () => dispatch({ type: 'SET_PAGE', page: n.page }) })),
     { id: 'theme', label: `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`, hint: 'Appearance', icon: theme === 'dark' ? 'sun' : 'moon', run: toggleTheme },
     { id: 'side', label: 'Toggle sidebar', hint: 'Layout  [', icon: 'chevL', run: toggleSidebar },
     { id: 'xlsx', label: 'Export Excel workbook', hint: 'Export', icon: 'sheet', run: async () => {

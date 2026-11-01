@@ -60,30 +60,40 @@ const CommandCenter: React.FC = () => {
   const go = (page: 'data' | 'materials') => lca({ type: 'SET_PAGE', page });
   const S = hub.settings, M = S.s2Method;
   const [imetric, setImetric] = useState<'perM2' | 'perFte' | 'perRev'>('perM2');
+  const [pick, setPick] = useState({ certs: true, lca: true });
+  const certsOn = S.modules.certs;
 
-  /* ── First run ── */
+  /* ── First run: choose the workspace ── */
   if (!hub.loaded) {
+    const opts = [
+      { k: 'ghg', icon: 'calc', t: 'Carbon footprint & decarbonisation', d: 'Scope 1, 2 and 3 from activity data with official emission factors, a net-zero strategy and BRSR / GRI / IFRS S2 tables.', locked: true },
+      { k: 'certs', icon: 'building', t: 'Green building certifications', d: 'Track LEED, IGBC, GRIHA, EDGE, WELL and Fitwel projects against their target level.' },
+      { k: 'lca', icon: 'layers', t: 'Building LCA', d: 'Embodied carbon to EN 15978 with LEED MRc and BREEAM checks; can feed Scope 3 Category 2.' },
+    ] as const;
     return (
       <div>
         <div className="ph"><div>
-          <div className="ph-eyebrow">Portfolio overview</div>
-          <div className="ph-title">Command Center</div>
-          <div className="ph-sub">GHG inventory, decarbonisation pathway and certification portfolio in one place.</div>
+          <div className="ph-eyebrow">Welcome</div>
+          <div className="ph-title">What will you use SustainHub for?</div>
+          <div className="ph-sub">Carbon accounting works on its own. Add certifications or LCA only if you need them; you can change this later in Data Manager → Reporting settings.</div>
         </div></div>
-        <div className="card rise">
-          <EmptyState icon={<Icon name="leaf" size={30} />} title="Set up your sustainability portfolio"
-            body="Bring in a yearly Scope 1/2/3 inventory and your certification projects. The dashboard tracks you against a 1.5°C-aligned pathway and flags projects at risk of missing their target.">
-            <button className="btn btn-pri btn-lg" onClick={() => dispatch({ type: 'LOAD_SAMPLE' })}><Icon name="grid" size={16} />Explore sample data</button>
-            <button className="btn btn-out btn-lg" onClick={() => { dispatch({ type: 'START_EMPTY' }); go('data'); }}><Icon name="plus" size={16} />Start from scratch</button>
-            <ImportGhg className="btn btn-out btn-lg" label="Import GHG CSV" />
-          </EmptyState>
-          <div className="steps" style={{ margin: '0 auto 12px' }}>
-            {[['Inventory', 'Enter yearly Scope 1, 2 (location + market) and 3 totals, or build them from activity data and your own emission factors.'],
-              ['Certifications', 'Add LEED, IGBC, GRIHA, EDGE, WELL or Fitwel projects with secured and likely points vs target.'],
-              ['Act', 'See the gap to your pathway, how much your levers close, and which projects need attention.']].map(([t, d], k) => (
-              <div className="step" key={t}><div className="n">{k + 1}</div><b>{t}</b><span className="muted">{d}</span></div>
-            ))}
-          </div>
+        <div className="choose-grid">
+          {opts.map((o, i) => {
+            const on = o.k === 'ghg' || pick[o.k];
+            return (
+              <button key={o.k} className={`choose rise${on ? ' on' : ''}`} style={{ ['--i' as string]: i }} disabled={'locked' in o}
+                aria-pressed={on} onClick={() => o.k !== 'ghg' && setPick({ ...pick, [o.k]: !pick[o.k] })}>
+                <span className="choose-ic"><Icon name={o.icon} size={22} /></span>
+                <span className="choose-check" aria-hidden>{on ? '✓' : ''}</span>
+                <b>{o.t}</b><span className="cell-sub">{o.d}</span>
+                {'locked' in o && <span className="badge b-pri" style={{ marginTop: 'auto' }}>Always included</span>}
+              </button>);
+          })}
+        </div>
+        <div className="row" style={{ justifyContent: 'center', marginTop: 22 }}>
+          <button className="btn btn-pri btn-lg" onClick={() => { dispatch({ type: 'START_EMPTY', modules: pick }); lca({ type: 'SET_PAGE', page: 'calculator' }); }}><Icon name="calc" size={16} />Start with my data</button>
+          <button className="btn btn-out btn-lg" onClick={() => { dispatch({ type: 'LOAD_SAMPLE' }); dispatch({ type: 'SET_SETTINGS', settings: { modules: pick } }); }}><Icon name="grid" size={16} />Explore sample data</button>
+          <ImportGhg className="btn btn-ghost btn-lg" label="Import GHG totals (CSV)" />
         </div>
       </div>
     );
@@ -136,8 +146,8 @@ const CommandCenter: React.FC = () => {
           <div className="ph-sub">
             <span className={`badge ${hub.isSample ? 'b-warn' : 'b-pri'}`}>{hub.isSample ? 'Sample data' : 'Your data'}</span>
             {m && <span>Inventory {m.base.year}–{m.latest.year}</span>}
-            <span>· {hub.projects.length} certification project{hub.projects.length === 1 ? '' : 's'}</span>
-            {results && <span>· Building LCA <b className="num">{fmt(results.perM2.GWP)}</b> kgCO₂e/m²</span>}
+            {certsOn && <span>· {hub.projects.length} certification project{hub.projects.length === 1 ? '' : 's'}</span>}
+            {results && S.modules.lca && <span>· Building LCA <b className="num">{fmt(results.perM2.GWP)}</b> kgCO₂e/m²</span>}
           </div>
         </div>
         <div className="ph-actions">
@@ -179,9 +189,15 @@ const CommandCenter: React.FC = () => {
           foot={m ? <span className={`delta ${behind ? 'bad' : 'good'}`}>{behind ? '▲ Behind' : '▼ Ahead'} in {m.latest.year}</span> : '—'} />
         <Kpi i={3} icon="link" tone="s3" label="Scope 3 share" value={m ? <><CountUp value={m.scope3Share} />%</> : '—'}
           spark={hub.ghg.map((g) => g.scope3)} foot={m ? `${fmt(m.latest.scope3)} tCO₂e` : '—'} />
-        <Kpi i={4} icon="building" tone={risk.length ? 'warn' : 'acc'} label="Certifications"
-          value={<CountUp value={hub.projects.length} />} unit={`${certified} certified`}
-          foot={hub.projects.length ? <span className={`delta ${risk.length ? 'bad' : 'good'}`}>{risk.length ? `${risk.length} at risk` : 'None at risk'}</span> : 'None tracked'} />
+        {certsOn ? (
+          <Kpi i={4} icon="building" tone={risk.length ? 'warn' : 'acc'} label="Certifications"
+            value={<CountUp value={hub.projects.length} />} unit={`${certified} certified`}
+            foot={hub.projects.length ? <span className={`delta ${risk.length ? 'bad' : 'good'}`}>{risk.length ? `${risk.length} at risk` : 'None at risk'}</span> : 'None tracked'} />
+        ) : (
+          <Kpi i={4} icon="clipboard" tone={hub.factors.length && hub.factors.every((f) => f.official) ? 'acc' : 'warn'} label="Official emission factors"
+            value={`${hub.factors.filter((f) => f.official).length}/${hub.factors.length}`} unit="factors"
+            foot={hub.factors.length ? 'Imported from publisher files' : <button className="btn btn-ghost btn-sm" style={{ padding: 0 }} onClick={() => lca({ type: 'SET_PAGE', page: 'calculator' })}>Import in Carbon Calculator →</button>} />
+        )}
         <Kpi i={5} icon="zap" tone={m && m.leverCoverage >= 100 ? 'acc' : 'warn'} label={`Levers vs ${S.targetYear} gap`}
           value={m ? <><CountUp value={Math.min(m.leverCoverage, 999)} />%</> : '—'} unit="covered"
           foot={m ? `${fmt(m.leverS12)} / ${fmt(m.gapTarget)} tCO₂e` : '—'} />
@@ -361,6 +377,7 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
+        {certsOn && (<>
         <Card i={12} span="c6" icon="check" title={cat ? `${cat.system} ${cat.version} · credit categories` : 'Credit categories'}
           sub={cat ? `${cat.name} · target ${cat.targetLabel} (${cat.needed} ${cat.unit})` : 'Scorecard breakdown for a project'}>
           {!cat ? (
@@ -464,6 +481,7 @@ const CommandCenter: React.FC = () => {
             </table></div>
           </section>
         )}
+        </>)}
       </div>
     </div>
   );

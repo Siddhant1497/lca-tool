@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   const { hub } = useHub();
   const { theme, toggleTheme } = useUi();
   const { sect, label } = sectionOf(state.activePage);
-  const isHub = sect === 'Portfolio';
+  const isHub = sect !== 'Building LCA';
   return (
     <header className="header">
       <div className="brand">

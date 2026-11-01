@@ -1,6 +1,7 @@
 import type { HubState } from '../types/hub';
 import { S3_CATEGORIES } from '../types/hub';
 import { total, s12, s2, intensities, disclosures, activityT } from './hub';
+import { scopeGaps, trajectory, phaseOf } from './strategy';
 
 /* Styled multi-sheet Excel workbook. The library is lazy-loaded on click so it never weighs on first paint. */
 type C = Record<string, unknown> | string | number | null | undefined;
@@ -56,10 +57,20 @@ export async function exportWorkbook(hub: HubState) {
   const lev: C[][] = [[H('Lever'), H('Scope'), H('Abatement tCO₂e/yr'), H('Delivery year'), H(`Cost ${s.currency}/tCO₂e`), H(`Annual cost ${s.currency}`), H('Status')],
     ...hub.levers.map((l) => [S(l.name), N(l.scope, '0'), N(l.abatement), N(l.year ?? null, '0'), N(l.costPerT ?? null), N(l.costPerT != null ? l.costPerT * l.abatement : null), S(l.status)])];
 
-  const fac: C[][] = [[H('Factor'), H('Scope'), H('Basis / category'), H('kgCO₂e per unit'), H('Unit'), H('Source')],
-    ...hub.factors.map((f) => [S(f.name), N(f.scope, '0'), S(f.scope === 2 ? f.s2basis : f.s3cat ? `Cat ${f.s3cat}` : ''), N(f.kgPerUnit, '0.000000'), S(f.unit), S(f.source)])];
-  const act: C[][] = [[H('Year'), H('Activity'), H('Quantity'), H('Unit'), H('Factor'), H('tCO₂e'), H('Source')],
-    ...hub.activities.map((a) => { const f = hub.factors.find((x) => x.id === a.factorId); return [N(a.year, '0'), S(a.description), N(a.quantity, '#,##0.00'), S(f?.unit), S(f?.name), N(activityT(a, f), '#,##0.000'), S(f?.source)]; })];
+  const fac: C[][] = [[H('Factor'), H('Scope'), H('Basis / category'), H('kgCO₂e per unit'), H('Unit'), H('Provenance'), H('Dataset / edition'), H('Row ref.'), H('Source'), H('URL')],
+    ...hub.factors.map((f) => [S(f.name), N(f.scope, '0'), S(f.scope === 2 ? f.s2basis : f.s3cat ? `Cat ${f.s3cat}` : ''), N(f.kgPerUnit, '0.000000'), S(f.unit), S(f.official ? 'Official file' : 'Manual entry'), S(f.pack), S(f.ref), S(f.source), S(f.url)])];
+  const act: C[][] = [[H('Year'), H('Site'), H('Activity'), H('Quantity'), H('Unit'), H('Factor'), H('kgCO₂e/unit'), H('tCO₂e'), H('Data quality'), H('Source')],
+    ...hub.activities.map((a) => { const f = hub.factors.find((x) => x.id === a.factorId); return [N(a.year, '0'), S(a.site), S(a.description), N(a.quantity, '#,##0.00'), S(f?.unit), S(f?.name), N(f?.kgPerUnit, '0.000000'), N(activityT(a, f), '#,##0.000'), S(a.quality ?? 'Measured'), S(f?.source)]; })];
+
+  const gaps = scopeGaps(hub.ghg, hub.levers, s);
+  const strat: C[][] = [[T('Decarbonisation strategy', 6)],
+    [S(`Near-term ${s.targetYear}: Scope 1+2 ${s.annualPct}%/yr, Scope 3 ${s.s3Pct}%/yr linear from base year · Net zero ${s.netZeroYear}: ≥${s.nzPct}% reduction, residual neutralised by removals`)], [],
+    [H('Scope'), H('Base'), H('Latest'), H(`Target ${s.targetYear}`), H('Still to cut'), H('In plan (open levers)'), H('Coverage'), H(`Residual ${s.netZeroYear}`)],
+    ...gaps.map((g) => [S(g.label), N(g.base), N(g.latest), N(g.target), B(g.cut), N(g.levers), N(g.coverage / 100, '0%'), N(g.residual)]), [],
+    [H('Roadmap phase'), H('Lever'), H('Scope'), H('tCO₂e/yr'), H('Delivery year'), H('Status')],
+    ...hub.levers.filter((l) => l.status !== 'Implemented').map((l) => [S(latest ? phaseOf(l, latest.year) : ''), S(l.name), N(l.scope, '0'), N(l.abatement), N(l.year ?? null, '0'), S(l.status)]), [],
+    [H('Year'), H('S1+2 actual'), H('S1+2 target'), H('S3 actual'), H('S3 target')],
+    ...trajectory(hub.ghg, s).map((t) => [N(t.year, '0'), N(t.s12), N(t.s12t), N(t.s3), N(t.s3t)])];
 
   const w = (...ws: number[]) => ws.map((width) => ({ width }));
   const blob = await write([
@@ -68,10 +79,11 @@ export async function exportWorkbook(hub: HubState) {
     { data: s3 as never, sheet: 'Scope 3 categories', columns: w(6, 40, 12, ...hub.ghg.map(() => 11)), stickyRowsCount: 1, stickyColumnsCount: 2 },
     { data: inten as never, sheet: 'Intensity', columns: w(8, 18, 14, 14, 18, 18), stickyRowsCount: 1 },
     { data: disc as never, sheet: 'Disclosures', columns: w(30, 12, 44, 14, 14, 16, 11, 50), stickyRowsCount: 1 },
-    { data: proj as never, sheet: 'Certifications', columns: w(30, 9, 18, 12, 9, 9, 9, 8, 7, 13, 12, 44), stickyRowsCount: 1 },
+    { data: strat as never, sheet: 'Strategy', columns: w(16, 40, 10, 14, 14, 18, 11, 14), showGridLines: false },
+    ...(s.modules.certs ? [{ data: proj as never, sheet: 'Certifications', columns: w(30, 9, 18, 12, 9, 9, 9, 8, 7, 13, 12, 44), stickyRowsCount: 1 }] : []),
     { data: lev as never, sheet: 'Levers', columns: w(36, 7, 18, 13, 16, 18, 13), stickyRowsCount: 1 },
-    { data: fac as never, sheet: 'Emission factors', columns: w(32, 7, 16, 16, 10, 60), stickyRowsCount: 1 },
-    { data: act as never, sheet: 'Activities', columns: w(8, 36, 14, 10, 32, 12, 60), stickyRowsCount: 1 },
+    { data: fac as never, sheet: 'Emission factors', columns: w(40, 7, 14, 16, 10, 14, 36, 12, 50, 40), stickyRowsCount: 1 },
+    { data: act as never, sheet: 'Activities', columns: w(8, 18, 36, 14, 10, 36, 14, 12, 13, 50), stickyRowsCount: 1 },
   ] as never, { fontFamily: 'Calibri', fontSize: 11 } as never).toBlob();
 
   const a = document.createElement('a');

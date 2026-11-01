@@ -48,14 +48,22 @@ export interface Lever {
   status: LeverStatus;
   year?: number;              // delivery year (full effect from this year)
   costPerT?: number;          // currency per tCO2e abated (negative = net saving) for the MACC
+  measureId?: string;         // link to the strategy measure library
 }
 
 /** User-entered emission factor. Nothing is prefilled: every factor must carry its own source. */
 export interface EmissionFactor {
   id: string; name: string; unit: string; kgPerUnit: number; scope: 1 | 2 | 3;
   s2basis?: 'location' | 'market'; s3cat?: number; source: string;
+  /** Provenance for factors imported from a published dataset. Editing the value clears `official`. */
+  official?: boolean; pack?: string; ref?: string; url?: string;
 }
-export interface Activity { id: string; year: number; factorId: string; description: string; quantity: number }
+export type DataQuality = 'Measured' | 'Calculated' | 'Estimated';
+export const DATA_QUALITY: DataQuality[] = ['Measured', 'Calculated', 'Estimated'];
+export interface Activity {
+  id: string; year: number; factorId: string; description: string; quantity: number;
+  site?: string; quality?: DataQuality;
+}
 
 export type S2Method = 'location' | 'market';
 export type RevenueUnit = '₹ crore' | '₹ lakh' | '₹ million' | 'USD million' | 'EUR million';
@@ -66,6 +74,10 @@ export const REVENUE_UNITS: { id: RevenueUnit; base: string; mult: number }[] = 
 export interface HubSettings {
   targetYear: number; annualPct: number; s2Method: S2Method;
   revenueUnit: RevenueUnit; currency: string; orgName: string;
+  /** Optional modules: switch off what you don't use (carbon accounting is always on). */
+  modules: { certs: boolean; lca: boolean };
+  /** Long-term ambition: Scope 3 linear rate, net-zero year and depth of reduction vs base year. */
+  s3Pct: number; netZeroYear: number; nzPct: number;
 }
 
 export interface HubState {

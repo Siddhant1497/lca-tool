@@ -6,7 +6,7 @@ import type { HubState } from '../types/hub';
  * thresholds from the current rating-system guide before using them.
  */
 export const SAMPLE: Omit<HubState, 'loaded' | 'isSample'> = {
-  settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: 'Sample Realty Ltd (fictional)' },
+  settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: 'Sample Realty Ltd (fictional)', modules: { certs: true, lca: true }, s3Pct: 2.5, netZeroYear: 2050, nzPct: 90 },
   factors: [], activities: [],
   ghg: [
     { year: 2019, scope1: 1850, scope2: 4200, scope3: 21500,
