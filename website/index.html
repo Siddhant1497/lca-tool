@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VERDEAXIS Sustainability Consulting</title>
+<meta name="description" content="Founder-led sustainability consulting in India and Asia: green building certification, energy and daylight simulation, LCA, GHG and ESG reporting.">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: an editorial page that reads like a façade study. One dark hero holds the
+     live shading model; everything after it is quiet paper and ink, ruled like a drawing set. */
+  --bg: #FFFFFF;
+  --paper: #F4F1EC;
+  --ink: #1F1D1B;
+  --muted: #6E6862;
+  --line: #D9D3CC;
+  --brick: #B4532A;
+  --brick-text: #8C3B1E;
+  --hero-bg: #1F1D1B;
+  --hero-ink: #F4EFE8;
+  --hero-muted: #B9B0A6;
+  --hero-line: #3B3632;
+  --sun: #E9A23B;
+  --display: "Instrument Serif", "Times New Roman", Times, serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+  --wrap: 1180px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171513; --paper: #211E1B; --ink: #EDE7E0; --muted: #A69E95; --line: #3A3530;
+    --brick: #D9784C; --brick-text: #E8956D; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171513; --paper: #211E1B; --ink: #EDE7E0; --muted: #A69E95; --line: #3A3530;
+  --brick: #D9784C; --brick-text: #E8956D; color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--brick); outline-offset: 3px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-size: clamp(36px, 5vw, 58px); }
+h3 { font-size: 28px; }
+.label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brick-text); }
+.lede { font-size: 20px; color: var(--muted); max-width: 62ch; }
+.num { font-variant-numeric: tabular-nums; }
+section { padding: 96px 0; }
+.sec-head { display: grid; grid-template-columns: 220px 1fr; gap: 24px 48px; margin-bottom: 56px; align-items: start; }
+.sec-head .label { padding-top: 14px; border-top: 1px solid var(--ink); }
+.sec-head h2 + p { margin-top: 18px; }
+.rule { border-top: 1px solid var(--line); }
+.btn { display: inline-flex; align-items: center; gap: 10px; font: 500 15px var(--body); padding: 14px 22px; border-radius: 2px; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: background .2s, color .2s; }
+.btn-brick { background: var(--brick); color: #fff; }
+.btn-brick:hover { background: #9A4524; }
+.btn-ghost { border-color: currentColor; color: inherit; background: transparent; }
+
+/* nav */
+.nav { position: sticky; top: 0; z-index: 20; background: var(--hero-bg); color: var(--hero-ink); border-bottom: 1px solid var(--hero-line); }
+.nav .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--display); font-size: 24px; letter-spacing: 0.06em; }
+.brand img { width: 26px; height: 26px; }
+.nav ul { display: flex; gap: 24px; list-style: none; margin-left: auto; font-size: 14px; }
+.nav ul a { text-decoration: none; color: var(--hero-muted); }
+.nav ul a:hover { color: var(--hero-ink); }
+.nav .btn { padding: 9px 16px; font-size: 14px; }
+
+/* hero */
+.hero { background: var(--hero-bg); color: var(--hero-ink); padding: 72px 0 0; }
+.hero .grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+.hero h1 { font-size: clamp(48px, 7vw, 92px); }
+.hero h1 em { color: var(--sun); font-style: italic; }
+.hero .intro { margin-top: 24px; font-size: 19px; color: var(--hero-muted); max-width: 46ch; }
+.hero .ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+.creds { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 36px; font-family: var(--mono); font-size: 13px; color: var(--hero-muted); }
+.creds b { color: var(--hero-ink); font-weight: 500; }
+
+.lab { border: 1px solid var(--hero-line); background: #262320; padding: 22px; }
+.lab-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.lab-top .label { color: var(--sun); }
+.lab-top span { font-family: var(--mono); font-size: 12px; color: var(--hero-muted); }
+#section { width: 100%; height: auto; aspect-ratio: 4 / 3; display: block; }
+.readout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--hero-line); border: 1px solid var(--hero-line); margin-top: 14px; }
+.readout div { background: #262320; padding: 10px 12px; }
+.readout dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--hero-muted); }
+.readout dd { font-family: var(--mono); font-size: 20px; color: var(--hero-ink); font-variant-numeric: tabular-nums; }
+.readout .big dd { color: var(--sun); }
+.controls { display: grid; grid-template-columns: 1fr auto; gap: 14px 18px; margin-top: 16px; align-items: center; }
+.controls label { font-family: var(--mono); font-size: 12px; color: var(--hero-muted); display: block; margin-bottom: 4px; }
+.controls input[type=range] { width: 100%; accent-color: var(--sun); }
+.controls select { background: #1F1D1B; color: var(--hero-ink); border: 1px solid var(--hero-line); padding: 7px 10px; font: 14px var(--mono); }
+.orient { display: flex; gap: 6px; }
+.orient button { font: 500 13px var(--mono); width: 38px; height: 34px; background: transparent; color: var(--hero-muted); border: 1px solid var(--hero-line); cursor: pointer; }
+.orient button[aria-pressed="true"] { background: var(--sun); color: #1F1D1B; border-color: var(--sun); }
+.lab-note { margin-top: 12px; font-size: 14px; color: var(--hero-muted); }
+.stripes-wrap { margin-top: 72px; }
+#stripes { width: 100%; height: 56px; display: block; }
+.stripes-cap { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--hero-muted); padding: 10px 0 18px; gap: 16px; }
+
+/* story */
+.story .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.story figure img { width: 100%; aspect-ratio: 10 / 7; object-fit: cover; }
+.story figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.story figcaption b { color: var(--ink); font-weight: 500; }
+.story .text { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 48px; }
+.story h2 { font-size: clamp(36px, 4.6vw, 54px); }
+
+/* why now */
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th { text-align: left; font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0 16px 12px 0; border-bottom: 1px solid var(--ink); }
+td { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:first-child { font-weight: 600; min-width: 190px; }
+td.status { font-family: var(--mono); font-size: 13px; color: var(--brick-text); white-space: nowrap; }
+.src { font-size: 13px; color: var(--muted); margin-top: 14px; }
+.timeline { margin-top: 72px; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 2px solid var(--ink); }
+.timeline div { padding: 18px 20px 0 0; position: relative; }
+.timeline div::before { content: ""; position: absolute; top: -7px; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--brick); }
+.timeline .yr { font-family: var(--display); font-size: 40px; color: var(--brick-text); line-height: 1; }
+.timeline p { font-size: 15px; margin-top: 8px; }
+
+/* benefits */
+.benefits { background: var(--paper); }
+.ben-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.ben-grid > div { padding: 0 28px; border-left: 1px solid var(--line); }
+.ben-grid > div:first-child { padding-left: 0; border-left: 0; }
+.ben-grid .big { font-family: var(--display); font-size: clamp(56px, 6vw, 80px); color: var(--brick); line-height: 1; margin: 14px 0 12px; }
+.ben-grid h3 { font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.4; }
+.ben-grid p { font-size: 15px; color: var(--muted); margin-top: 10px; }
+.ben-grid .src { font-family: var(--mono); font-size: 12px; }
+
+/* clients */
+.clients { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 48px; }
+.client { padding: 28px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr; gap: 10px; }
+.client h3 { font-size: 30px; }
+.client .push { font-size: 15px; color: var(--muted); }
+.client .push b { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--brick-text); font-weight: 500; margin-right: 8px; }
+
+/* services */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
+.pillar { padding: 28px 28px 0 0; }
+.pillar + .pillar { padding-left: 28px; border-left: 1px solid var(--line); }
+.pillar .n { font-family: var(--mono); font-size: 13px; color: var(--brick-text); }
+.pillar h3 { font-size: 44px; margin: 6px 0 8px; }
+.pillar .tag { color: var(--muted); font-size: 15px; margin-bottom: 18px; }
+.pillar ul { list-style: none; font-size: 15px; }
+.pillar li { padding: 8px 0; border-top: 1px solid var(--line); }
+.systems { margin-top: 64px; display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); }
+.systems span { flex: 1 1 140px; padding: 18px 20px; border-right: 1px solid var(--line); font-family: var(--display); font-size: 30px; }
+.systems span small { display: block; font: 12px var(--mono); color: var(--muted); letter-spacing: .06em; margin-top: 4px; }
+.systems span:last-child { border-right: 0; }
+
+/* beyond */
+.beyond { background: var(--paper); }
+.extra { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.extra div { background: var(--paper); padding: 28px; }
+.extra div:first-child { background: var(--brick); color: #fff; }
+.extra div:first-child p, .extra div:first-child .n { color: #fff; }
+.extra .n { font-family: var(--mono); font-size: 12px; color: var(--brick-text); }
+.extra h3 { font-size: 30px; margin: 10px 0 10px; }
+.extra p { font-size: 15px; color: var(--muted); }
+
+/* tool */
+.tool .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 56px; align-items: start; }
+.shot { border: 1px solid var(--line); background: var(--paper); padding: 10px; }
+.shot img { border: 1px solid var(--line); }
+.shot + .shot { margin-top: 14px; }
+.shot figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 10px 2px 2px; }
+.feat { list-style: none; border-top: 1px solid var(--ink); }
+.feat li { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.feat li b { display: block; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.chips span { font-family: var(--mono); font-size: 12px; border: 1px solid var(--line); padding: 5px 10px; }
+
+/* founder */
+.founder .grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 56px; align-items: start; }
+.founder img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+.founder .name { font-size: clamp(44px, 5vw, 64px); }
+.founder .role { font-family: var(--mono); font-size: 13px; color: var(--brick-text); margin-top: 10px; }
+.founder blockquote { font-family: var(--display); font-style: italic; font-size: 26px; line-height: 1.3; margin: 28px 0; padding-left: 22px; border-left: 2px solid var(--brick); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); margin-top: 8px; }
+.stats div { padding: 16px 12px 0 0; }
+.stats b { font-family: var(--display); font-weight: 400; font-size: 46px; color: var(--brick); display: block; line-height: 1; }
+.stats span { font-size: 13px; color: var(--muted); }
+.record { margin-top: 64px; }
+.record td:last-child { color: var(--brick-text); }
+
+/* network */
+.network .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+#net { width: 100%; height: auto; }
+.cmp td:nth-child(3) { color: var(--brick-text); font-weight: 600; }
+.cmp td:first-child { min-width: 130px; }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 2px solid var(--ink); }
+.steps div { padding: 20px 20px 0 0; }
+.steps .n { font-family: var(--display); font-size: 52px; color: var(--brick); line-height: 1; }
+.steps h3 { font-family: var(--body); font-size: 18px; font-weight: 600; margin: 10px 0 6px; }
+.steps p { font-size: 15px; color: var(--muted); }
+.engage { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 72px; }
+.engage div { background: var(--bg); padding: 26px; }
+.engage div:first-child { background: var(--ink); color: var(--bg); }
+.engage div:first-child p, .engage div:first-child .for { color: var(--bg); opacity: .85; }
+.engage .for { font-family: var(--mono); font-size: 12px; color: var(--brick-text); margin: 8px 0 10px; }
+.engage h3 { font-size: 30px; }
+.engage p { font-size: 15px; color: var(--muted); }
+
+/* contact */
+.contact { background: var(--hero-bg); color: var(--hero-ink); }
+.contact .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.contact h2 { font-size: clamp(42px, 6vw, 76px); }
+.contact .lede { color: var(--hero-muted); margin-top: 20px; }
+.contact ul.gets { list-style: none; margin-top: 28px; border-top: 1px solid var(--hero-line); }
+.contact ul.gets li { padding: 12px 0; border-bottom: 1px solid var(--hero-line); font-size: 16px; }
+.direct { margin-top: 32px; font-family: var(--mono); font-size: 15px; line-height: 2; }
+.direct a { color: var(--sun); }
+form { display: grid; gap: 16px; }
+form label { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--hero-muted); display: block; margin-bottom: 6px; }
+form input, form select, form textarea { width: 100%; background: #262320; border: 1px solid var(--hero-line); color: var(--hero-ink); font: 16px var(--body); padding: 12px 14px; border-radius: 2px; }
+form textarea { min-height: 120px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+#form-msg { font-size: 15px; color: var(--sun); min-height: 1.4em; }
+
+footer { background: var(--hero-bg); color: var(--hero-muted); border-top: 1px solid var(--hero-line); padding: 40px 0 56px; font-size: 13px; }
+footer .wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; }
+footer .brand { color: var(--hero-ink); }
+footer p + p { margin-top: 8px; }
+
+@media (max-width: 960px) {
+  .nav ul { display: none; }
+  .nav .btn { margin-left: auto; }
+  .hero .grid, .story .text, .tool .grid, .founder .grid, .network .grid, .contact .grid, footer .wrap { grid-template-columns: 1fr; }
+  .sec-head { grid-template-columns: 1fr; }
+  .ben-grid, .engage { grid-template-columns: 1fr 1fr; gap: 32px 0; }
+  .ben-grid > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .pillars, .extra { grid-template-columns: 1fr; }
+  .pillar + .pillar { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); margin-top: 24px; }
+  .timeline, .steps { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+  .clients { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  section { padding: 64px 0; }
+  .wrap { padding: 0 16px; }
+  .story .photos, .ben-grid, .engage, .form-row, .timeline, .steps { grid-template-columns: 1fr; }
+  .ben-grid > div { padding: 0 0 24px; border-left: 0; border-bottom: 1px solid var(--line); }
+  .readout { grid-template-columns: 1fr 1fr; }
+  .stats { grid-template-columns: 1fr 1fr; row-gap: 16px; }
+  .brand span { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/mark-reverse.svg" alt=""><span>VERDEAXIS</span></a>
+    <ul>
+      <li><a href="#why-now">Why now</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#founder">Founder</a></li>
+      <li><a href="#how">How we work</a></li>
+    </ul>
+    <a class="btn btn-brick" href="#contact">Free feasibility review</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap grid">
+    <div>
+      <p class="label" style="color:var(--sun)">Sustainability consulting · India and Asia</p>
+      <h1 style="margin-top:18px">Closing the gap between regulation and <em>reality.</em></h1>
+      <p class="intro">We help developers, manufacturers and listed companies get certified, cut energy and carbon, and report it with numbers they can stand behind.</p>
+      <div class="ctas">
+        <a class="btn btn-brick" href="#contact">Book a free feasibility review</a>
+        <a class="btn btn-ghost" href="#services">See what we do</a>
+      </div>
+      <p class="creds"><span><b>Siddhant Jain</b>, founder</span><span>IGBC AP</span><span>EDGE Expert &amp; Auditor</span><span>200+ certified projects</span></p>
+    </div>
+
+    <div class="lab" aria-labelledby="lab-title">
+      <div class="lab-top"><p class="label" id="lab-title">Our logo is a shading device. Move the sun.</p><span>Ahmedabad · 23.0°N</span></div>
+      <svg id="section" viewBox="0 0 400 300" role="img" aria-label="Section through a façade with horizontal louvres, showing sun rays and the shaded part of the glass"></svg>
+      <dl class="readout">
+        <div><dt>Sun altitude</dt><dd id="r-alt">–</dd></div>
+        <div><dt>Azimuth</dt><dd id="r-az">–</dd></div>
+        <div><dt>Profile angle</dt><dd id="r-prof">–</dd></div>
+        <div class="big"><dt>Glass shaded</dt><dd id="r-shade">–</dd></div>
+      </dl>
+      <div class="controls">
+        <div>
+          <label for="hour">Solar time <span id="hour-out">17:00</span></label>
+          <input id="hour" type="range" min="6" max="18" step="0.25" value="17">
+        </div>
+        <div>
+          <label for="month">Day</label>
+          <select id="month">
+            <option value="0">21 Jan</option><option value="1">21 Feb</option><option value="2">21 Mar</option>
+            <option value="3">21 Apr</option><option value="4" selected>21 May</option><option value="5">21 Jun</option>
+            <option value="6">21 Jul</option><option value="7">21 Aug</option><option value="8">21 Sep</option>
+            <option value="9">21 Oct</option><option value="10">21 Nov</option><option value="11">21 Dec</option>
+          </select>
+        </div>
+        <div>
+          <label id="orient-label">Façade faces</label>
+          <div class="orient" role="group" aria-labelledby="orient-label">
+            <button type="button" data-az="0" aria-pressed="false">N</button>
+            <button type="button" data-az="90" aria-pressed="false">E</button>
+            <button type="button" data-az="180" aria-pressed="false">S</button>
+            <button type="button" data-az="270" aria-pressed="true">W</button>
+          </div>
+        </div>
+      </div>
+      <p class="lab-note" id="lab-note">Fins 300 mm deep at 300 mm spacing.</p>
+    </div>
+  </div>
+
+  <div class="wrap stripes-wrap">
+    <canvas id="stripes" aria-label="Warming stripes: one stripe per year of global average temperature from 1880 to 2025, blue for cooler years and red for warmer years"></canvas>
+    <div class="stripes-cap"><span>1880</span><span>Each stripe is one year of global temperature. Data: NASA GISTEMP.</span><span>2025</span></div>
+  </div>
+</header>
+
+<main>
+
+<section class="story">
+  <div class="wrap">
+    <div class="photos">
+      <figure><img src="assets/hawa-mahal.jpg" alt="The Hawa Mahal's pink sandstone façade of small latticed windows, Jaipur"><figcaption><b>Hawa Mahal, Jaipur, 1799.</b> 953 small windows pull breezes through the palace.</figcaption></figure>
+      <figure><img src="assets/iim-ahmedabad.jpg" alt="Brick buildings with deep-set openings at IIM Ahmedabad"><figcaption><b>IIM Ahmedabad, 1974.</b> Deep-set openings and brick walls that shade themselves.</figcaption></figure>
+    </div>
+    <div class="text">
+      <h2>India has always known how to build for heat.</h2>
+      <p class="lede">Modern buildings can do the same, if the right decisions are made early, when they cost the least. We help you make those decisions with models and real numbers, then get the result certified.</p>
+    </div>
+  </div>
+</section>
+
+<section id="why-now" class="rule">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">01 · Why now</p>
+      <div><h2>India's rulebook is being rewritten.</h2><p class="lede">Six changes that reach developers, manufacturers and listed companies. Status as of October 2026.</p></div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Mandate</th><th>What it requires</th><th>Who it affects</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Carbon Credit Trading Scheme</td><td>Emission-intensity targets for 490 plants in eight sectors. Shortfalls are covered by buying carbon credits.</td><td>Cement, aluminium, refining, textiles, paper</td><td class="status">In force</td></tr>
+          <tr><td>BRSR Core</td><td>Assured ESG data from India's top 1,000 listed companies, with value-chain disclosures phasing in.</td><td>Listed companies and their suppliers</td><td class="status">Top 1,000 by FY 2026-27</td></tr>
+          <tr><td>Building energy codes</td><td>ECBC is notified in 25 states and UTs. ECSBC 2024, its successor, adds sustainability requirements.</td><td>New commercial buildings</td><td class="status">States adopting</td></tr>
+          <tr><td>Star rating for large buildings</td><td>Proposed: new buildings of 20,000 m² or more need at least a BEE 3-star rating or an approved equivalent.</td><td>Developers and owners</td><td class="status">Draft, July 2026</td></tr>
+          <tr><td>Climate finance taxonomy</td><td>Will define which projects count as green for banks and investors. Buildings are a priority sector.</td><td>Anyone raising green finance</td><td class="status">Draft framework</td></tr>
+          <tr><td>NDC 2035</td><td>47% lower emissions intensity than 2005 and 60% non-fossil power by 2035. Net zero by 2070.</td><td>Every sector</td><td class="status">Submitted April 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Sources: MoEFCC/PIB, SEBI, BEE and Ministry of Power, NITI Aayog, Ministry of Finance, UNFCCC.</p>
+
+    <h3 style="margin-top:80px">Beyond India: export markets and investors ask for the same numbers.</h3>
+    <div class="timeline">
+      <div><span class="yr">2025</span><p>Malaysia starts ISSB-based climate reporting for its largest listed companies.</p></div>
+      <div><span class="yr">2026</span><p>EU CBAM's definitive phase: steel, aluminium and cement exporters must show verified emissions.</p></div>
+      <div><span class="yr">2027</span><p>First CBAM certificates bought for 2026 imports. Malaysia adds Scope 3 and assurance.</p></div>
+      <div><span class="yr">2028</span><p>EU: all new public buildings must be zero-emission.</p></div>
+      <div><span class="yr">2030</span><p>EU: every new building must be zero-emission.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">01 · Why it pays</p>
+      <div><h2>What a green building gives back to its owner.</h2></div>
+    </div>
+    <div class="ben-grid">
+      <div><p class="label">Financial</p><p class="big num">24%</p><h3>higher rents for green offices in Mumbai; 14–16% in Chennai and Hyderabad.</h3><p>Extra build cost is typically under 2%.</p><p class="src">Colliers–CREDAI 2025; IFC</p></div>
+      <div><p class="label">Market</p><p class="big num">74%</p><h3>of India's office leasing in H1 2025 went to green-certified buildings.</h3><p>Occupancy runs 80–90%, against 65–85% for non-green stock.</p><p class="src">ANAROCK 2025; Colliers</p></div>
+      <div><p class="label">People</p><p class="big num">26%</p><h3>higher cognitive scores for people working in green-certified offices.</h3><p>30% fewer sick-building symptoms, and better sleep.</p><p class="src">Harvard COGfx study</p></div>
+      <div><p class="label">Society</p><p class="big num">20%+</p><h3>less energy, water and embodied energy, the EDGE minimum.</h3><p>Lower bills for occupants, less pressure on the grid and water supply.</p><p class="src">IFC EDGE standard</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">01 · Who we help</p>
+      <div><h2>Four kinds of client, four reasons to call.</h2></div>
+    </div>
+    <div class="clients">
+      <div class="client"><h3>Developers, retail and logistics</h3><p class="push"><b>Pushing you</b>Tenant requirements, green finance, energy codes and the proposed star-rating rule.</p><p>Certification under LEED, IGBC, EDGE or GRIHA, backed by energy and daylight models.</p></div>
+      <div class="client"><h3>Manufacturers and exporters</h3><p class="push"><b>Pushing you</b>EU CBAM, India's carbon market and buyers asking for product carbon data.</p><p>GHG inventories, product LCA, EPD support and green factory certification.</p></div>
+      <div class="client"><h3>Listed companies and funds</h3><p class="push"><b>Pushing you</b>BRSR Core assurance, investor questionnaires and GRESB.</p><p>Scope 1–3 inventories, BRSR and GRI reporting, and physical climate-risk studies.</p></div>
+      <div class="client"><h3>Architects and MEP teams</h3><p class="push"><b>Pushing you</b>Credits that depend on simulation, on tight design timelines.</p><p>Energy, daylight and microclimate studies, delivered as part of your team.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="rule">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">02 · What we do</p>
+      <div><h2>Measure, certify, report.</h2><p class="lede">We test the design in a model before anyone builds it. Every study ends with a one-page summary in plain English: what to change, what it costs and which credits it earns.</p></div>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><p class="n">01</p><h3>Measure</h3><p class="tag">Find the baseline and build the evidence.</p><ul><li>Energy modelling in DesignBuilder, EnergyPlus and eQUEST</li><li>Daylight and glare: sDA, ASE, DGP</li><li>Microclimate: UTCI, PET, wind and heat island</li><li>LCA, EPDs, CBAM and CCTS data</li><li>GHG inventory, Scope 1, 2 and 3</li></ul></div>
+      <div class="pillar"><p class="n">02</p><h3>Certify</h3><p class="tag">Take the project through to award.</p><ul><li>LEED, EDGE, IGBC and GRIHA</li><li>WELL and Fitwel</li><li>ECBC, ECSBC and BEE star ratings</li><li>EDGE audits</li><li>Reviewer queries and appeals</li></ul></div>
+      <div class="pillar"><p class="n">03</p><h3>Report</h3><p class="tag">Show investors and regulators the numbers.</p><ul><li>BRSR Core and BRSR</li><li>GRI, CDP and TCFD</li><li>GRESB submissions</li><li>Decarbonisation roadmaps</li><li>SBTi target-setting support</li></ul></div>
+    </div>
+    <div class="systems" aria-label="Rating systems we deliver">
+      <span>LEED<small>USGBC / GBCI</small></span><span>EDGE<small>IFC / GBCI</small></span><span>IGBC<small>CII</small></span><span>GRIHA<small>GRIHA Council</small></span><span>WELL<small>IWBI</small></span><span>Fitwel<small>Center for Active Design</small></span>
+    </div>
+  </div>
+</section>
+
+<section class="beyond">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">02 · Beyond the certificate</p>
+      <div><h2>What we do that most consultants don't.</h2><p class="lede">A plaque on the wall earns nothing by itself. We help you turn the rating into rent, sales and finance.</p></div>
+    </div>
+    <div class="extra">
+      <div><p class="n">01</p><h3>Market the building</h3><p>Certification story for brochures, signage and sales teams, plus the press release and plaque launch.</p></div>
+      <div><p class="n">02</p><h3>Help lease and sell it</h3><p>One-page green fact sheets and talking points that brokers, tenants and buyers understand.</p></div>
+      <div><p class="n">03</p><h3>Unlock green finance</h3><p>Documentation for green loans and bonds, matched to what your lender needs.</p></div>
+      <div><p class="n">04</p><h3>Find the incentives</h3><p>We check which state and city benefits your site qualifies for, such as extra FAR or fee rebates.</p></div>
+      <div><p class="n">05</p><h3>Keep it performing</h3><p>A 12-month check of real energy and water use against the model, and fixes where they drift.</p></div>
+      <div><p class="n">06</p><h3>Show progress live</h3><p>A shared online tracker, so you can see every credit's status without asking.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="tools" class="tool">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">02 · Our tools</p>
+      <div><h2>Our own whole-building LCA tool.</h2><p class="lede">We built it in-house to run embodied carbon studies quickly and check them against the standards our clients are assessed on.</p></div>
+    </div>
+    <div class="grid">
+      <div>
+        <figure class="shot"><img src="assets/lca-dashboard.jpg" alt="Dashboard of the VERDEAXIS LCA tool showing total GWP, embodied carbon per square metre, top materials and a benchmark bar"><figcaption>Dashboard: embodied carbon per m² against an office benchmark. Example project.</figcaption></figure>
+        <figure class="shot"><img src="assets/lca-results.jpg" alt="Results view of the LCA tool with six impact categories and embodied versus operational carbon"><figcaption>Results: six impact categories, embodied against operational carbon.</figcaption></figure>
+      </div>
+      <div>
+        <ul class="feat">
+          <li><b>Life-cycle stages A1 to D</b>Product, transport, construction, replacement, end of life and benefits beyond the boundary.</li>
+          <li><b>Six impact categories</b>GWP, ozone depletion, acidification, eutrophication, smog and fossil resource use.</li>
+          <li><b>Baseline against proposed</b>See the percentage reduction each design change buys you.</li>
+          <li><b>Compliance checks</b>Credit-ready reporting for the rating system you are targeting.</li>
+          <li><b>Export</b>Tables and summaries ready for submission documents.</li>
+        </ul>
+        <div class="chips"><span>LEED v4 MRc1</span><span>LEED v4.1 MRc1</span><span>EN 15978</span><span>BREEAM Mat 01</span><span>ISO 14044</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="founder" class="founder rule">
+  <div class="wrap">
+    <div class="grid">
+      <img src="assets/siddhant-jain.jpg" alt="Portrait of Siddhant Jain, founder of VERDEAXIS">
+      <div>
+        <p class="label">03 · Meet the founder</p>
+        <h2 class="name" style="margin-top:14px">Siddhant Jain</h2>
+        <p class="role">Founder and Principal Consultant · IGBC AP · EDGE Expert &amp; Auditor</p>
+        <blockquote>Over seven years I've worked on more than 200 certified green building projects, from retail stores to logistics parks. Certification kept being left to the end, after the big decisions were made. VERDEAXIS works the other way round. And if a certification isn't worth it for your project, I'll tell you.</blockquote>
+        <div class="stats">
+          <div><b class="num">7+</b><span>years in practice</span></div>
+          <div><b class="num">200+</b><span>certified projects</span></div>
+          <div><b class="num">6</b><span>countries</span></div>
+          <div><b class="num">6</b><span>rating systems</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="record">
+      <h3>Selected projects the founder has worked on</h3>
+      <div class="table-scroll" style="margin-top:24px">
+        <table>
+          <thead><tr><th>Project</th><th>Location</th><th>Scope</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Green building portfolio</td><td>India and Malaysia</td><td>Multiple rating systems</td><td>200+ certified projects</td></tr>
+            <tr><td>Commercial campus</td><td>Gandhinagar, India</td><td>LEED v4.1 O+M</td><td>Targeting Gold</td></tr>
+            <tr><td>28-floor tower</td><td>Ho Chi Minh City, Vietnam</td><td>LEED BD+C v4</td><td>Core and Shell</td></tr>
+            <tr><td>Pet food facilities</td><td>France</td><td>LEED BD+C v4</td><td>Two industrial sites</td></tr>
+            <tr><td>Rice milling factory</td><td>Cambodia</td><td>EDGE v3.1</td><td>Final certification</td></tr>
+            <tr><td>Industrial portfolio</td><td>Thailand</td><td>ESG and GHG, Scope 1–3</td><td>GRESB-aligned reporting</td></tr>
+            <tr><td>Industrial park</td><td>Samut Sakhon, Thailand</td><td>Physical climate risk</td><td>WRI, NASA and Fathom data</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Worked on by the founder as part of previous consultancy teams, before VERDEAXIS was formed. Client names withheld.</p>
+    </div>
+  </div>
+</section>
+
+<section class="network" style="background:var(--paper)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">03 · How we're built</p>
+      <div><h2>A network of specialists, not a pyramid of staff.</h2><p class="lede">Lower overheads mean lower certification fees, without junior hand-offs.</p></div>
+    </div>
+    <div class="grid">
+      <svg id="net" viewBox="0 0 440 400" role="img" aria-label="The founder at the centre, linked to six specialist areas: energy and daylight modelling, LCA and carbon, MEP and commissioning, ESG reporting, architecture and façade, and local partners abroad"></svg>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th></th><th>Typical firm</th><th>VERDEAXIS</th></tr></thead>
+          <tbody>
+            <tr><td>Who does the work</td><td>Junior staff, reviewed later</td><td>Senior specialists, led by the founder</td></tr>
+            <tr><td>Overheads</td><td>Large office and idle bench</td><td>Lean and project-based</td></tr>
+            <tr><td>Your fee</td><td>Carries those overheads</td><td>Pays for the work itself</td></tr>
+            <tr><td>Capacity</td><td>Fixed headcount</td><td>Scales with the project</td></tr>
+            <tr><td>Your contact</td><td>Account manager</td><td>The founder, directly</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">04 · How we work</p>
+      <div><h2>Five steps from first call to certificate.</h2><p class="lede">A timeline agreed up front, a direct line to the founder, fees without big-firm overheads, and no surprise costs.</p></div>
+    </div>
+    <div class="steps">
+      <div><p class="n">01</p><h3>Scope</h3><p>Brief, goals and the right rating system.</p></div>
+      <div><p class="n">02</p><h3>Analyse</h3><p>Site visit, data audit, models and GHG baseline.</p></div>
+      <div><p class="n">03</p><h3>Document</h3><p>Credit documents, drawings and model files.</p></div>
+      <div><p class="n">04</p><h3>Submit</h3><p>Upload, reviewer queries and any appeals.</p></div>
+      <div><p class="n">05</p><h3>Certify</h3><p>Award, handover, then re-certification and reporting.</p></div>
+    </div>
+    <div class="engage">
+      <div><h3>Feasibility review</h3><p class="for">Start here · any new project</p><p>Best-fit system, target rating and the main gaps. Free, with a written fee proposal after.</p></div>
+      <div><h3>Certification, end to end</h3><p class="for">Developers and owners</p><p>Registration, modelling, documents, submission and reviewer responses, through to award.</p></div>
+      <div><h3>Simulation support</h3><p class="for">Architects and MEP teams</p><p>Energy, daylight and microclimate studies, delivered to your design programme.</p></div>
+      <div><h3>Carbon and ESG</h3><p class="for">Manufacturers, listed firms</p><p>GHG inventories, LCA and EPDs, CBAM data and BRSR reporting.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap grid">
+    <div>
+      <p class="label" style="color:var(--sun)">Next step</p>
+      <h2 style="margin-top:16px">Send us your drawings. We'll tell you what's possible.</h2>
+      <p class="lede">The first feasibility review is free. You get:</p>
+      <ul class="gets">
+        <li>The rating system that fits your project, timeline and budget</li>
+        <li>The main design and documentation gaps, before you register</li>
+        <li>What modelling or carbon work you'll actually need</li>
+        <li>A realistic timeline from kickoff to award</li>
+      </ul>
+      <p class="direct">Siddhant Jain, Founder<br>
+        <a href="mailto:info@verdeaxis.com">info@verdeaxis.com</a><br>
+        <a href="tel:+919725523213">+91 97255 23213</a></p>
+    </div>
+    <form id="enquiry" novalidate>
+      <div class="form-row">
+        <div><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
+        <div><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization"></div>
+      </div>
+      <div class="form-row">
+        <div><label for="f-type">Project type</label>
+          <select id="f-type" name="type"><option>New building</option><option>Existing building</option><option>Factory or industrial</option><option>GHG or ESG reporting</option><option>LCA or EPD</option><option>Not sure yet</option></select></div>
+        <div><label for="f-system">Rating system</label>
+          <select id="f-system" name="system"><option>Not sure, advise me</option><option>LEED</option><option>EDGE</option><option>IGBC</option><option>GRIHA</option><option>WELL or Fitwel</option></select></div>
+      </div>
+      <div><label for="f-msg">Tell us about the project</label><textarea id="f-msg" name="message" placeholder="Location, built-up area, stage of design, deadline"></textarea></div>
+      <div><button class="btn btn-brick" type="submit">Request the free review</button></div>
+      <p id="form-msg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top"><img src="assets/mark-reverse.svg" alt=""><span>VERDEAXIS</span></a>
+      <p style="margin-top:12px"><i>Verde</i> (green) + <i>axis</i>: the line everything is measured against.</p>
+      <p>India · Malaysia · France · Vietnam · Cambodia · Thailand</p>
+    </div>
+    <div>
+      <p>Warming stripes: one stripe per year of global average temperature, 1880–2025, against the 1971–2000 average. Data: NASA GISTEMP. Concept: Ed Hawkins, #ShowYourStripes.</p>
+      <p>Photos via Wikimedia Commons: Hawa Mahal by Adityaoberai (CC BY 4.0); IIM Ahmedabad by Perspectives, IIM Ahmedabad Photography Club (CC BY-SA 4.0). LCA tool screenshots show an example project.</p>
+      <p>Policy status as of October 2026. Check current notifications before relying on them.</p>
+      <p>This page is built without trackers or heavy frameworks, and weighs about 1 MB including photos.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* ---------- Warming stripes (NASA GISTEMP, 1880–2025) ---------- */
+  const T = [-0.18,-0.09,-0.12,-0.18,-0.28,-0.34,-0.32,-0.37,-0.18,-0.11,-0.36,-0.23,-0.28,-0.32,-0.31,-0.23,-0.12,-0.12,-0.28,-0.18,-0.09,-0.16,-0.29,-0.38,-0.48,-0.27,-0.23,-0.39,-0.43,-0.49,-0.44,-0.45,-0.38,-0.36,-0.17,-0.15,-0.36,-0.46,-0.30,-0.28,-0.28,-0.19,-0.28,-0.27,-0.27,-0.22,-0.11,-0.22,-0.20,-0.36,-0.16,-0.09,-0.16,-0.29,-0.13,-0.20,-0.15,-0.03,-0.01,-0.02,0.12,0.18,0.06,0.09,0.20,0.10,-0.07,-0.03,-0.11,-0.11,-0.17,-0.07,0.01,0.08,-0.13,-0.14,-0.19,0.05,0.06,0.03,-0.03,0.06,0.03,0.05,-0.20,-0.11,-0.06,-0.02,-0.08,0.05,0.03,-0.08,0.01,0.16,-0.07,-0.01,-0.10,0.18,0.07,0.16,0.26,0.32,0.14,0.32,0.15,0.12,0.18,0.32,0.39,0.27,0.45,0.41,0.22,0.23,0.32,0.45,0.33,0.47,0.61,0.38,0.39,0.53,0.63,0.62,0.53,0.68,0.64,0.66,0.54,0.66,0.72,0.61,0.65,0.68,0.75,0.90,1.01,0.92,0.85,0.98,1.01,0.85,0.89,1.17,1.29,1.19];
+  const COLS = ["#08306b","#08519c","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#deebf7","#fee0d2","#fcbba1","#fc9272","#fb6a4a","#ef3b2c","#cb181d","#a50f15","#67000d"];
+  const base = T.slice(91, 121).reduce((a, b) => a + b, 0) / 30; // 1971–2000
+  function drawStripes() {
+    const c = document.getElementById("stripes");
+    const w = c.clientWidth, h = c.clientHeight, dpr = window.devicePixelRatio || 1;
+    c.width = w * dpr; c.height = h * dpr;
+    const g = c.getContext("2d"); g.scale(dpr, dpr);
+    const bw = w / T.length;
+    T.forEach((v, i) => {
+      const k = Math.max(0, Math.min(15, Math.floor(((v - base) + 0.75) / 1.5 * 16)));
+      g.fillStyle = COLS[k];
+      g.fillRect(Math.floor(i * bw), 0, Math.ceil(bw) + 1, h);
+    });
+  }
+
+  /* ---------- Louvre shading model ---------- */
+  const LAT = 23.02 * Math.PI / 180;
+  const DOY = [21, 52, 80, 111, 141, 172, 202, 233, 264, 294, 325, 355];
+  const D_OVER_S = 1.0; // fin depth / fin spacing (300 mm / 300 mm)
+  const state = { hour: 17, month: 4, facade: 270 };
+  const rad = Math.PI / 180;
+
+  function sun(month, hour) {
+    const n = DOY[month];
+    const dec = 23.45 * Math.sin(2 * Math.PI * (284 + n) / 365) * rad;
+    const H = 15 * (hour - 12) * rad;
+    const sinAlt = Math.sin(LAT) * Math.sin(dec) + Math.cos(LAT) * Math.cos(dec) * Math.cos(H);
+    const alt = Math.asin(sinAlt);
+    let cosAz = (Math.sin(dec) - sinAlt * Math.sin(LAT)) / (Math.cos(alt) * Math.cos(LAT));
+    cosAz = Math.max(-1, Math.min(1, cosAz));
+    let az = Math.acos(cosAz) / rad; // from north, clockwise, morning side
+    if (H > 0) az = 360 - az;
+    return { alt: alt / rad, az };
+  }
+
+  function model() {
+    const s = sun(state.month, state.hour);
+    let gamma = ((s.az - state.facade + 540) % 360) - 180; // sun bearing relative to façade normal
+    let prof = null, shaded = null, note;
+    if (s.alt <= 0) { note = "The sun is below the horizon."; shaded = 1; }
+    else if (Math.abs(gamma) >= 90) { note = "The sun is behind this façade, so the glass is in its own shade."; shaded = 1; }
+    else {
+      const tanP = Math.tan(s.alt * rad) / Math.cos(gamma * rad);
+      prof = Math.atan(tanP) / rad;
+      shaded = Math.min(1, D_OVER_S * tanP);
+      if (shaded > 0.9) note = "High sun: horizontal fins this deep block almost all of it.";
+      else if (shaded < 0.5) note = "Low sun: horizontal fins shade less than half the glass. This façade needs vertical fins or a deeper screen.";
+      else note = "Partly shaded. A model tells us whether deeper fins or better glass pays back.";
+    }
+    return { s, gamma, prof, shaded, note };
+  }
+
+  const NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+
+  function drawSection(m) {
+    const svg = document.getElementById("section");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const glassX = 250, top = 30, gap = 52, depth = 52, fins = 5;
+    // interior and exterior labels
+    el("text", { x: 20, y: 262, fill: "#B9B0A6", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, svg).textContent = "OUTSIDE";
+    el("text", { x: 300, y: 262, fill: "#B9B0A6", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, svg).textContent = "INSIDE";
+    // glass bands (lit / shaded)
+    const sh = m.shaded == null ? 0 : m.shaded;
+    for (let i = 0; i < fins - 1; i++) {
+      const y0 = top + i * gap + 4, h = gap - 4;
+      el("rect", { x: glassX, y: y0, width: 6, height: h, fill: "#E9A23B" }, svg);
+      el("rect", { x: glassX, y: y0, width: 6, height: h * sh, fill: "#4A433D" }, svg);
+      // light spilling into the room
+      if (sh < 1 && m.prof != null) {
+        const litTop = y0 + h * sh, len = 70;
+        const dx = len, dy = len * Math.tan(m.prof * rad);
+        el("polygon", { points: `${glassX + 6},${litTop} ${glassX + 6},${y0 + h} ${glassX + 6 + dx},${y0 + h + dy} ${glassX + 6 + dx},${litTop + dy}`, fill: "#E9A23B", opacity: 0.18 }, svg);
+      }
+    }
+    // wall line
+    el("line", { x1: glassX + 3, y1: top - 6, x2: glassX + 3, y2: top + (fins - 1) * gap + 6, stroke: "#6E6862", "stroke-width": 1 }, svg);
+    // fins
+    for (let i = 0; i < fins; i++) {
+      const y = top + i * gap;
+      el("rect", { x: glassX - depth, y: y, width: depth, height: 4, fill: "#B4532A" }, svg);
+    }
+    // sun and rays
+    if (m.prof != null && m.s.alt > 0) {
+      const t = Math.tan(m.prof * rad);
+      for (let i = 0; i < fins - 1; i++) {
+        const tipX = glassX - depth, tipY = top + i * gap + 4;
+        const startX = tipX - 160, startY = tipY - 160 * t;
+        const hitY = tipY + depth * t;
+        el("line", { x1: startX, y1: startY, x2: glassX, y2: Math.min(hitY, top + (i + 1) * gap), stroke: "#E9A23B", "stroke-width": 1, "stroke-dasharray": "3 4", opacity: 0.8 }, svg);
+      }
+      // place the sun on the ray through the second fin tip, kept inside the drawing
+      const x0 = glassX - depth, y0 = top + gap + 4, cp = Math.cos(m.prof * rad), sp = Math.sin(m.prof * rad);
+      const dist = Math.min(170, (y0 - 18) / Math.max(sp, 0.01), (x0 - 24) / Math.max(cp, 0.01));
+      el("circle", { cx: x0 - dist * cp, cy: y0 - dist * sp, r: 13, fill: "#E9A23B" }, svg);
+    } else {
+      el("text", { x: 20, y: 150, fill: "#B9B0A6", "font-family": "IBM Plex Mono, monospace", "font-size": 12 }, svg).textContent = m.s.alt <= 0 ? "Sun below horizon" : "Sun behind façade";
+    }
+    // dimension
+    const dy = top + (fins - 1) * gap + 22;
+    el("line", { x1: glassX - depth, y1: dy, x2: glassX, y2: dy, stroke: "#B9B0A6", "stroke-width": 1 }, svg);
+    el("text", { x: glassX - depth, y: dy + 16, fill: "#B9B0A6", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, svg).textContent = "300 mm";
+    el("text", { x: 20, y: 290, fill: "#B9B0A6", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, svg).textContent = "Section · façade facing " + { 0: "north", 90: "east", 180: "south", 270: "west" }[state.facade];
+  }
+
+  function fmtHour(h) { const hh = Math.floor(h), mm = Math.round((h - hh) * 60); return String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0"); }
+
+  function render() {
+    const m = model();
+    document.getElementById("hour-out").textContent = fmtHour(state.hour);
+    document.getElementById("r-alt").textContent = m.s.alt > 0 ? m.s.alt.toFixed(0) + "°" : "below";
+    document.getElementById("r-az").textContent = m.s.az.toFixed(0) + "°";
+    document.getElementById("r-prof").textContent = m.prof == null ? "–" : m.prof.toFixed(0) + "°";
+    document.getElementById("r-shade").textContent = Math.round(m.shaded * 100) + "%";
+    document.getElementById("lab-note").textContent = m.note + " Fins 300 mm deep at 300 mm spacing.";
+    drawSection(m);
+  }
+
+  document.getElementById("hour").addEventListener("input", (e) => { state.hour = +e.target.value; render(); });
+  document.getElementById("month").addEventListener("change", (e) => { state.month = +e.target.value; render(); });
+  document.querySelectorAll(".orient button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(".orient button").forEach((x) => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    state.facade = +b.dataset.az; render();
+  }));
+
+  /* ---------- Network diagram ---------- */
+  function drawNet() {
+    const svg = document.getElementById("net");
+    const cs = getComputedStyle(document.documentElement);
+    const ink = cs.getPropertyValue("--ink").trim(), line = cs.getPropertyValue("--line").trim(), bg = cs.getPropertyValue("--bg").trim(), brick = cs.getPropertyValue("--brick").trim();
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const cx = 220, cy = 200, rx = 160, ry = 140;
+    const sats = [["Energy and", "daylight modelling"], ["LCA and", "carbon"], ["MEP and", "commissioning"], ["ESG", "reporting"], ["Architecture", "and façade"], ["Local partners", "abroad"]];
+    const pts = sats.map((_, k) => { const a = (-90 + k * 60) * rad; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)]; });
+    pts.forEach(([x, y]) => el("line", { x1: cx, y1: cy, x2: x, y2: y, stroke: line, "stroke-width": 1.5 }, svg));
+    pts.forEach(([x, y], k) => {
+      el("circle", { cx: x, cy: y, r: 52, fill: bg, stroke: brick, "stroke-width": 1.5 }, svg);
+      sats[k].forEach((t, j) => { const tx = el("text", { x: x, y: y - 4 + j * 16, "text-anchor": "middle", fill: ink, "font-family": "IBM Plex Sans, Arial, sans-serif", "font-size": 12.5, "font-weight": 500 }, svg); tx.textContent = t; });
+    });
+    el("circle", { cx: cx, cy: cy, r: 62, fill: brick }, svg);
+    const a = el("text", { x: cx, y: cy - 2, "text-anchor": "middle", fill: "#fff", "font-family": "Instrument Serif, Times New Roman, serif", "font-size": 26 }, svg); a.textContent = "Founder";
+    const b = el("text", { x: cx, y: cy + 20, "text-anchor": "middle", fill: "#fff", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, svg); b.textContent = "on every project";
+  }
+
+  /* ---------- Enquiry form ---------- */
+  document.getElementById("enquiry").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const f = e.target, msg = document.getElementById("form-msg");
+    if (!f.name.value.trim()) { msg.textContent = "Please add your name so we know who to reply to."; f.name.focus(); return; }
+    const body = `Name: ${f.name.value}\nCompany: ${f.company.value}\nProject type: ${f.type.value}\nRating system: ${f.system.value}\n\n${f.message.value}`;
+    const href = "mailto:info@verdeaxis.com?subject=" + encodeURIComponent("Feasibility review request") + "&body=" + encodeURIComponent(body);
+    msg.textContent = "Your email app should open with the request filled in. If it doesn't, write to info@verdeaxis.com.";
+    window.location.href = href;
+  });
+
+  function all() { drawStripes(); render(); drawNet(); }
+  all();
+  window.addEventListener("resize", drawStripes);
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", drawNet);
+  new MutationObserver(drawNet).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+})();
+</script>
+</body>
+</html>
