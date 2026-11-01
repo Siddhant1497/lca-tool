@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ask, canPrint } from '../../utils/platform';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
   ComposedChart, Area, Line, ReferenceLine, Cell, PieChart, Pie, LineChart,
@@ -159,7 +160,7 @@ const CommandCenter: React.FC = () => {
               ))}
             </span>
           </span>
-          <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>
+          {canPrint && <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>}
           <button className="btn btn-pri" onClick={() => go('data')}><Icon name="database" size={16} />Manage data</button>
         </div>
       </div>
@@ -167,7 +168,7 @@ const CommandCenter: React.FC = () => {
       {hub.isSample && (
         <div className="notice"><Icon name="alert" size={16} />
           <span className="grow">Sample data is fictional. Score thresholds are placeholders; take real targets from the current rating-system guide.</span>
-          <button className="btn btn-sm btn-out" onClick={() => { if (confirm('Remove the sample data and start an empty portfolio?')) { dispatch({ type: 'START_EMPTY' }); go('data'); } }}>Use my own data</button>
+          <button className="btn btn-sm btn-out" onClick={async () => { if (await ask('Remove the sample data and start an empty portfolio?')) { dispatch({ type: 'START_EMPTY' }); go('data'); } }}>Use my own data</button>
         </div>
       )}
       {miss.length > 0 && (

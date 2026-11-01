@@ -13,6 +13,7 @@ import ChartTip from '../ui/ChartTip';
 import { useToast } from '../ui/Toast';
 import { Field, Num, Section, n, okNum } from './data/fields';
 import FactorImport from './data/FactorImport';
+import { ask } from '../../utils/platform';
 
 type FD = { id: string; name: string; unit: string; kgPerUnit: string; scope: 1 | 2 | 3; s2basis: 'location' | 'market'; s3cat: string; source: string; official?: boolean; pack?: string; ref?: string; url?: string };
 type AD = { id: string; year: string; factorId: string; description: string; quantity: string; site: string; quality: DataQuality };
@@ -95,7 +96,7 @@ const CarbonCalculator: React.FC = () => {
   const has = (yr: number, sc: 1 | 2 | 3, mk?: boolean) => hub.activities.some((x) => {
     const ff = fac(x.factorId); return x.year === yr && ff?.scope === sc && (sc !== 2 || (ff.s2basis === 'market') === !!mk);
   });
-  const apply = (r: ReturnType<typeof rollupActivities>[number]) => {
+  const apply = async (r: ReturnType<typeof rollupActivities>[number]) => {
     const cur = hub.ghg.find((g) => g.year === r.year);
     const s3acts = hub.activities.filter((x) => x.year === r.year && fac(x.factorId)?.scope === 3);
     const allCat = s3acts.length > 0 && s3acts.every((x) => fac(x.factorId)?.s3cat);
@@ -105,7 +106,7 @@ const CarbonCalculator: React.FC = () => {
       scope2m: has(r.year, 2, true) ? r.scope2m : cur?.scope2m ?? null,
       scope3: allCat ? s3Sum(s3cats) : has(r.year, 3) ? r.scope3 : cur?.scope3 ?? 0, s3cats, denom: cur?.denom,
     };
-    if (cur && !confirm(`Overwrite the scopes covered by your ${r.year} activities in the inventory with the calculated values?`)) return;
+    if (cur && !(await ask(`Overwrite the scopes covered by your ${r.year} activities in the inventory with the calculated values?`))) return;
     dispatch({ type: 'UPSERT_GHG', row }); toast(`${r.year} inventory updated from activity data`);
   };
 
@@ -225,7 +226,7 @@ const CarbonCalculator: React.FC = () => {
                     <td className="num">{used}</td>
                     <td><div className="row-actions">
                       <button className="icon-btn sm" aria-label={`Edit ${x.name}`} onClick={() => { setTried(false); setF({ ...x, kgPerUnit: String(x.kgPerUnit), s2basis: x.s2basis ?? 'location', s3cat: x.s3cat ? String(x.s3cat) : '' }); }}><Icon name="edit" size={15} /></button>
-                      <button className="icon-btn sm danger" aria-label={`Delete ${x.name}`} onClick={() => { if (confirm(used ? `Delete ${x.name} and its ${used} activit${used > 1 ? 'ies' : 'y'}?` : `Delete ${x.name}?`)) { dispatch({ type: 'DELETE_FACTOR', id: x.id }); toast('Factor deleted', 'info'); } }}><Icon name="trash" size={15} /></button>
+                      <button className="icon-btn sm danger" aria-label={`Delete ${x.name}`} onClick={async () => { if (await ask(used ? `Delete ${x.name} and its ${used} activit${used > 1 ? 'ies' : 'y'}?` : `Delete ${x.name}?`)) { dispatch({ type: 'DELETE_FACTOR', id: x.id }); toast('Factor deleted', 'info'); } }}><Icon name="trash" size={15} /></button>
                     </div></td>
                   </tr>);
               })}</tbody>

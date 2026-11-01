@@ -8,6 +8,7 @@ import EmptyState from '../../ui/EmptyState';
 import { useToast } from '../../ui/Toast';
 import { SysTag, STAGE_BADGE } from '../CommandCenter';
 import { Field, Num, Section, n, okNum } from './fields';
+import { ask } from '../../../utils/platform';
 
 type CD = { name: string; max: string; secured: string; likely: string };
 type D = { id: string; name: string; system: CertSystem; version: string; targetLabel: string; needed: string; secured: string; likely: string; max: string; unit: 'pts' | '%'; stage: CertStage; next: string; cats: CD[] };
@@ -73,7 +74,7 @@ const ProjectsTab: React.FC = () => {
                 <td><span className={`badge ${STAGE_BADGE[p.stage]}`}>{p.stage}</span></td>
                 <td><div className="row-actions">
                   <button className="icon-btn sm" aria-label={`Edit ${p.name}`} onClick={() => { setTried(false); setD(toD(p)); }}><Icon name="edit" size={15} /></button>
-                  <button className="icon-btn sm danger" aria-label={`Delete ${p.name}`} onClick={() => { if (confirm(`Delete ${p.name}?`)) { dispatch({ type: 'DELETE_PROJECT', id: p.id }); toast(`Deleted ${p.name}`, 'info'); } }}><Icon name="trash" size={15} /></button>
+                  <button className="icon-btn sm danger" aria-label={`Delete ${p.name}`} onClick={async () => { if (await ask(`Delete ${p.name}?`)) { dispatch({ type: 'DELETE_PROJECT', id: p.id }); toast(`Deleted ${p.name}`, 'info'); } }}><Icon name="trash" size={15} /></button>
                 </div></td>
               </tr>))}
             </tbody>

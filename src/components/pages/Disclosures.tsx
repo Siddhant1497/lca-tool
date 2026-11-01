@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { canPrint } from '../../utils/platform';
 import { useHub } from '../../context/HubContext';
 import { useLCA } from '../../context/LCAContext';
 import { disclosures, type DStatus } from '../../utils/hub';
@@ -28,7 +29,7 @@ const Disclosures: React.FC = () => {
   };
   const xlsx = async () => {
     setBusy(true);
-    try { const { exportWorkbook } = await import('../../utils/xlsx'); await exportWorkbook(hub); toast('Excel workbook downloaded'); }
+    try { const { exportWorkbook } = await import('../../utils/xlsx'); if (await exportWorkbook(hub)) toast('Excel workbook ready'); }
     catch (e) { toast(`Export failed: ${(e as Error).message}`, 'err'); }
     setBusy(false);
   };
@@ -60,7 +61,7 @@ const Disclosures: React.FC = () => {
         <div className="ph-actions">
           <label className="mini">Reporting year
             <select value={yr} onChange={(e) => setYear(Number(e.target.value))}>{[...years].reverse().map((y) => <option key={y}>{y}</option>)}</select></label>
-          <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>
+          {canPrint && <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>}
           <button className="btn btn-pri" onClick={xlsx} disabled={busy}><Icon name="sheet" size={16} />{busy ? 'Building…' : 'Export Excel workbook'}</button>
         </div>
       </div>

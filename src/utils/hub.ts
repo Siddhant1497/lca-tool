@@ -106,11 +106,9 @@ export const toCsv = (head: string[], rows: unknown[][]) => [head, ...rows].map(
 
 export const GHG_TEMPLATE = 'year,scope1,scope2,scope3,scope2_market\n2022,0,0,0,\n2023,0,0,0,\n2024,0,0,0,\n';
 
-export const download = (name: string, text: string, type = 'text/csv') => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([text], { type }));
-  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-};
+/** Save a text file (CSV/JSON). Uses the hosted page's download permission when available. */
+export const download = (name: string, text: string, type = 'text/csv') =>
+  import('./platform').then((m) => m.saveFile(name, text, type));
 
 /** LEED v4 / v4.1 BD+C (New Construction) category maxima — 110 points total. */
 export const LEED_BDC_CATEGORIES = [

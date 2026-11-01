@@ -5,6 +5,7 @@ import type { HubState } from '../../../types/hub';
 import Icon from '../../ui/Icon';
 import { useToast } from '../../ui/Toast';
 import { Section } from './fields';
+import { ask } from '../../../utils/platform';
 
 const stamp = () => new Date().toISOString().slice(0, 10);
 
@@ -25,7 +26,7 @@ const BackupTab: React.FC = () => {
     try {
       const s = JSON.parse(await file.text()) as Partial<HubState>;
       if (!s || typeof s !== 'object' || !Array.isArray(s.ghg) || !Array.isArray(s.projects)) throw new Error('Not a SustainHub backup file.');
-      if (!confirm('Replace all current portfolio data with this backup?')) return;
+      if (!(await ask('Replace all current portfolio data with this backup?'))) return;
       dispatch({ type: 'RESTORE', state: s as HubState });
       toast(`Restored ${s.ghg.length} years, ${s.projects.length} projects`);
     } catch (e) { toast(e instanceof SyntaxError ? 'File is not valid JSON.' : (e as Error).message, 'err'); }
@@ -35,7 +36,7 @@ const BackupTab: React.FC = () => {
   return (
     <>
       <Section title="Excel workbook" sub="One formatted .xlsx with Summary, Inventory, Scope 3 categories, Intensity, Disclosures, Certifications, Levers, Emission factors and Activities sheets.">
-        <button className="btn btn-pri" onClick={async () => { try { const { exportWorkbook } = await import('../../../utils/xlsx'); await exportWorkbook(hub); toast('Excel workbook downloaded'); } catch (e) { toast(`Export failed: ${(e as Error).message}`, 'err'); } }}>
+        <button className="btn btn-pri" onClick={async () => { try { const { exportWorkbook } = await import('../../../utils/xlsx'); if (await exportWorkbook(hub)) toast('Excel workbook ready'); } catch (e) { toast(`Export failed: ${(e as Error).message}`, 'err'); } }}>
           <Icon name="sheet" size={16} />Export Excel workbook (.xlsx)</button>
       </Section>
 
@@ -58,8 +59,8 @@ const BackupTab: React.FC = () => {
 
       <Section title="Danger zone" sub="These cannot be undone, so download a backup first.">
         <div className="row">
-          <button className="btn btn-danger-out" onClick={() => { if (confirm('Delete ALL portfolio data (inventory, projects, levers, factors, activities)?')) { dispatch({ type: 'CLEAR' }); toast('All portfolio data cleared', 'info'); } }}><Icon name="trash" size={16} />Clear all portfolio data</button>
-          <button className="btn btn-ghost" onClick={() => { if (confirm('Replace current data with the illustrative sample?')) { dispatch({ type: 'LOAD_SAMPLE' }); toast('Sample data loaded', 'info'); } }}>Load sample data</button>
+          <button className="btn btn-danger-out" onClick={async () => { if (await ask('Delete ALL portfolio data (inventory, projects, levers, factors, activities)?')) { dispatch({ type: 'CLEAR' }); toast('All portfolio data cleared', 'info'); } }}><Icon name="trash" size={16} />Clear all portfolio data</button>
+          <button className="btn btn-ghost" onClick={async () => { if (await ask('Replace current data with the illustrative sample?')) { dispatch({ type: 'LOAD_SAMPLE' }); toast('Sample data loaded', 'info'); } }}>Load sample data</button>
         </div>
       </Section>
     </>

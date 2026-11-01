@@ -8,6 +8,7 @@ import EmptyState from '../../ui/EmptyState';
 import { useToast } from '../../ui/Toast';
 import { STATUS_COL } from '../CommandCenter';
 import { Field, Num, Section, n, okNum } from './fields';
+import { ask } from '../../../utils/platform';
 
 type D = { id: string; name: string; scope: 1 | 2 | 3; abatement: string; status: LeverStatus; year: string; costPerT: string };
 
@@ -54,7 +55,7 @@ const LeversTab: React.FC = () => {
                 <td><span className="row" style={{ gap: 6 }}><span className="sw" style={{ background: STATUS_COL[l.status] }} />{l.status}</span></td>
                 <td><div className="row-actions">
                   <button className="icon-btn sm" aria-label={`Edit ${l.name}`} onClick={() => edit(l)}><Icon name="edit" size={15} /></button>
-                  <button className="icon-btn sm danger" aria-label={`Delete ${l.name}`} onClick={() => { if (confirm(`Delete ${l.name}?`)) { dispatch({ type: 'DELETE_LEVER', id: l.id }); toast(`Deleted ${l.name}`, 'info'); } }}><Icon name="trash" size={15} /></button>
+                  <button className="icon-btn sm danger" aria-label={`Delete ${l.name}`} onClick={async () => { if (await ask(`Delete ${l.name}?`)) { dispatch({ type: 'DELETE_LEVER', id: l.id }); toast(`Deleted ${l.name}`, 'info'); } }}><Icon name="trash" size={15} /></button>
                 </div></td>
               </tr>))}
             </tbody>

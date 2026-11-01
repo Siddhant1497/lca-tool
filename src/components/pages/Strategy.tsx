@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { canPrint } from '../../utils/platform';
 import { ResponsiveContainer, ComposedChart, Line, Area, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
 import { useHub } from '../../context/HubContext';
 import { useLCA } from '../../context/LCAContext';
@@ -102,7 +103,7 @@ const Strategy: React.FC = () => {
           <div className="ph-sub">{S.orgName || 'Your organisation'} · base year {base.year} · latest {latest.year} · net zero {S.netZeroYear}{hub.isSample && <span className="badge b-warn">Sample data</span>}</div>
         </div>
         <div className="ph-actions">
-          <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>
+          {canPrint && <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>}
           <button className="btn btn-pri" onClick={copy}><Icon name="copy" size={16} />Copy strategy summary</button>
         </div>
       </div>

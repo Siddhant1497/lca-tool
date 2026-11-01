@@ -2,6 +2,7 @@ import type { HubState } from '../types/hub';
 import { S3_CATEGORIES } from '../types/hub';
 import { total, s12, s2, intensities, disclosures, activityT } from './hub';
 import { scopeGaps, trajectory, phaseOf } from './strategy';
+import { saveFile } from './platform';
 
 /* Styled multi-sheet Excel workbook. The library is lazy-loaded on click so it never weighs on first paint. */
 type C = Record<string, unknown> | string | number | null | undefined;
@@ -86,10 +87,8 @@ export async function exportWorkbook(hub: HubState) {
     { data: act as never, sheet: 'Activities', columns: w(8, 18, 36, 14, 10, 36, 14, 12, 13, 50), stickyRowsCount: 1 },
   ] as never, { fontFamily: 'Calibri', fontSize: 11 } as never).toBlob();
 
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${(s.orgName || 'sustainhub').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-ghg-workbook-${today}.xlsx`;
-  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  const name = `${(s.orgName || 'sustainhub').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-ghg-workbook-${today}.xlsx`;
+  return saveFile(name, blob);
 }
 
 export { s2 };

@@ -9,6 +9,7 @@ import EmptyState from '../../ui/EmptyState';
 import ImportGhg from '../../ui/ImportGhg';
 import { useToast } from '../../ui/Toast';
 import { Field, Num, Section, n, okNum } from './fields';
+import { ask } from '../../../utils/platform';
 
 type D = {
   year: string; scope1: string; scope2: string; scope2m: string; scope3: string;
@@ -101,7 +102,7 @@ const InventoryTab: React.FC = () => {
                   </div></td>
                   <td><div className="row-actions">
                     <button className="icon-btn sm" onClick={() => open(g)} aria-label={`Edit ${g.year}`}><Icon name="edit" size={15} /></button>
-                    <button className="icon-btn sm danger" aria-label={`Delete ${g.year}`} onClick={() => { if (confirm(`Delete inventory year ${g.year}?`)) { dispatch({ type: 'DELETE_GHG', year: g.year }); toast(`Deleted ${g.year}`, 'info'); } }}><Icon name="trash" size={15} /></button>
+                    <button className="icon-btn sm danger" aria-label={`Delete ${g.year}`} onClick={async () => { if (await ask(`Delete inventory year ${g.year}?`)) { dispatch({ type: 'DELETE_GHG', year: g.year }); toast(`Deleted ${g.year}`, 'info'); } }}><Icon name="trash" size={15} /></button>
                   </div></td>
                 </tr>
               ))}

@@ -5,6 +5,7 @@ import { useUi } from '../context/UiContext';
 import { useToast } from './ui/Toast';
 import Icon, { type IconName } from './ui/Icon';
 import { visibleNav } from './nav';
+import { ask, canPrint } from '../utils/platform';
 
 interface Cmd { id: string; label: string; hint: string; icon: IconName; run: () => void }
 
@@ -35,9 +36,9 @@ const CommandPalette: React.FC = () => {
     { id: 'side', label: 'Toggle sidebar', hint: 'Layout  [', icon: 'chevL', run: toggleSidebar },
     { id: 'xlsx', label: 'Export Excel workbook', hint: 'Export', icon: 'sheet', run: async () => {
       if (!hub.ghg.length && !hub.projects.length) { toast('Nothing to export yet', 'info'); return; }
-      const { exportWorkbook } = await import('../utils/xlsx'); await exportWorkbook(hub); toast('Excel workbook downloaded'); } },
-    { id: 'print', label: 'Print / save as PDF', hint: 'Export', icon: 'file', run: () => setTimeout(() => window.print(), 100) },
-    { id: 'sample', label: 'Load sample portfolio', hint: 'Data', icon: 'grid', run: () => { if (!hub.loaded || confirm('Replace current data with the illustrative sample?')) { hd({ type: 'LOAD_SAMPLE' }); dispatch({ type: 'SET_PAGE', page: 'hub' }); } } },
+      const { exportWorkbook } = await import('../utils/xlsx'); if (await exportWorkbook(hub)) toast('Excel workbook ready'); } },
+    ...(canPrint ? [{ id: 'print', label: 'Print / save as PDF', hint: 'Export', icon: 'file' as IconName, run: () => { setTimeout(() => window.print(), 100); } }] : []),
+    { id: 'sample', label: 'Load sample portfolio', hint: 'Data', icon: 'grid', run: async () => { if (!hub.loaded || await ask('Replace current data with the illustrative sample?')) { hd({ type: 'LOAD_SAMPLE' }); dispatch({ type: 'SET_PAGE', page: 'hub' }); } } },
   ], [dispatch, hub, hd, theme, toggleTheme, toggleSidebar, toast]);
 
   const list = cmds.filter((c) => (c.label + ' ' + c.hint).toLowerCase().includes(q.toLowerCase().trim()));

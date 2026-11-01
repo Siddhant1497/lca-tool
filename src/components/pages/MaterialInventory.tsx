@@ -4,6 +4,7 @@ import { useLCA } from '../../context/LCAContext';
 import { MATERIALS, getMaterialById } from '../../data/materials';
 import type { MaterialEntry, LifeCycleStage, MaterialCategory } from '../../types/lca';
 import { STAGE_META, MATERIAL_CATEGORY_LABELS } from '../../types/lca';
+import { ask } from '../../utils/platform';
 
 const COMPONENTS = [
   'Foundation / Substructure','Ground Floor / Slab','Columns / Beams / Frame',
@@ -63,8 +64,8 @@ const MaterialInventory: React.FC = () => {
     setShowModal(false);
   };
 
-  const del = (id: string) => {
-    if (!confirm('Remove this material?')) return;
+  const del = async (id: string) => {
+    if (!(await ask('Remove this material?'))) return;
     dispatch(tab === 'proposed' ? { type: 'DELETE_ENTRY', id } : { type: 'DELETE_BASELINE', id });
   };
 
