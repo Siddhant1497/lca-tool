@@ -20,12 +20,14 @@ const Disclosures = lazy(() => import('./components/pages/Disclosures'));
 const CarbonCalculator = lazy(() => import('./components/pages/CarbonCalculator'));
 const Strategy = lazy(() => import('./components/pages/Strategy'));
 const ClientShare = lazy(() => import('./components/pages/ClientShare'));
+const Documentation = lazy(() => import('./components/pages/Documentation'));
 
 const PAGE_MAP = {
   hub:        CommandCenter,
   calculator: CarbonCalculator,
   strategy:   Strategy,
   share:      ClientShare,
+  docs:       Documentation,
   data:       DataManager,
   reports:    Disclosures,
   dashboard:  Dashboard,
@@ -41,7 +43,8 @@ const AppInner: React.FC = () => {
   const { collapsed } = useUi();
   const { hub } = useHub();
   // A page whose module is switched off falls back to the Command Center.
-  const hidden = NAV.find((x) => x.page === state.activePage)?.module === 'lca' && !hub.settings.modules.lca;
+  const mod = NAV.find((x) => x.page === state.activePage)?.module;
+  const hidden = !!mod && !hub.settings.modules[mod];
   const Page = hidden ? CommandCenter : (PAGE_MAP[state.activePage] ?? CommandCenter);
   // New page → start at the top (the scroll container is <main>, not the window).
   useEffect(() => { document.getElementById('main')?.scrollTo({ top: 0 }); }, [state.activePage]);

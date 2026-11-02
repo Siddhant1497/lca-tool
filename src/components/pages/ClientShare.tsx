@@ -10,6 +10,8 @@ import EmptyState from '../ui/EmptyState';
 import Modal from '../ui/Modal';
 import { useToast } from '../ui/Toast';
 import { SysTag } from './CommandCenter';
+import { loadNarratives, summarise, type DocSummary } from '../../utils/docsProgress';
+import { buildPortalUpdate } from '../../utils/portal';
 
 const FRAMEWORKS = [
   { id: 'ghgp', label: 'GHG Protocol' }, { id: 'gri', label: 'GRI 305' }, { id: 'brsr', label: 'BRSR Principle 6' }, { id: 'issb', label: 'IFRS S2' },
@@ -34,6 +36,8 @@ const ClientShare: React.FC = () => {
   const [cfg, setCfg] = useState<ShareConfig>(() => ({ ...defaults(), ...(read<ShareConfig>(`share_cfg:${client.id}`) ?? {}) }));
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [docSums, setDocSums] = useState<DocSummary[]>([]);
+  useEffect(() => { if (!hub.docs.length) { setDocSums([]); return; } loadNarratives().then((D) => setDocSums(hub.docs.map((d) => summarise(d, D)).filter(Boolean) as DocSummary[])).catch(() => setDocSums([])); }, [hub.docs]);
 
   // Per-client presets: switching client loads that client's last choices.
   useEffect(() => { setCfg({ ...defaults(), ...(read<ShareConfig>(`share_cfg:${client.id}`) ?? {}) }); }, [client.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -41,18 +45,23 @@ const ClientShare: React.FC = () => {
 
   const on = (k: SectionKey) => cfg.sections.includes(k);
   const toggle = (k: SectionKey) => setCfg({ ...cfg, sections: on(k) ? cfg.sections.filter((x) => x !== k) : [...cfg.sections, k] });
-  const sections = SHARE_SECTIONS.filter((s) => s.key !== 'certs' || certsOn);
+  const sections = SHARE_SECTIONS.filter((s) => (s.key !== 'certs' && s.key !== 'docs') || certsOn);
   const groups = [...new Set(sections.map((s) => s.group))];
-  const payload = useMemo(() => buildPayload(hub, client.name, { ...cfg, createdAt: new Date().toISOString() }), [hub, client.name, cfg]);
+  const payload = useMemo(() => buildPayload(hub, client.name, { ...cfg, createdAt: new Date().toISOString() }, docSums), [hub, client.name, cfg, docSums]);
   const latest = hub.ghg[hub.ghg.length - 1];
   const fwReady = latest ? disclosures(hub.ghg, hub.settings, latest.year) : [];
 
   const make = async () => {
     const res = await fetch('./client-view-template.html');
     if (!res.ok) throw new Error('Client view template not found. Run "npm run build:viewer" (it runs automatically with npm run dev / build).');
-    return fillTemplate(await res.text(), buildPayload(hub, client.name, { ...cfg, createdAt: new Date().toISOString() }));
+    return fillTemplate(await res.text(), buildPayload(hub, client.name, { ...cfg, createdAt: new Date().toISOString() }, docSums));
   };
   const doPreview = async () => { setBusy(true); try { setPreview(await make()); } catch (e) { toast((e as Error).message, 'err'); } setBusy(false); };
+  const doPortal = async () => {
+    const upd = buildPortalUpdate(buildPayload(hub, client.name, { ...cfg, createdAt: new Date().toISOString() }, docSums));
+    const name = `${client.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'client'}-portal-update-${new Date().toISOString().slice(0, 10)}.json`;
+    try { if (await saveFile(name, JSON.stringify(upd, null, 2), 'application/json')) toast('Portal update ready. Open the client portal and choose "Import update".'); } catch (e) { toast((e as Error).message, 'err'); }
+  };
   const doDownload = async () => {
     setBusy(true);
     try {
@@ -117,6 +126,16 @@ const ClientShare: React.FC = () => {
                   })}
                 </div>
               )}
+              {g === 'Certifications' && on('docs') && (
+                <div className="share-sub">
+                  {docSums.length === 0 && <span className="cell-sub">No documentation sets for this client (Documentation page).</span>}
+                  {docSums.map((d) => (
+                    <label key={d.id} className="row" style={{ gap: 7, fontSize: '.84rem', flexWrap: 'nowrap' }}>
+                      <input type="checkbox" checked={(cfg.docIds ?? []).includes(d.id)} onChange={(e) => setCfg({ ...cfg, docIds: e.target.checked ? [...(cfg.docIds ?? []), d.id] : (cfg.docIds ?? []).filter((x) => x !== d.id) })} />
+                      <span>{d.name}</span><span className="cell-sub">· {d.system.replace('IGBC ', '')} · {d.pctReady}% ready</span>
+                    </label>))}
+                </div>
+              )}
               {g === 'Certifications' && on('certs') && (
                 <div className="share-sub">
                   {hub.projects.length === 0 && <span className="cell-sub">No certification projects for this client.</span>}
@@ -148,13 +167,30 @@ const ClientShare: React.FC = () => {
               <li className={inc.ghg.some((g) => g.s3cats) ? 'y' : 'n'}>{inc.ghg.some((g) => g.s3cats) ? 'Scope 3 category split' : 'No Scope 3 category split'}</li>
               <li className={inc.ghg.some((g) => g.denom) ? 'y' : 'n'}>{inc.ghg.some((g) => g.denom) ? 'Intensity denominators (area, FTE, turnover)' : 'No floor area / headcount / turnover'}</li>
               <li className={inc.levers.length ? 'y' : 'n'}>{inc.levers.length ? `${inc.levers.length} decarbonisation levers` : 'No levers'}</li>
+              {certsOn && <li className={payload.docs?.length ? 'y' : 'n'}>{payload.docs?.length ? `Documentation status for ${payload.docs.length} set(s), no narrative text` : 'No documentation progress'}</li>}
               {certsOn && <li className={inc.projects.length ? 'y' : 'n'}>{inc.projects.length ? `${inc.projects.length} certification project(s)` : 'No certification projects'}</li>}
-              <li className="n">Activity data, emission-factor library, other clients — never included</li>
+              <li className="n">Activity data, emission-factor library, narrative text, other clients — never included</li>
             </ul>
           </section>
 
-          <section className="card rise" style={{ ['--i' as string]: 3 }}>
-            <div className="card-hd"><span className="card-ic"><Icon name="link" size={17} /></span><div><div className="t">How the client opens it</div></div></div>
+          <section className="card rise portal-card" style={{ ['--i' as string]: 3 }}>
+            <div className="card-hd"><span className="card-ic"><Icon name="zap" size={17} /></span><div><div className="t">Live client portal</div><div className="s">Real-time tracking: the client's page updates the moment you push</div></div></div>
+            <ol className="how">
+              <li>Open this client's portal (one private claude.ai page per client) and invite the client from its <b>Share</b> menu (Contributor lets them answer document requests).</li>
+              <li>Download the update below and use <b>Import update</b> in the portal. Every open client view refreshes live.</li>
+              <li>Clients tick off requested documents and leave notes; you see it straight away.</li>
+            </ol>
+            <div className="field" style={{ marginBottom: 10 }}><label>This client's portal link</label>
+              <input value={cfg.portalUrl ?? ''} onChange={(e) => setCfg({ ...cfg, portalUrl: e.target.value.trim() })} placeholder="https://claude.ai/artifact/…" /></div>
+            <div className="row">
+              <button className="btn btn-pri" onClick={doPortal} disabled={!cfg.sections.length}><Icon name="download" size={16} />Download portal update (.json)</button>
+              {cfg.portalUrl?.startsWith('https://') && <a className="btn btn-out" href={cfg.portalUrl} target="_blank" rel="noreferrer">Open portal ↗</a>}
+            </div>
+            <div className="hint" style={{ marginTop: 8 }}>The update holds the same minimised data as the client file, never activity data, factors or narrative text.</div>
+          </section>
+
+          <section className="card rise" style={{ ['--i' as string]: 4 }}>
+            <div className="card-hd"><span className="card-ic"><Icon name="link" size={17} /></span><div><div className="t">Or send a snapshot file</div></div></div>
             <ol className="how">
               <li>Download the dashboard file (one <code>.html</code> file, works offline).</li>
               <li>Send it by email, WhatsApp or a shared drive link — or upload it to your website / any static host for a web link.</li>

@@ -1,13 +1,14 @@
 import type { HubState } from '../types/hub';
 import type { ShareConfig, SectionKey } from '../context/ShareContext';
+import type { DocSummary } from './docsProgress';
 
-export interface SharePayload { v: 1; client: string; config: ShareConfig; state: HubState }
+export interface SharePayload { v: 1; client: string; config: ShareConfig; state: HubState; docs?: DocSummary[] }
 
 /**
  * Data minimisation for client sharing: the payload carries only what the chosen sections need.
  * Anything left out here is not in the file at all (not merely hidden).
  */
-export function buildPayload(hub: HubState, client: string, config: ShareConfig): SharePayload {
+export function buildPayload(hub: HubState, client: string, config: ShareConfig, docSummaries: DocSummary[] = []): SharePayload {
   const has = (...k: SectionKey[]) => k.some((x) => config.sections.includes(x));
   const emissions = has('kpis', 'pathway', 'split', 'inventory', 'scope3', 'intensity', 'levers', 'strategy', 'disclosures');
   const keepDenom = has('intensity', 'disclosures');
@@ -18,10 +19,11 @@ export function buildPayload(hub: HubState, client: string, config: ShareConfig)
       ...(keepCats && g.s3cats ? { s3cats: g.s3cats } : {}), ...(keepDenom && g.denom ? { denom: g.denom } : {}) })) : [],
     levers: has('levers', 'strategy', 'pathway', 'kpis') ? hub.levers : [],
     projects: has('certs') ? hub.projects.filter((p) => config.projectIds.includes(p.id)) : [],
-    factors: [], activities: [],   // activity data and factor libraries never leave the consultant's workspace
+    factors: [], activities: [], docs: [],   // activity data, factor libraries and narrative text never leave the consultant's workspace
     settings: { ...hub.settings, orgName: hub.settings.orgName || client, modules: { certs: has('certs') && config.projectIds.length > 0, lca: false } },
   };
-  return { v: 1, client, config, state };
+  const docs = has('docs') ? docSummaries.filter((d) => (config.docIds ?? []).includes(d.id)) : [];
+  return { v: 1, client, config, state, ...(docs.length ? { docs } : {}) };
 }
 
 const MARK = '<script id="share-data" type="application/json">null</script>';

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import type { HubState, GhgYear, HubSettings, CertProject, Lever, EmissionFactor, Activity } from '../types/hub';
+import type { HubState, GhgYear, HubSettings, CertProject, Lever, EmissionFactor, Activity, DocSet } from '../types/hub';
 import { SAMPLE } from '../data/hubSample';
 
 export type HubAction =
@@ -13,10 +13,13 @@ export type HubAction =
   | { type: 'UPSERT_PROJECT'; item: CertProject } | { type: 'DELETE_PROJECT'; id: string }
   | { type: 'UPSERT_LEVER'; item: Lever } | { type: 'DELETE_LEVER'; id: string }
   | { type: 'UPSERT_FACTOR'; item: EmissionFactor } | { type: 'ADD_FACTORS'; items: EmissionFactor[] } | { type: 'DELETE_FACTOR'; id: string }
-  | { type: 'UPSERT_ACTIVITY'; item: Activity } | { type: 'DELETE_ACTIVITY'; id: string };
+  | { type: 'UPSERT_ACTIVITY'; item: Activity } | { type: 'DELETE_ACTIVITY'; id: string }
+  | { type: 'UPSERT_DOC'; item: DocSet } | { type: 'DELETE_DOC'; id: string }
+  | { type: 'DOC_EDIT'; id: string; key: string; value: string }
+  | { type: 'DOC_META'; id: string; credit: string; patch: DocSet['meta'][string] };
 
 export const EMPTY: HubState = {
-  loaded: false, isSample: false, ghg: [], projects: [], levers: [], factors: [], activities: [],
+  loaded: false, isSample: false, ghg: [], projects: [], levers: [], factors: [], activities: [], docs: [],
   settings: { targetYear: 2030, annualPct: 4.2, s2Method: 'location', revenueUnit: '₹ crore', currency: '₹', orgName: '', modules: { certs: true, lca: true }, s3Pct: 2.5, netZeroYear: 2050, nzPct: 90 },
 };
 
@@ -28,7 +31,7 @@ const byYear = (g: GhgYear[]) => [...g].sort((a, b) => a.year - b.year);
 export const migrate = (raw: Partial<HubState>): HubState => ({
   ...EMPTY, ...raw,
   ghg: byYear(raw.ghg ?? []), projects: raw.projects ?? [], levers: raw.levers ?? [],
-  factors: raw.factors ?? [], activities: raw.activities ?? [],
+  factors: raw.factors ?? [], activities: raw.activities ?? [], docs: raw.docs ?? [],
   settings: { ...EMPTY.settings, ...(raw.settings ?? {}), modules: { ...EMPTY.settings.modules, ...(raw.settings?.modules ?? {}) } },
 });
 
@@ -61,6 +64,16 @@ export const reducer = (s: HubState, a: HubAction): HubState => {
     case 'DELETE_FACTOR':   return { ...live, factors: s.factors.filter((x) => x.id !== a.id), activities: s.activities.filter((x) => x.factorId !== a.id) };
     case 'UPSERT_ACTIVITY': return { ...live, activities: upsert(s.activities, a.item) };
     case 'DELETE_ACTIVITY': return { ...live, activities: s.activities.filter((x) => x.id !== a.id) };
+    case 'UPSERT_DOC':      return { ...live, docs: upsert(s.docs, a.item) };
+    case 'DELETE_DOC':      return { ...live, docs: s.docs.filter((x) => x.id !== a.id) };
+    case 'DOC_EDIT': {
+      const now = new Date().toISOString();
+      return { ...live, docs: s.docs.map((d) => (d.id !== a.id ? d : { ...d, updatedAt: now, edits: { ...d.edits, [a.key]: a.value } })) };
+    }
+    case 'DOC_META': {
+      const now = new Date().toISOString();
+      return { ...live, docs: s.docs.map((d) => (d.id !== a.id ? d : { ...d, updatedAt: now, meta: { ...d.meta, [a.credit]: { ...d.meta[a.credit], ...a.patch } } })) };
+    }
     default: return s;
   }
 };
@@ -94,7 +107,18 @@ export const HubProvider: React.FC<{ children: React.ReactNode; fixed?: { state:
   const active = useRef(reg.active);
   const [hub, dispatch] = useReducer(reducer, EMPTY, () => (fixed ? migrate({ ...fixed.state, loaded: true }) : loadState(reg.active)));
 
-  useEffect(() => { if (!fixed) writeJSON(keyFor(active.current), hub); }, [hub, fixed]);
+  useEffect(() => {
+    if (fixed) return;
+    const key = keyFor(active.current), t = setTimeout(() => writeJSON(key, hub), 250);
+    return () => clearTimeout(t);
+  }, [hub, fixed]);
+  // Flush on tab close so the last keystrokes are never lost.
+  const latest = useRef(hub); latest.current = hub;
+  useEffect(() => {
+    if (fixed) return;
+    const f = () => writeJSON(keyFor(active.current), latest.current);
+    window.addEventListener('pagehide', f); return () => window.removeEventListener('pagehide', f);
+  }, [fixed]);
   useEffect(() => { if (!fixed) writeJSON(CLIENTS_KEY, reg); }, [reg, fixed]);
 
   const switchClient = useCallback((id: string) => {

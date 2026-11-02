@@ -80,9 +80,18 @@ export interface HubSettings {
   s3Pct: number; netZeroYear: number; nzPct: number;
 }
 
+/** A documentation set: one rating-system narrative pack for one project, filled from its calculation workbook. */
+export interface DocSet {
+  id: string; name: string; rating: string; projectId?: string; updatedAt: string;
+  src: import('../utils/narrative').NSource;
+  edits: Record<string, string>;                       // typed facts, keyed like the IGBC Narrative Builder
+  meta: Record<string, { status?: import('../utils/narrative').DocStatus; owner?: string; due?: string; note?: string }>;
+}
+
 export interface HubState {
   loaded: boolean; isSample: boolean;
   ghg: GhgYear[]; projects: CertProject[]; levers: Lever[];
   factors: EmissionFactor[]; activities: Activity[];
+  docs: DocSet[];
   settings: HubSettings;
 }

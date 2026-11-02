@@ -12,6 +12,7 @@ export const SHARE_SECTIONS = [
   { key: 'strategy', group: 'Decarbonisation', label: 'Decarbonisation strategy', hint: 'Targets, gap, hotspots, roadmap, summary' },
   { key: 'disclosures', group: 'Reporting', label: 'Disclosure tables', hint: 'GHG Protocol, GRI, BRSR, IFRS S2 (choose below)' },
   { key: 'certs', group: 'Certifications', label: 'Certification status', hint: 'Selected projects: progress, gap, next action' },
+  { key: 'docs', group: 'Certifications', label: 'Documentation progress', hint: 'Credit-by-credit status and due dates (no narrative text)' },
 ] as const;
 export type SectionKey = typeof SHARE_SECTIONS[number]['key'];
 
@@ -19,6 +20,8 @@ export interface ShareConfig {
   sections: SectionKey[];
   frameworks: string[];         // disclosure framework ids
   projectIds: string[];         // certification projects to include
+  docIds?: string[];            // documentation sets to include
+  portalUrl?: string;           // this client's live portal page
   title: string; preparedBy: string; note: string; createdAt: string;
 }
 

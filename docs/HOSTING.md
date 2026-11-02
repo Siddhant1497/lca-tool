@@ -44,6 +44,17 @@ How to deliver it:
 
 Each file is a dated snapshot. When numbers change, generate a new one.
 
-## 4. When you'd need a server
+## 4. Live client portal (real-time tracking)
+
+`portal/client-portal.html` is published as a private claude.ai page: **https://claude.ai/artifact/Hb25XVyroYcQDrnHLARkaW** (the first portal; ask Claude to publish one copy per client).
+
+1. In SustainHub, switch to the client → **Client sharing** → tick sections (add **Documentation progress** for credit tracking) → **Download portal update (.json)**.
+2. Open the client's portal and use **Import update from SustainHub**. Every open client view refreshes immediately.
+3. Credits set to **Awaiting client** in Documentation become requests on the portal's **Documents we need from you** board (optional tick box).
+4. Invite the client from the portal's **Share** menu: *Contributor* to answer requests (mark as sent, add notes), *Viewer* for read-only.
+
+Access rules (enforced by the platform): everyone invited can read; only you (and Editors) can change the dashboard data; Contributors can update requests. The portal holds the same minimised data as the client file, never activity data, emission factors or narrative text. Clients need a claude.ai sign-in.
+
+## 5. When you'd need a server
 
 Live, always-up-to-date client portals with client logins (each client signs in and sees only their own dashboard) need a backend with authentication, e.g. Supabase or Firebase with row-level access rules. The data model is already separated per client, so this is a natural next step.

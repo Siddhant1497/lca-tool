@@ -9,6 +9,8 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 | Area | What it does |
 |---|---|
 | **Clients** | Separate workspace per client (switcher in the header). **Client sharing** builds a read-only, single-file dashboard per client with only the sections, disclosure frameworks and certification projects you tick; activity data and factor libraries never leave your workspace. See [docs/HOSTING.md](docs/HOSTING.md). |
+| **Documentation** | Your IGBC narrative templates (from the IGBC Narrative Builder): 6 rating systems, 271 credits. Open the filled calculation workbook to fill every figure from its named ranges; type project facts in place; per-credit status, owner and due date; Copy for Word. |
+| **Live client portal** | A private claude.ai page per client that updates in real time when you import an update from Client sharing, with a two-way "documents we need from you" board. See [docs/HOSTING.md](docs/HOSTING.md). |
 | **Workspace** | First-run choice: carbon only, or add certifications and/or building LCA. Switch modules on or off any time; hidden modules disappear from the navigation, the dashboard and the Excel export. |
 | **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors from **bundled official packs**: CEA CO₂ Baseline Database v22.0 (India grid FY 2013-14 to 2025-26), UK DESNZ 2025 and 2026 (all kg CO₂e rows), GHG Protocol GWPs (AR5/AR6), plus import of any other official file (US EPA, IPCC…). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
 | **Decarbonisation Strategy** | SBTi-style near-term and net-zero targets (editable), trajectory to net zero, gap by scope, hotspot analysis with a 27-measure library (each linked to the relevant LEED credit), a Now / Next / Later roadmap, residual-emission planning and an auto-written strategy summary. |
@@ -29,7 +31,7 @@ Merge to `main`, then set **Settings → Pages → Source: GitHub Actions**. The
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 39 unit tests: pathway, strategy, factor packs, sharing, reducers
+npm test           # 48 unit tests: pathway, strategy, factor packs, sharing, narratives, workbook reader, portal
 npm run build      # production build in dist/
 ```
 
