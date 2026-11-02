@@ -128,3 +128,57 @@ describe('official factor import', () => {
     expect(st.settings.modules).toEqual({ certs: false, lca: false });
   });
 });
+
+describe('official packs (values transcribed from source documents)', async () => {
+  const { PACKS, CEA_V22, blendGwp, GWP } = await import('../../data/packs');
+  it('CEA v22 Annexure-I series', () => {
+    expect(CEA_V22.find(([fy]) => fy === '2025-26')![1]).toBe(0.675);
+    expect(CEA_V22.find(([fy]) => fy === '2024-25')![1]).toBe(0.710);
+    expect(CEA_V22).toHaveLength(13);
+  });
+  it('AR5 blend GWPs reproduce the UK DESNZ 2025 refrigerant factors', () => {
+    expect(Math.round(blendGwp('R-410A', 'ar5')!)).toBe(1924);
+    expect(Math.round(blendGwp('R-404A', 'ar5')!)).toBe(3943);
+    expect(Math.round(blendGwp('R-407C', 'ar5')!)).toBe(1624);
+    expect(GWP['HFC-32'].ar6).toBe(771);
+  });
+  it('DESNZ packs load with exact file values', async () => {
+    const rows = await PACKS.find((p) => p.id === 'desnz-2025')!.load();
+    const d = rows.find((r) => r.key === '1_101_1011_8_1')!;
+    expect(d).toMatchObject({ name: 'Fuels › Liquid fuels › Diesel (average biofuel blend)', unit: 'litres', kgPerUnit: 2.57082, scope: 1 });
+    expect(rows.find((r) => r.key === '3_201_2156_3_1')!.kgPerUnit).toBe(1924);   // R410A, cross-check
+    expect(rows.every((r) => Number.isFinite(r.kgPerUnit))).toBe(true);
+    const air = rows.find((r) => r.name.startsWith('Business travel- air'))!;
+    expect(air.s3cat).toBe(6);
+  });
+});
+
+describe('client sharing', async () => {
+  const { buildPayload, fillTemplate } = await import('../share');
+  const { SAMPLE } = await import('../../data/hubSample');
+  const hub = { ...SAMPLE, loaded: true, isSample: true,
+    factors: [{ id: 'f', name: 'SECRET factor', unit: 'kWh', kgPerUnit: 1, scope: 2 as const, source: 's' }],
+    activities: [{ id: 'a', year: 2024, factorId: 'f', description: 'SECRET site meter', quantity: 5 }] };
+  const base = { frameworks: ['ghgp'], projectIds: [SAMPLE.projects[0].id], title: 't', preparedBy: 'p', note: '', createdAt: '2026-11-02' };
+  it('includes only what the chosen sections need', () => {
+    const p = buildPayload(hub, 'Client A', { ...base, sections: ['kpis', 'inventory'] });
+    expect(p.state.ghg.length).toBe(SAMPLE.ghg.length);
+    expect(p.state.ghg.some((g) => g.s3cats || g.denom)).toBe(false);   // no category split or denominators
+    expect(p.state.projects).toEqual([]);
+    expect(p.state.factors).toEqual([]); expect(p.state.activities).toEqual([]);
+  });
+  it('filters certification projects to the ones ticked', () => {
+    const p = buildPayload(hub, 'Client A', { ...base, sections: ['certs'] });
+    expect(p.state.projects.map((x) => x.id)).toEqual([SAMPLE.projects[0].id]);
+    expect(p.state.ghg).toEqual([]);
+  });
+  it('injects safely into the template and never leaks excluded data', () => {
+    const tpl = '<html><head><title>x</title></head><body><script id="share-data" type="application/json">null</script></body></html>';
+    const html = fillTemplate(tpl, buildPayload({ ...hub, settings: { ...hub.settings, orgName: '</script><b>x' } }, 'Client <A>', { ...base, sections: ['kpis'] }));
+    expect(html).not.toContain('SECRET');
+    expect(html).not.toContain('</script><b>');                 // payload cannot break out of the script tag
+    expect(html.match(/<\/script>/g)).toHaveLength(1);
+    expect(html).toContain('<title>t – Client A</title>');
+    expect(() => fillTemplate('<html></html>', buildPayload(hub, 'c', { ...base, sections: [] }))).toThrow(/template/);
+  });
+});

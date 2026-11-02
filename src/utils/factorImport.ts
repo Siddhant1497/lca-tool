@@ -7,7 +7,7 @@ export type Grid = (string | number | null | undefined)[][];
 
 export interface Candidate {
   key: string; name: string; unit: string; kgPerUnit: number;
-  scope: 1 | 2 | 3 | null; ref?: string; gasUnit?: string;
+  scope: 1 | 2 | 3 | null; ref?: string; gasUnit?: string; s3cat?: number;
 }
 export interface Mapping { header: number; name: number[]; unit: number; value: number; scope?: number; ref?: number; multiplier: number }
 

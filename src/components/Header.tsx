@@ -4,6 +4,7 @@ import { useUi } from '../context/UiContext';
 import { useHub } from '../context/HubContext';
 import Icon from './ui/Icon';
 import { sectionOf } from './nav';
+import ClientSwitcher from './ClientSwitcher';
 
 const Header: React.FC = () => {
   const { state } = useLCA();
@@ -25,10 +26,7 @@ const Header: React.FC = () => {
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}>
           <Icon name="search" size={15} /><span>Search or jump to…</span><kbd>Ctrl K</kbd>
         </button>
-        <span className="chip" title={isHub ? 'Portfolio data' : 'Active LCA project'}>
-          <span className="dot" style={isHub && hub.isSample ? { background: 'var(--warn)' } : undefined} />
-          {isHub ? (hub.isSample ? 'Sample portfolio' : hub.loaded ? 'My portfolio' : 'No data yet') : (state.project?.name ?? 'LCA project')}
-        </span>
+        {isHub ? <ClientSwitcher /> : <span className="chip" title="Active LCA project"><span className="dot" />{state.project?.name ?? 'LCA project'}</span>}
         <button className="icon-btn" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} title="Toggle theme">
           <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
         </button>

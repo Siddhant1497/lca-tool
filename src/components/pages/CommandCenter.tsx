@@ -8,6 +8,7 @@ import { useHub } from '../../context/HubContext';
 import { useLCA } from '../../context/LCAContext';
 import { buildPathway, metrics, fmt, total, s2, s12, projectGap, atRisk, onTrack, missingMarket, leverProjection, macc, intensities, s3Rows, hasS3Cats } from '../../utils/hub';
 import Macc from '../ui/Macc';
+import { useShare, type SectionKey } from '../../context/ShareContext';
 import type { CertProject, LeverStatus, CertSystem } from '../../types/hub';
 import CountUp from '../ui/CountUp';
 import EmptyState from '../ui/EmptyState';
@@ -31,8 +32,8 @@ export const SysTag: React.FC<{ s: CertSystem }> = ({ s }) => (
   <span className="sys" style={{ ['--sys' as string]: SYS_COL[s] }}>{s}</span>
 );
 
-const Card: React.FC<{ title: string; sub?: React.ReactNode; icon: IconName; i: number; span: string; right?: React.ReactNode; children: React.ReactNode }> =
-  ({ title, sub, icon, i, span, right, children }) => (
+const Card: React.FC<{ title: string; sub?: React.ReactNode; icon: IconName; i: number; span: string; right?: React.ReactNode; children: React.ReactNode; k?: SectionKey; when?: boolean }> =
+  ({ title, sub, icon, i, span, right, children, k, when = true }) => !when || !useShare().show(k ?? 'kpis') ? null : (
     <section className={`card rise ${span}`} style={{ ['--i' as string]: i }}>
       <div className="card-hd">
         <span className="card-ic"><Icon name={icon} size={17} /></span>
@@ -60,6 +61,7 @@ const CommandCenter: React.FC = () => {
   const { dispatch: lca, results } = useLCA();
   const go = (page: 'data' | 'materials') => lca({ type: 'SET_PAGE', page });
   const S = hub.settings, M = S.s2Method;
+  const { show, readOnly } = useShare();
   const [imetric, setImetric] = useState<'perM2' | 'perFte' | 'perRev'>('perM2');
   const [pick, setPick] = useState({ certs: true, lca: true });
   const certsOn = S.modules.certs;
@@ -128,8 +130,8 @@ const CommandCenter: React.FC = () => {
   ] : [];
   const noGhg = (
     <EmptyState compact icon={<Icon name="chart" size={22} />} title="No inventory yet" body="Add at least one year of Scope 1/2/3 totals to see trends and your pathway.">
-      <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add inventory</button>
-      <ImportGhg className="btn btn-out btn-sm" />
+      <button className="btn btn-pri btn-sm edit" onClick={() => go('data')}><Icon name="plus" size={14} />Add inventory</button>
+      <ImportGhg className="btn btn-out btn-sm edit" />
     </EmptyState>
   );
   const pipe = [
@@ -142,11 +144,11 @@ const CommandCenter: React.FC = () => {
     <div>
       <div className="ph">
         <div>
-          <div className="ph-eyebrow">Portfolio overview</div>
-          <div className="ph-title">Command Center</div>
+          <div className="ph-eyebrow">{readOnly ? 'Emissions overview' : 'Portfolio overview'}</div>
+          <div className="ph-title">{readOnly ? 'Overview' : 'Command Center'}</div>
           <div className="ph-sub">
             <span className={`badge ${hub.isSample ? 'b-warn' : 'b-pri'}`}>{hub.isSample ? 'Sample data' : 'Your data'}</span>
-            {m && <span>Inventory {m.base.year}–{m.latest.year}</span>}
+            {m && <span>Inventory {m.base.year === m.latest.year ? m.latest.year : `${m.base.year}–${m.latest.year}`}</span>}
             {certsOn && <span>· {hub.projects.length} certification project{hub.projects.length === 1 ? '' : 's'}</span>}
             {results && S.modules.lca && <span>· Building LCA <b className="num">{fmt(results.perM2.GWP)}</b> kgCO₂e/m²</span>}
           </div>
@@ -161,14 +163,14 @@ const CommandCenter: React.FC = () => {
             </span>
           </span>
           {canPrint && <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>}
-          <button className="btn btn-pri" onClick={() => go('data')}><Icon name="database" size={16} />Manage data</button>
+          <button className="btn btn-pri edit" onClick={() => go('data')}><Icon name="database" size={16} />Manage data</button>
         </div>
       </div>
 
       {hub.isSample && (
         <div className="notice"><Icon name="alert" size={16} />
           <span className="grow">Sample data is fictional. Score thresholds are placeholders; take real targets from the current rating-system guide.</span>
-          <button className="btn btn-sm btn-out" onClick={async () => { if (await ask('Remove the sample data and start an empty portfolio?')) { dispatch({ type: 'START_EMPTY' }); go('data'); } }}>Use my own data</button>
+          <button className="btn btn-sm btn-out edit" onClick={async () => { if (await ask('Remove the sample data and start an empty portfolio?')) { dispatch({ type: 'START_EMPTY' }); go('data'); } }}>Use my own data</button>
         </div>
       )}
       {miss.length > 0 && (
@@ -177,7 +179,7 @@ const CommandCenter: React.FC = () => {
         </div>
       )}
 
-      <div className="kpi-grid six">
+      <div className="kpi-grid six" hidden={!show('kpis')}>
         <Kpi i={0} icon="pie" tone="pri" label={m ? `Total emissions ${m.latest.year}` : 'Total emissions'}
           value={m ? <CountUp value={m.latestTotal} /> : '—'} unit="tCO₂e"
           spark={hub.ghg.map((g) => total(g, M))}
@@ -190,14 +192,17 @@ const CommandCenter: React.FC = () => {
           foot={m ? <span className={`delta ${behind ? 'bad' : 'good'}`}>{behind ? '▲ Behind' : '▼ Ahead'} in {m.latest.year}</span> : '—'} />
         <Kpi i={3} icon="link" tone="s3" label="Scope 3 share" value={m ? <><CountUp value={m.scope3Share} />%</> : '—'}
           spark={hub.ghg.map((g) => g.scope3)} foot={m ? `${fmt(m.latest.scope3)} tCO₂e` : '—'} />
-        {certsOn ? (
+        {readOnly && !certsOn ? (
+          <Kpi i={4} icon="zap" tone="s2" label={m ? `Scope 1+2 ${m.latest.year}` : 'Scope 1+2'} value={m ? <CountUp value={s12(m.latest, M)} /> : '—'} unit="tCO₂e"
+            spark={hub.ghg.map((g) => s12(g, M))} foot={`Scope 2 ${M}-based`} />
+        ) : certsOn ? (
           <Kpi i={4} icon="building" tone={risk.length ? 'warn' : 'acc'} label="Certifications"
             value={<CountUp value={hub.projects.length} />} unit={`${certified} certified`}
             foot={hub.projects.length ? <span className={`delta ${risk.length ? 'bad' : 'good'}`}>{risk.length ? `${risk.length} at risk` : 'None at risk'}</span> : 'None tracked'} />
         ) : (
           <Kpi i={4} icon="clipboard" tone={hub.factors.length && hub.factors.every((f) => f.official) ? 'acc' : 'warn'} label="Official emission factors"
             value={`${hub.factors.filter((f) => f.official).length}/${hub.factors.length}`} unit="factors"
-            foot={hub.factors.length ? 'Imported from publisher files' : <button className="btn btn-ghost btn-sm" style={{ padding: 0 }} onClick={() => lca({ type: 'SET_PAGE', page: 'calculator' })}>Import in Carbon Calculator →</button>} />
+            foot={hub.factors.length ? 'Imported from publisher files' : <button className="btn btn-ghost btn-sm" style={{ padding: 0 }} onClick={() => lca({ type: 'SET_PAGE', page: 'calculator' })} hidden={readOnly}>Import in Carbon Calculator →</button>} />
         )}
         <Kpi i={5} icon="zap" tone={m && m.leverCoverage >= 100 ? 'acc' : 'warn'} label={`Levers vs ${S.targetYear} gap`}
           value={m ? <><CountUp value={Math.min(m.leverCoverage, 999)} />%</> : '—'} unit="covered"
@@ -205,7 +210,7 @@ const CommandCenter: React.FC = () => {
       </div>
 
       <div className="hub-grid">
-        <Card i={6} span="c7" icon="target" title="Scope 1+2 vs decarbonisation pathway"
+        <Card k="pathway" when={!readOnly || !!m} i={6} span="c7" icon="target" title="Scope 1+2 vs decarbonisation pathway"
           sub={`Linear ${S.annualPct}%/yr of base-year emissions · ${M}-based Scope 2`}
           right={<>
             <label className="mini">Target <input type="number" min={m?.latest.year ?? 2020} max={2060} value={S.targetYear}
@@ -244,7 +249,7 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={7} span="c5" icon="pie" title={m ? `Emissions split · ${m.latest.year}` : 'Emissions split'} sub="Share of total by scope">
+        <Card k="split" when={!readOnly || !!m} i={7} span="c5" icon="pie" title={m ? `Emissions split · ${m.latest.year}` : 'Emissions split'} sub="Share of total by scope">
           {!m ? noGhg : (<>
             <div style={{ position: 'relative', height: 230, margin: 'auto 0' }}>
               <ResponsiveContainer>
@@ -269,7 +274,7 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={8} span="c7" icon="chart" title="GHG inventory by scope" sub={`tCO₂e per year · Scope 2 ${M}-based`}>
+        <Card k="inventory" when={!readOnly || !!m} i={8} span="c7" icon="chart" title="GHG inventory by scope" sub={`tCO₂e per year · Scope 2 ${M}-based`}>
           {!m ? noGhg : (<>
             <div className="chart"><ResponsiveContainer>
               <BarChart data={trend} margin={{ top: 8, right: 4, left: -6, bottom: 0 }} barCategoryGap="28%">
@@ -288,11 +293,11 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={9} span="c5" icon="link" title="Scope 3 hotspots" sub={s3Year ? `${s3Year.year} by GHG Protocol category · ${s3.length} reported` : 'By GHG Protocol category'}>
+        <Card k="scope3" when={!readOnly || !!s3Year} i={9} span="c5" icon="link" title="Scope 3 hotspots" sub={s3Year ? `${s3Year.year} by GHG Protocol category · ${s3.length} reported` : 'By GHG Protocol category'}>
           {!s3Year ? (
             <EmptyState compact icon={<Icon name="link" size={22} />} title="No category split yet"
               body="Scope 3 is usually 70–90% of a real-estate footprint. Break it into the 15 GHG Protocol categories to see where to act. Cat 2 can take your building LCA A1–A3 result.">
-              <button className="btn btn-pri btn-sm" onClick={() => go('data')}>Add categories</button>
+              <button className="btn btn-pri btn-sm edit" onClick={() => go('data')}>Add categories</button>
             </EmptyState>
           ) : (<>
             <div style={{ flex: 1, minHeight: 40 + s3.length * 30 }}><ResponsiveContainer>
@@ -315,12 +320,12 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={10} span="c7" icon="zap" title={curve.length ? 'Marginal abatement cost curve' : 'Decarbonisation levers'}
+        <Card k="levers" when={!readOnly || levers.length > 0} i={10} span="c7" icon="zap" title={curve.length ? 'Marginal abatement cost curve' : 'Decarbonisation levers'}
           sub={curve.length ? `Width = tCO₂e/yr abated · height = ${S.currency}/tCO₂e · open levers, cheapest first` : 'Abatement potential, tCO₂e/yr'}
-          right={<button className="btn btn-ghost btn-sm" onClick={() => go('data')}>Edit<Icon name="arrowR" size={14} /></button>}>
+          right={<button className="btn btn-ghost btn-sm edit" onClick={() => go('data')}>Edit<Icon name="arrowR" size={14} /></button>}>
           {levers.length === 0 ? (
             <EmptyState compact icon={<Icon name="zap" size={22} />} title="No levers yet" body="Add reduction measures (solar PPA, heat pumps, low-carbon concrete…) with cost per tonne to build a MACC.">
-              <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add a lever</button>
+              <button className="btn btn-pri btn-sm edit" onClick={() => go('data')}><Icon name="plus" size={14} />Add a lever</button>
             </EmptyState>
           ) : curve.length ? (<>
             <Macc bars={curve} currency={S.currency} />
@@ -351,14 +356,14 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={11} span="c5" icon="trendDown" title="Emissions intensity" sub={`Scope 1+2 ${IMETA[imetric].unit} · ${M}-based`}
+        <Card k="intensity" when={!readOnly || iSeries.length > 0} i={11} span="c5" icon="trendDown" title="Emissions intensity" sub={`Scope 1+2 ${IMETA[imetric].unit} · ${M}-based`}
           right={<span className="seg" role="group" aria-label="Intensity metric">
             {(Object.keys(IMETA) as (keyof typeof IMETA)[]).map((k) => (
               <button key={k} className={imetric === k ? 'on' : ''} aria-pressed={imetric === k} onClick={() => setImetric(k)}>{k === 'perRev' ? 'Turnover' : IMETA[k].label.replace('per ', '')}</button>))}
           </span>}>
           {iSeries.length === 0 ? (
             <EmptyState compact icon={<Icon name="trendDown" size={22} />} title="No denominators yet" body="Add floor area, employees or turnover to an inventory year to track intensity, which BRSR and GRI 305-4 ask for.">
-              <button className="btn btn-pri btn-sm" onClick={() => go('data')}>Add denominators</button>
+              <button className="btn btn-pri btn-sm edit" onClick={() => go('data')}>Add denominators</button>
             </EmptyState>
           ) : (<>
             <div className="int-head">
@@ -379,11 +384,11 @@ const CommandCenter: React.FC = () => {
         </Card>
 
         {certsOn && (<>
-        <Card i={12} span="c6" icon="check" title={cat ? `${cat.system} ${cat.version} · credit categories` : 'Credit categories'}
+        <Card k="certs" when={!readOnly || !!cat} i={12} span="c6" icon="check" title={cat ? `${cat.system} ${cat.version} · credit categories` : 'Credit categories'}
           sub={cat ? `${cat.name} · target ${cat.targetLabel} (${cat.needed} ${cat.unit})` : 'Scorecard breakdown for a project'}>
           {!cat ? (
             <EmptyState compact icon={<Icon name="check" size={22} />} title="No scorecard yet" body="Give a project a category breakdown (LEED template included) to see secured vs likely points per category.">
-              <button className="btn btn-out btn-sm" onClick={() => go('data')}>Open Data Manager</button>
+              <button className="btn btn-out btn-sm edit" onClick={() => go('data')}>Open Data Manager</button>
             </EmptyState>
           ) : (<>
             <div style={{ flex: 1, minHeight: 30 + cat.categories!.length * 30 }}><ResponsiveContainer>
@@ -409,10 +414,10 @@ const CommandCenter: React.FC = () => {
           </>)}
         </Card>
 
-        <Card i={13} span="c6" icon="building" title="Certification pipeline" sub="Projects by status">
+        <Card k="certs" when={!readOnly || hub.projects.length > 0} i={13} span="c6" icon="building" title="Certification pipeline" sub="Projects by status">
           {hub.projects.length === 0 ? (
             <EmptyState compact icon={<Icon name="building" size={22} />} title="No projects tracked" body="Add your LEED, IGBC, GRIHA, EDGE, WELL and Fitwel projects to see what needs attention.">
-              <button className="btn btn-pri btn-sm" onClick={() => go('data')}><Icon name="plus" size={14} />Add a project</button>
+              <button className="btn btn-pri btn-sm edit" onClick={() => go('data')}><Icon name="plus" size={14} />Add a project</button>
             </EmptyState>
           ) : (
             <>
@@ -456,12 +461,12 @@ const CommandCenter: React.FC = () => {
           )}
         </Card>
 
-        {hub.projects.length > 0 && (
+        {hub.projects.length > 0 && show('certs') && (
           <section className="card rise c12" style={{ ['--i' as string]: 14 }}>
             <div className="card-hd">
               <span className="card-ic"><Icon name="file" size={17} /></span>
               <div><div className="t">Certification portfolio</div><div className="s">Secured (solid) and likely (striped) against the target marker</div></div>
-              <div className="r"><button className="btn btn-ghost btn-sm" onClick={() => go('data')}>Edit projects<Icon name="arrowR" size={14} /></button></div>
+              <div className="r"><button className="btn btn-ghost btn-sm edit" onClick={() => go('data')}>Edit projects<Icon name="arrowR" size={14} /></button></div>
             </div>
             <div className="tbl-wrap"><table>
               <thead><tr><th>Project</th><th>System</th><th>Target</th><th style={{ minWidth: 220 }}>Progress</th><th>Gap</th><th>Stage</th><th>Next action</th></tr></thead>

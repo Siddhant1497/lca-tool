@@ -14,6 +14,7 @@ import ChartTip from '../ui/ChartTip';
 import { useToast } from '../ui/Toast';
 import { Field, Num, n, okNum } from './data/fields';
 import { STATUS_COL } from './CommandCenter';
+import { useShare } from '../../context/ShareContext';
 
 const TICK = { fontSize: 11, fill: 'var(--muted)' };
 const kfmt = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : String(Math.round(v)));
@@ -27,6 +28,7 @@ const Strategy: React.FC = () => {
   const { dispatch: nav } = useLCA();
   const toast = useToast();
   const S = hub.settings;
+  const { readOnly } = useShare();
   const [focus, setFocus] = useState<SourceKey | null>(null);
   const [add, setAdd] = useState<{ m: Measure; abatement: string; year: string; cost: string; status: LeverStatus } | null>(null);
   const [tried, setTried] = useState(false);
@@ -98,7 +100,7 @@ const Strategy: React.FC = () => {
     <div>
       <div className="ph">
         <div>
-          <div className="ph-eyebrow">Carbon & portfolio</div>
+          <div className="ph-eyebrow">{readOnly ? 'Plan' : 'Carbon & portfolio'}</div>
           <div className="ph-title">Decarbonisation Strategy</div>
           <div className="ph-sub">{S.orgName || 'Your organisation'} · base year {base.year} · latest {latest.year} · net zero {S.netZeroYear}{hub.isSample && <span className="badge b-warn">Sample data</span>}</div>
         </div>
@@ -111,13 +113,13 @@ const Strategy: React.FC = () => {
       <div className="hub-grid">
         <section className="card rise c5" style={{ ['--i' as string]: 0 }}>
           <div className="card-hd"><span className="card-ic"><Icon name="target" size={17} /></span><div><div className="t">1 · Ambition</div><div className="s">Defaults follow SBTi criteria; check the current version</div></div></div>
-          <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+          <fieldset disabled={readOnly} className="plain-fs"><div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
             <Field label="Near-term target year"><input type="number" min={latest.year} max={2050} value={S.targetYear} onChange={(e) => set({ targetYear: Number(e.target.value) || 2030 })} /></Field>
             <Field label="Net-zero year"><input type="number" min={S.targetYear} max={2070} value={S.netZeroYear} onChange={(e) => set({ netZeroYear: Number(e.target.value) || 2050 })} /></Field>
             <Field label="Scope 1+2 rate (%/yr)" hint="4.2 = 1.5°C-aligned"><input type="number" step={0.1} min={0.1} max={20} value={S.annualPct} onChange={(e) => set({ annualPct: Number(e.target.value) || 4.2 })} /></Field>
             <Field label="Scope 3 rate (%/yr)" hint="2.5 = well-below 2°C minimum"><input type="number" step={0.1} min={0.1} max={20} value={S.s3Pct} onChange={(e) => set({ s3Pct: Number(e.target.value) || 2.5 })} /></Field>
             <Field label="Long-term reduction (%)" className="full" hint="Net-zero standard: ≥ 90% cut, residual neutralised by removals"><input type="number" min={50} max={100} value={S.nzPct} onChange={(e) => set({ nzPct: Number(e.target.value) || 90 })} /></Field>
-          </div>
+          </div></fieldset>
           <div className="target-strip">
             <div><span>{S.targetYear} Scope 1+2</span><b>−{fmt(Math.min(S.annualPct * (S.targetYear - base.year), S.nzPct), 0)}%</b></div>
             <div><span>{S.targetYear} Scope 3</span><b>−{fmt(Math.min(S.s3Pct * (S.targetYear - base.year), S.nzPct), 0)}%</b></div>
@@ -195,7 +197,7 @@ const Strategy: React.FC = () => {
                   {m.credits && <div className="measure-credit"><Icon name="check" size={13} />{m.credits}</div>}
                   <div style={{ marginTop: 'auto', paddingTop: 10 }}>
                     {inPlan(m.id) ? <span className="badge b-pass">✓ In plan</span>
-                      : <button className="btn btn-out btn-sm" onClick={() => { setTried(false); setAdd({ m, abatement: '', year: '', cost: '', status: 'Identified' }); }}><Icon name="plus" size={14} />Add to plan</button>}
+                      : <button className="btn btn-out btn-sm edit" onClick={() => { setTried(false); setAdd({ m, abatement: '', year: '', cost: '', status: 'Identified' }); }}><Icon name="plus" size={14} />Add to plan</button>}
                   </div>
                 </div>
               ))}
@@ -203,9 +205,9 @@ const Strategy: React.FC = () => {
           </div>
         </section>
 
-        <section className="card rise c12" style={{ ['--i' as string]: 4 }}>
+        <section className="card rise c12" style={{ ['--i' as string]: 4 }} hidden={readOnly && hub.levers.filter((l) => l.status !== 'Implemented').length === 0}>
           <div className="card-hd"><span className="card-ic"><Icon name="layers" size={17} /></span><div><div className="t">4 · Phased roadmap</div><div className="s">Open levers by delivery year · implemented levers are already in your actuals</div></div>
-            <div className="r"><button className="btn btn-ghost btn-sm" onClick={() => nav({ type: 'SET_PAGE', page: 'data' })}>Edit levers<Icon name="arrowR" size={14} /></button></div></div>
+            <div className="r"><button className="btn btn-ghost btn-sm edit" onClick={() => nav({ type: 'SET_PAGE', page: 'data' })}>Edit levers<Icon name="arrowR" size={14} /></button></div></div>
           {hub.levers.filter((l) => l.status !== 'Implemented').length === 0 ? (
             <EmptyState compact icon={<Icon name="layers" size={22} />} title="Nothing in the plan yet" body="Add measures from the hotspots above. Give each one an abatement estimate and a delivery year to place it on the roadmap." />
           ) : (
@@ -228,7 +230,7 @@ const Strategy: React.FC = () => {
         </section>
 
         <section className="card rise c12" style={{ ['--i' as string]: 5 }}>
-          <div className="card-hd"><span className="card-ic"><Icon name="file" size={17} /></span><div><div className="t">5 · Strategy summary</div><div className="s">Generated from the numbers above. Edit freely before it goes into a report or board paper.</div></div>
+          <div className="card-hd"><span className="card-ic"><Icon name="file" size={17} /></span><div><div className="t">5 · Strategy summary</div><div className="s">{readOnly ? 'Summary of the strategy above.' : 'Generated from the numbers above. Edit freely before it goes into a report or board paper.'}</div></div>
             <div className="r"><button className="btn btn-out btn-sm" onClick={copy}><Icon name="copy" size={14} />Copy</button></div></div>
           <pre className="summary">{summary}</pre>
           <div className="insight"><Icon name="info" size={16} /><span>Residual emissions at net zero (about <b>{fmt(residual)}</b> tCO₂e/yr) are neutralised with permanent carbon removals. Avoidance offsets and RECs do not count as reductions against these targets. Report them separately.</span></div>

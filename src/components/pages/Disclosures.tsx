@@ -6,6 +6,7 @@ import { disclosures, type DStatus } from '../../utils/hub';
 import Icon from '../ui/Icon';
 import EmptyState from '../ui/EmptyState';
 import { useToast } from '../ui/Toast';
+import { useShare } from '../../context/ShareContext';
 
 const BADGE: Record<DStatus, [string, string]> = { ok: ['b-pass', 'Available'], partial: ['b-warn', 'Partial'], missing: ['b-fail', 'Missing'] };
 
@@ -17,7 +18,8 @@ const Disclosures: React.FC = () => {
   const [year, setYear] = useState<number | null>(years.length ? years[years.length - 1] : null);
   const [busy, setBusy] = useState(false);
   const yr = year != null && years.includes(year) ? year : years[years.length - 1];
-  const fw = yr != null ? disclosures(hub.ghg, hub.settings, yr) : [];
+  const { readOnly, config } = useShare();
+  const fw = (yr != null ? disclosures(hub.ghg, hub.settings, yr) : []).filter((f) => !config || config.frameworks.includes(f.id));
   const prevYear = yr != null ? years[years.indexOf(yr) - 1] : undefined;
 
   const copy = async (id: string) => {
@@ -62,7 +64,7 @@ const Disclosures: React.FC = () => {
           <label className="mini">Reporting year
             <select value={yr} onChange={(e) => setYear(Number(e.target.value))}>{[...years].reverse().map((y) => <option key={y}>{y}</option>)}</select></label>
           {canPrint && <button className="btn btn-out" onClick={() => window.print()}><Icon name="file" size={16} />Print / PDF</button>}
-          <button className="btn btn-pri" onClick={xlsx} disabled={busy}><Icon name="sheet" size={16} />{busy ? 'Building…' : 'Export Excel workbook'}</button>
+          <button className="btn btn-pri" onClick={xlsx} disabled={busy} hidden={readOnly}><Icon name="sheet" size={16} />{busy ? 'Building…' : 'Export Excel workbook'}</button>
         </div>
       </div>
 

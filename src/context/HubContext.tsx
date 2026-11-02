@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import type { HubState, GhgYear, HubSettings, CertProject, Lever, EmissionFactor, Activity } from '../types/hub';
 import { SAMPLE } from '../data/hubSample';
 
 export type HubAction =
   | { type: 'LOAD_SAMPLE' } | { type: 'START_EMPTY'; modules?: HubSettings['modules'] } | { type: 'CLEAR' }
   | { type: 'RESTORE'; state: HubState }
+  | { type: 'REPLACE'; state: HubState }
   | { type: 'SET_GHG'; ghg: GhgYear[] }
   | { type: 'UPSERT_GHG'; row: GhgYear; replaceYear?: number }
   | { type: 'DELETE_GHG'; year: number }
@@ -36,9 +37,10 @@ export const reducer = (s: HubState, a: HubAction): HubState => {
   switch (a.type) {
     // Module choices survive switching between sample and own data.
     case 'LOAD_SAMPLE':  return { ...SAMPLE, loaded: true, isSample: true, settings: { ...SAMPLE.settings, modules: s.loaded ? s.settings.modules : SAMPLE.settings.modules } };
-    case 'START_EMPTY':  return { ...EMPTY, loaded: true, settings: { ...EMPTY.settings, modules: a.modules ?? s.settings.modules } };
+    case 'START_EMPTY':  return { ...EMPTY, loaded: true, settings: { ...EMPTY.settings, orgName: s.settings.orgName, modules: a.modules ?? s.settings.modules } };
     case 'CLEAR':        return { ...EMPTY, settings: { ...EMPTY.settings, modules: s.settings.modules } };
     case 'RESTORE':      return migrate({ ...a.state, loaded: true });
+    case 'REPLACE':      return migrate(a.state);
     case 'SET_GHG':      return { ...live, ghg: byYear(a.ghg) };
     case 'UPSERT_GHG': {
       const drop = a.replaceYear ?? a.row.year;
@@ -63,16 +65,64 @@ export const reducer = (s: HubState, a: HubAction): HubState => {
   }
 };
 
-const KEY = 'hub_v1';
-const Ctx = createContext<{ hub: HubState; dispatch: React.Dispatch<HubAction> } | null>(null);
+/* ── Client workspaces ──
+   Each client has its own HubState under its own storage key. The first workspace keeps the
+   original key ('hub_v1') so data saved before workspaces existed simply becomes "My organisation". */
+export interface Client { id: string; name: string; createdAt: string }
+const CLIENTS_KEY = 'hub_clients';
+const keyFor = (id: string) => (id === 'default' ? 'hub_v1' : `hub_v1:${id}`);
+const readJSON = <T,>(k: string): T | null => { try { const s = localStorage.getItem(k); return s ? (JSON.parse(s) as T) : null; } catch { return null; } };
+const writeJSON = (k: string, v: unknown) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ignore */ } };
+const loadState = (id: string): HubState => { const r = readJSON<Partial<HubState>>(keyFor(id)); return r ? migrate(r) : EMPTY; };
 
-export const HubProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [hub, dispatch] = useReducer(reducer, EMPTY, (init) => {
-    try { const s = localStorage.getItem(KEY); if (s) return migrate(JSON.parse(s)); } catch { /* ignore */ }
-    return init;
+interface HubCtx {
+  hub: HubState; dispatch: React.Dispatch<HubAction>;
+  clients: Client[]; client: Client; readOnly: boolean;
+  switchClient: (id: string) => void; addClient: (name: string) => void;
+  renameClient: (id: string, name: string) => void; deleteClient: (id: string) => void;
+}
+const Ctx = createContext<HubCtx | null>(null);
+
+/** `fixed` = read-only shared view: the given state, no workspaces, nothing written to storage. */
+export const HubProvider: React.FC<{ children: React.ReactNode; fixed?: { state: HubState; clientName: string } }> = ({ children, fixed }) => {
+  const [reg, setReg] = useState<{ active: string; list: Client[] }>(() => {
+    if (fixed) return { active: 'shared', list: [{ id: 'shared', name: fixed.clientName, createdAt: '' }] };
+    const r = readJSON<{ active: string; list: Client[] }>(CLIENTS_KEY);
+    if (r?.list?.length) return r.list.some((c) => c.id === r.active) ? r : { ...r, active: r.list[0].id };
+    return { active: 'default', list: [{ id: 'default', name: 'My organisation', createdAt: new Date().toISOString() }] };
   });
-  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(hub)); } catch { /* ignore */ } }, [hub]);
-  return <Ctx.Provider value={{ hub, dispatch }}>{children}</Ctx.Provider>;
+  const active = useRef(reg.active);
+  const [hub, dispatch] = useReducer(reducer, EMPTY, () => (fixed ? migrate({ ...fixed.state, loaded: true }) : loadState(reg.active)));
+
+  useEffect(() => { if (!fixed) writeJSON(keyFor(active.current), hub); }, [hub, fixed]);
+  useEffect(() => { if (!fixed) writeJSON(CLIENTS_KEY, reg); }, [reg, fixed]);
+
+  const switchClient = useCallback((id: string) => {
+    if (fixed || id === active.current) return;
+    writeJSON(keyFor(active.current), hub);
+    active.current = id;
+    setReg((r) => ({ ...r, active: id }));
+    dispatch({ type: 'REPLACE', state: loadState(id) });
+  }, [hub, fixed]);
+  const addClient = useCallback((name: string) => {
+    const id = Math.random().toString(36).slice(2, 10);
+    setReg((r) => ({ ...r, list: [...r.list, { id, name: name.trim() || 'New client', createdAt: new Date().toISOString() }] }));
+    writeJSON(keyFor(active.current), hub);
+    active.current = id;
+    setReg((r) => ({ ...r, active: id }));
+    dispatch({ type: 'REPLACE', state: { ...EMPTY, settings: { ...EMPTY.settings, orgName: name.trim() } } });
+  }, [hub]);
+  const renameClient = useCallback((id: string, name: string) => setReg((r) => ({ ...r, list: r.list.map((c) => (c.id === id ? { ...c, name: name.trim() || c.name } : c)) })), []);
+  const deleteClient = useCallback((id: string) => {
+    if (reg.list.length <= 1) return;
+    try { localStorage.removeItem(keyFor(id)); } catch { /* ignore */ }
+    const rest = reg.list.filter((c) => c.id !== id);
+    if (id === active.current) { active.current = rest[0].id; dispatch({ type: 'REPLACE', state: loadState(rest[0].id) }); }
+    setReg({ active: active.current, list: rest });
+  }, [reg]);
+
+  const client = reg.list.find((c) => c.id === reg.active) ?? reg.list[0];
+  return <Ctx.Provider value={{ hub, dispatch, clients: reg.list, client, readOnly: !!fixed, switchClient, addClient, renameClient, deleteClient }}>{children}</Ctx.Provider>;
 };
 
 export const useHub = () => {

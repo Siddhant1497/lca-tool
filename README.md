@@ -8,8 +8,9 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 
 | Area | What it does |
 |---|---|
+| **Clients** | Separate workspace per client (switcher in the header). **Client sharing** builds a read-only, single-file dashboard per client with only the sections, disclosure frameworks and certification projects you tick; activity data and factor libraries never leave your workspace. See [docs/HOSTING.md](docs/HOSTING.md). |
 | **Workspace** | First-run choice: carbon only, or add certifications and/or building LCA. Switch modules on or off any time; hidden modules disappear from the navigation, the dashboard and the Excel export. |
-| **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors **imported from official publisher files** (CEA, UK DESNZ flat file auto-detected, US EPA, IPCC, GHG Protocol GWPs). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
+| **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors from **bundled official packs**: CEA CO₂ Baseline Database v22.0 (India grid FY 2013-14 to 2025-26), UK DESNZ 2025 and 2026 (all kg CO₂e rows), GHG Protocol GWPs (AR5/AR6), plus import of any other official file (US EPA, IPCC…). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
 | **Decarbonisation Strategy** | SBTi-style near-term and net-zero targets (editable), trajectory to net zero, gap by scope, hotspot analysis with a 27-measure library (each linked to the relevant LEED credit), a Now / Next / Later roadmap, residual-emission planning and an auto-written strategy summary. |
 | **Command Center** | KPIs with sparklines, Scope 1+2 against a linear 1.5 °C-aligned pathway with a "with dated levers" projection, scope split, inventory trend, Scope 3 hotspots by GHG Protocol category, MACC, intensity trends (per m², per FTE, per turnover), LEED category scorecard, certification pipeline with a "needs attention" list, and the full portfolio table. Location/market Scope 2 toggle. |
 | **Data Manager** | Validated editors for inventory years (Scope 2 dual reporting, 15 Scope 3 categories, intensity denominators), certification projects (LEED, IGBC, GRIHA, EDGE, WELL, Fitwel; category scorecards with a LEED v4/v4.1 BD+C template), levers (delivery year, cost per tonne), reporting settings and workspace modules. |
@@ -19,12 +20,16 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 
 Plus: dark mode, a collapsible sidebar (`[`), a **Ctrl/⌘ + K** command palette, skeleton loading, empty states on every panel, a mobile layout, and reduced-motion support.
 
+## Host it
+
+Merge to `main`, then set **Settings → Pages → Source: GitHub Actions**. The app goes live at https://siddhant1497.github.io/lca-tool/ and redeploys on every merge. Details and client-sharing options are in [docs/HOSTING.md](docs/HOSTING.md).
+
 ## Run it
 
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 33 unit tests: pathway, strategy, factor import, reducers
+npm test           # 39 unit tests: pathway, strategy, factor packs, sharing, reducers
 npm run build      # production build in dist/
 ```
 
@@ -35,7 +40,7 @@ npm run build      # production build in dist/
 - **MACC.** Open levers with a cost, cheapest first. Bar width is tCO₂e/yr and height is cost per tonne, with negative values for net savings.
 - **Scope 2.** Location- and market-based figures are stored separately. Years without a market-based figure are flagged when you switch to market-based, rather than silently mixed.
 - **Intensity.** Scope 1+2 per m² (kgCO₂e), per FTE and per turnover. BRSR's per-rupee figure appears when turnover is in a ₹ unit.
-- **Emission factors.** No values are built into the code. Import them from the publisher's own file (or type them in with a citation), so the edition and row reference travel with every number into the Excel export.
+- **Emission factors.** Bundled packs were read from the publishers' documents (CEA v22.0 Annexure-I; DESNZ 2025/2026 flat files; GHG Protocol GWP table v2.0) and keep edition plus table/row references. Nothing is used until you pick and import rows. AR5 blend GWPs computed from the GHG Protocol table reproduce DESNZ's refrigerant factors exactly (unit-tested).
 - **Strategy defaults.** 4.2 %/yr Scope 1+2 (1.5 °C), 2.5 %/yr Scope 3 (well-below 2 °C) and a ≥ 90 % cut by the net-zero year follow SBTi criteria; check them against the current criteria version. Residual emissions are neutralised with removals; offsets are never counted as reductions.
 
 ## Honest limits

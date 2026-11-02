@@ -7,6 +7,7 @@ export const NAV: NavItem[] = [
   { page: 'calculator', icon: 'calc',      label: 'Carbon Calculator' },
   { page: 'strategy',   icon: 'target',    label: 'Decarbonisation Strategy' },
   { page: 'reports',    icon: 'clipboard', label: 'Disclosures' },
+  { page: 'share',      icon: 'link',      label: 'Client sharing' },
   { page: 'data',       icon: 'database',  label: 'Data Manager' },
   { page: 'dashboard',  icon: 'home',      label: 'LCA Overview',   sect: 'Building LCA', module: 'lca' },
   { page: 'project',    icon: 'ruler',     label: 'Project Setup',  module: 'lca' },

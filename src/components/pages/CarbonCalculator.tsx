@@ -13,6 +13,8 @@ import ChartTip from '../ui/ChartTip';
 import { useToast } from '../ui/Toast';
 import { Field, Num, Section, n, okNum } from './data/fields';
 import FactorImport from './data/FactorImport';
+import { PACKS, type OfficialPack } from '../../data/packs';
+import type { Candidate } from '../../utils/factorImport';
 import { ask } from '../../utils/platform';
 
 type FD = { id: string; name: string; unit: string; kgPerUnit: string; scope: 1 | 2 | 3; s2basis: 'location' | 'market'; s3cat: string; source: string; official?: boolean; pack?: string; ref?: string; url?: string };
@@ -30,6 +32,10 @@ const CarbonCalculator: React.FC = () => {
   const [f, setF] = useState<FD | null>(null);
   const [a, setA] = useState<AD | null>(null);
   const [imp, setImp] = useState<string | null | undefined>(undefined);
+  const [preset, setPreset] = useState<{ pack: OfficialPack; rows: Candidate[] } | null>(null);
+  const [loadingPack, setLoadingPack] = useState('');
+  const openPack = async (p: OfficialPack) => { setLoadingPack(p.id); try { setPreset({ pack: p, rows: await p.load() }); } catch (e) { toast(`Could not load pack: ${(e as Error).message}`, 'err'); } setLoadingPack(''); };
+  const imported = (p: OfficialPack) => hub.factors.filter((f) => f.pack?.startsWith(p.publisher) && f.pack.includes(p.edition)).length;
   const [tried, setTried] = useState(false);
   const [fq, setFq] = useState('');
   const fac = (id: string) => hub.factors.find((x) => x.id === id);
@@ -176,7 +182,27 @@ const CarbonCalculator: React.FC = () => {
       </div>
 
       {tab === 'sources' && (<>
-        <div className="notice info"><Icon name="info" size={16} /><span className="grow">SustainHub ships <b>no built-in factor values</b>. Download the current file from the publisher and import it here, so the edition and row reference stay attached to every number in your inventory.</span></div>
+        <Section title="Ready-to-use official packs" sub="Read from the publishers' own documents with edition and table/row references. Nothing is used until you pick rows and import them.">
+          <div className="pack-grid">
+            {PACKS.map((p) => (
+              <div key={p.id} className="pack">
+                <div className="row" style={{ justifyContent: 'space-between', flexWrap: 'nowrap', alignItems: 'flex-start' }}>
+                  <div><div className="cell-main">{p.title}</div><div className="cell-sub">{p.publisher}</div></div>
+                  <span className="badge b-pri">{p.count}</span>
+                </div>
+                <div className="cell-sub" style={{ marginTop: 6 }}><b>{p.edition}</b> · {p.published}</div>
+                <div className="cell-sub" style={{ fontSize: '.78rem', marginTop: 6, lineHeight: 1.45 }}>{p.note}</div>
+                <div className="row" style={{ marginTop: 'auto', paddingTop: 12 }}>
+                  <a className="btn btn-ghost btn-sm" href={p.url} target="_blank" rel="noreferrer">Source ↗</a>
+                  <span className="grow" />
+                  {imported(p) > 0 && <span className="badge b-pass">{imported(p)} in library</span>}
+                  <button className="btn btn-pri btn-sm" disabled={loadingPack === p.id} onClick={() => openPack(p)}><Icon name="search" size={14} />{loadingPack === p.id ? 'Loading…' : 'Browse & import'}</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+        <div className="sec-title" style={{ marginTop: 8 }}>Other official sources (import their files)</div>
         <div className="src-grid">
           {OFFICIAL_SOURCES.map((s, i) => (
             <section key={s.id} className="card rise src-card" style={{ ['--i' as string]: i }}>
@@ -286,6 +312,7 @@ const CarbonCalculator: React.FC = () => {
         )}
       </>)}
 
+      {preset && <FactorImport preset={preset} onClose={() => { setPreset(null); setTab('factors'); }} />}
       {imp !== undefined && <FactorImport sourceId={imp ?? undefined} onClose={() => { setImp(undefined); setTab('factors'); }} />}
       {f && (
         <Modal title={hub.factors.some((x) => x.id === f.id) ? 'Edit factor' : 'Add emission factor'} onClose={() => setF(null)}

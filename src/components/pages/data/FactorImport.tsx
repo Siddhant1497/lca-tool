@@ -4,6 +4,7 @@ import { uid } from '../../../utils/hub';
 import { parseCsv, detectDesnz, desnzCandidates, genericCandidates, guessHeader, type Grid, type Candidate, type Mapping } from '../../../utils/factorImport';
 import { S3_CATEGORIES } from '../../../types/hub';
 import { OFFICIAL_SOURCES } from '../../../data/officialSources';
+import type { OfficialPack } from '../../../data/packs';
 import Modal from '../../ui/Modal';
 import Icon from '../../ui/Icon';
 import { useToast } from '../../ui/Toast';
@@ -13,18 +14,19 @@ const MULT = [{ v: 1, l: 'kgCO₂e per unit' }, { v: 1000, l: 'tCO₂e per unit 
 const SHOW = 300;
 
 /** Import factors from an official dataset file. The user reviews and ticks every row before anything is added. */
-const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ onClose, sourceId }) => {
+/** With `preset`, rows come from a bundled official pack (no file needed); otherwise from the user's file. */
+const FactorImport: React.FC<{ onClose: () => void; sourceId?: string; preset?: { pack: OfficialPack; rows: Candidate[] } }> = ({ onClose, sourceId, preset }) => {
   const { dispatch } = useHub();
   const toast = useToast();
-  const src = OFFICIAL_SOURCES.find((x) => x.id === sourceId);
+  const src = OFFICIAL_SOURCES.find((x) => x.id === (preset?.pack.sourceId ?? sourceId));
   const [sheets, setSheets] = useState<{ sheet: string; data: Grid }[] | null>(null);
   const [si, setSi] = useState(0);
   const [fileName, setFileName] = useState('');
   const [err, setErr] = useState('');
   const [map, setMap] = useState<Mapping | null>(null);
-  const [pack, setPack] = useState(src ? `${src.publisher.split(' (')[0]} · ${src.dataset}` : '');
-  const [edition, setEdition] = useState('');
-  const [url, setUrl] = useState(src?.url ?? '');
+  const [pack, setPack] = useState(preset ? preset.pack.publisher : src ? `${src.publisher.split(' (')[0]} · ${src.dataset}` : '');
+  const [edition, setEdition] = useState(preset ? `${preset.pack.edition}, ${preset.pack.published}` : '');
+  const [url, setUrl] = useState(preset?.pack.url ?? src?.url ?? '');
   const [defScope, setDefScope] = useState<1 | 2 | 3>(src?.id === 'cea' ? 2 : 1);
   const [s2basis, setS2basis] = useState<'location' | 'market'>('location');
   const [s3cat, setS3cat] = useState('');
@@ -35,11 +37,12 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
   const grid = sheets?.[si]?.data ?? [];
   const desnz = useMemo(() => detectDesnz(grid), [grid]);
   const cands = useMemo<Candidate[]>(() => {
+    if (preset) return preset.rows;
     if (!grid.length) return [];
     if (desnz) return desnzCandidates(grid, desnz);
     return map ? genericCandidates(grid, map) : [];
-  }, [grid, desnz, map]);
-  const shown = cands.filter((c) => (!desnz || !co2eOnly || /co2e/i.test(c.gasUnit ?? '')) && (!q || c.name.toLowerCase().includes(q.toLowerCase()) || c.unit.toLowerCase().includes(q.toLowerCase())));
+  }, [grid, desnz, map, preset]);
+  const shown = cands.filter((c) => (!desnz || !co2eOnly || (c.gasUnit ?? '').trim().toLowerCase() === 'kg co2e') && (!q || c.name.toLowerCase().includes(q.toLowerCase()) || c.unit.toLowerCase().includes(q.toLowerCase())));
 
   const load = async (f?: File) => {
     if (!f) return;
@@ -72,7 +75,7 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
     const items = chosen.map((c) => {
       const scope = c.scope ?? defScope;
       return { id: uid(), name: c.name, unit: c.unit, kgPerUnit: c.kgPerUnit, scope,
-        s2basis: scope === 2 ? s2basis : undefined, s3cat: scope === 3 && s3cat ? Number(s3cat) : undefined,
+        s2basis: scope === 2 ? s2basis : undefined, s3cat: scope === 3 ? (s3cat ? Number(s3cat) : c.s3cat) : undefined,
         source: `${pack.trim()} ${edition.trim()} · ${c.ref ?? ''}`.trim(), official: true, pack: `${pack.trim()} ${edition.trim()}`, ref: c.ref, url: url.trim() || undefined };
     });
     dispatch({ type: 'ADD_FACTORS', items });
@@ -87,9 +90,10 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
         <button className="btn btn-out" onClick={onClose}>Cancel</button>
         <button className="btn btn-pri" disabled={!ready} onClick={doImport} title={!pack || !edition ? 'Enter dataset and edition' : ''}><Icon name="download" size={15} />Import {sel.size || ''} factor{sel.size === 1 ? '' : 's'}</button>
       </>}>
-      {src && <div className="notice info"><Icon name="info" size={16} /><span className="grow"><b>{src.publisher}.</b> {src.howTo} <a href={src.url} target="_blank" rel="noreferrer">Open publisher site ↗</a></span></div>}
+      {preset && <div className="notice info"><Icon name="check" size={16} /><span className="grow"><b>{preset.pack.title}</b> — {preset.pack.edition}, {preset.pack.published}. {preset.pack.note} Values are exactly as published; tick the rows you will use.{preset.pack.licence ? ` ${preset.pack.licence}` : ''}</span></div>}
+      {!preset && src && <div className="notice info"><Icon name="info" size={16} /><span className="grow"><b>{src.publisher}.</b> {src.howTo} <a href={src.url} target="_blank" rel="noreferrer">Open publisher site ↗</a></span></div>}
 
-      <div className="row" style={{ marginBottom: 14 }}>
+      {!preset && <div className="row" style={{ marginBottom: 14 }}>
         <label className="btn btn-pri" style={{ cursor: 'pointer' }}>
           <Icon name="upload" size={15} />{fileName ? 'Choose another file' : 'Choose .xlsx or .csv'}
           <input type="file" accept=".xlsx,.csv,text/csv" hidden data-testid="factor-file" onChange={(e) => load(e.target.files?.[0])} />
@@ -100,17 +104,17 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
             {sheets.map((s, i) => <option key={i} value={i}>{s.sheet}</option>)}</select></label>
         )}
         {desnz && <span className="badge b-pass">DESNZ flat file recognised</span>}
-      </div>
+      </div>}
       {err && <div className="notice err-n" role="alert"><Icon name="alert" size={16} /><span>{err}</span></div>}
 
-      {sheets && (<>
+      {(sheets || preset) && (<>
         <div className="form-grid">
           <Field label="Dataset / publisher" hint="e.g. CEA CO₂ Baseline Database, UK DESNZ conversion factors"><input value={pack} onChange={(e) => setPack(e.target.value)} className={!pack.trim() ? 'invalid' : ''} /></Field>
           <Field label="Edition / version / year" hint="Must match your reporting period"><input value={edition} onChange={(e) => setEdition(e.target.value)} placeholder="e.g. 2025 or v21.0" className={!edition.trim() ? 'invalid' : ''} /></Field>
           <Field label="Source URL"><input value={url} onChange={(e) => setUrl(e.target.value)} /></Field>
           <Field label="Scope for rows without one"><select value={defScope} onChange={(e) => setDefScope(Number(e.target.value) as 1 | 2 | 3)}><option value={1}>Scope 1</option><option value={2}>Scope 2</option><option value={3}>Scope 3</option></select></Field>
           <Field label="Scope 2 basis"><select value={s2basis} onChange={(e) => setS2basis(e.target.value as 'location' | 'market')}><option value="location">Location-based</option><option value="market">Market-based</option></select></Field>
-          <Field label="Scope 3 category for imported rows"><select value={s3cat} onChange={(e) => setS3cat(e.target.value)}><option value="">Not specified</option>{S3_CATEGORIES.map((c) => <option key={c.n} value={c.n}>{c.n}. {c.name}</option>)}</select></Field>
+          <Field label="Scope 3 category for imported rows" hint={preset ? 'Blank keeps each row\'s own category' : undefined}><select value={s3cat} onChange={(e) => setS3cat(e.target.value)}><option value="">{preset ? 'As tagged in pack' : 'Not specified'}</option>{S3_CATEGORIES.map((c) => <option key={c.n} value={c.n}>{c.n}. {c.name}</option>)}</select></Field>
         </div>
 
         {!desnz && map && (<>
@@ -140,7 +144,7 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
             {shown.slice(0, SHOW).map((c) => (
               <tr key={c.key} onClick={() => toggle(c.key)} style={{ cursor: 'pointer', background: sel.has(c.key) ? 'var(--pri-lt)' : undefined }}>
                 <td><input type="checkbox" checked={sel.has(c.key)} readOnly aria-label={`Select ${c.name}`} /></td>
-                <td style={{ fontSize: '.82rem' }}>{c.name}</td><td className="cell-sub">{c.unit}{c.gasUnit && !/co2e/i.test(c.gasUnit) ? ` (${c.gasUnit})` : ''}</td>
+                <td style={{ fontSize: '.82rem' }}>{c.name}</td><td className="cell-sub">{c.unit}{c.gasUnit && c.gasUnit.trim().toLowerCase() !== 'kg co2e' ? ` (${c.gasUnit})` : ''}</td>
                 <td className="num mono">{c.kgPerUnit.toLocaleString('en-US', { maximumSignificantDigits: 8 })}</td>
                 <td className="cell-sub">{c.scope ? `S${c.scope}` : `S${defScope}*`}</td><td className="cell-sub mono">{c.ref}</td>
               </tr>))}
@@ -148,7 +152,7 @@ const FactorImport: React.FC<{ onClose: () => void; sourceId?: string }> = ({ on
           </tbody>
         </table></div>
         {shown.length > SHOW && <div className="hint" style={{ marginTop: 6 }}>Showing the first {SHOW} of {shown.length.toLocaleString()} matches; refine the search to see more.</div>}
-        <div className="hint" style={{ marginTop: 6 }}>Values are read exactly from your file. Each imported factor records dataset, edition and row so it can be traced, and editing a value later removes its "official" tag.</div>
+        <div className="hint" style={{ marginTop: 6 }}>Values are exactly as {preset ? 'published in the source document' : 'in your file'}. Each imported factor records dataset, edition and row so it can be traced, and editing a value later removes its "official" tag.</div>
       </>)}
     </Modal>
   );
