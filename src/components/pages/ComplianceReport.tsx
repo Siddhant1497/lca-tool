@@ -8,7 +8,7 @@ const STATUS_BADGE: Record<RequirementResult['status'], string> = { pass: 'b-pas
 
 const ScoreBar: React.FC<{ score: number; max: number; color: string }> = ({ score, max, color }) => (
   <div className="row" style={{ gap:'6px', marginTop:'4px' }}>
-    <div style={{ flex:1, height:'8px', background:'#E2E8F0', borderRadius:'4px', overflow:'hidden' }}>
+    <div style={{ flex:1, height:'8px', background:'var(--border)', borderRadius:'4px', overflow:'hidden' }}>
       <div style={{ height:'100%', background:color, width:`${(score/max)*100}%`, borderRadius:'4px', transition:'width .4s' }} />
     </div>
     <span style={{ fontSize:'.83rem', fontWeight:700, color, minWidth:'38px' }}>{score}/{max}</span>
@@ -33,9 +33,9 @@ const CompCard: React.FC<{ r: ComplianceResult }> = ({ r }) => {
         <div style={{ textAlign:'right' }}>
           {r.maxScore !== undefined && (
             <>
-              <div><span style={{ fontWeight:700, fontSize:'1.15rem', color:r.compliant?'#065F46':'#991B1B' }}>{r.score??0}</span>
+              <div><span style={{ fontWeight:700, fontSize:'1.15rem', color:r.compliant?'var(--acc)':'var(--err)' }}>{r.score??0}</span>
                 <span className="muted" style={{ fontSize:'.82rem' }}>/{r.maxScore} pts</span></div>
-              <ScoreBar score={r.score??0} max={r.maxScore} color={r.compliant?'#059669':'#DC2626'} />
+              <ScoreBar score={r.score??0} max={r.maxScore} color={r.compliant?'var(--acc)':'var(--err)'} />
             </>
           )}
         </div>
@@ -99,11 +99,11 @@ const ComplianceReport: React.FC = () => {
 
       <div className="kpi-grid" style={{ marginBottom:'20px' }}>
         {[
-          { lbl: 'Standards Met', val: `${pass}/${complianceResults.length}`, sub: 'fully compliant', col: pass>0?'#059669':'#DC2626' },
-          { lbl: 'LEED v4 MRc1', val: `${leedV4?.creditPoints??0}/3 pts`, sub: leedV4?.summary??'—', col: leedV4?.compliant?'#059669':'#DC2626' },
-          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/5 pts`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'#059669':'#DC2626' },
-          { lbl: 'BREEAM Mat 01', val: `${breeam?.creditPoints??0}/6 pts`, sub: breeam?.summary??'—', col: breeam?.compliant?'#7C3AED':'#DC2626' },
-          { lbl: 'EN 15978', val: en?.compliant?'Compliant':'Action Req.', sub: en?.summary??'—', col: en?.compliant?'#059669':'#DC2626' },
+          { lbl: 'Standards Met', val: `${pass}/${complianceResults.length}`, sub: 'fully compliant', col: pass>0?'var(--acc)':'var(--err)' },
+          { lbl: 'LEED v4 MRc1', val: `${leedV4?.creditPoints??0}/3 pts`, sub: leedV4?.summary??'—', col: leedV4?.compliant?'var(--acc)':'var(--err)' },
+          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/5 pts`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'var(--acc)':'var(--err)' },
+          { lbl: 'BREEAM Mat 01', val: `${breeam?.creditPoints??0}/6 pts`, sub: breeam?.summary??'—', col: breeam?.compliant?'var(--purple)':'var(--err)' },
+          { lbl: 'EN 15978', val: en?.compliant?'Compliant':'Action Req.', sub: en?.summary??'—', col: en?.compliant?'var(--acc)':'var(--err)' },
         ].map((k) => (
           <div className="kpi" key={k.lbl}><div className="kpi-lbl">{k.lbl}</div><div className="kpi-val" style={{ fontSize:'1.1rem', color:k.col }}>{k.val}</div><div className="kpi-sub">{k.sub}</div></div>
         ))}

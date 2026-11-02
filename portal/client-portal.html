@@ -1,0 +1,351 @@
+<title>SustainHub Client Portal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky client bar; summary tiles, then pathway + roadmap, certifications, documentation tracker, and the two-way requests board. One column on phones. */
+:root {
+  --bg: #f3f6f5; --surf: #ffffff; --surf2: #f8faf9; --line: #e2e8e6; --line2: #cdd7d4;
+  --fg: #0e1a17; --muted: #5a6b66; --subtle: #87968f;
+  --pri: #0f766e; --pri-lt: #e3f3f0; --pri-ink: #ffffff;
+  --ok: #15803d; --ok-lt: #dcfce7; --warn: #b45309; --warn-lt: #fef3c7; --bad: #dc2626; --bad-lt: #fee2e2; --info: #2563eb; --info-lt: #dbeafe;
+  --s12: #2563eb; --s3: #8b5cf6; --tgt: #b45309;
+  --ui: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0a100e; --surf: #111916; --surf2: #151f1c; --line: #22302b; --line2: #2f403a; --fg: #e8f0ed; --muted: #9baea7; --subtle: #6f837c;
+  --pri: #2dd4bf; --pri-lt: rgba(45,212,191,.12); --pri-ink: #04201c;
+  --ok: #4ade80; --ok-lt: rgba(74,222,128,.13); --warn: #fbbf24; --warn-lt: rgba(251,191,36,.13); --bad: #f87171; --bad-lt: rgba(248,113,113,.14); --info: #60a5fa; --info-lt: rgba(96,165,250,.14);
+  --s12: #60a5fa; --s3: #a78bfa; --tgt: #fbbf24; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0a100e; --surf: #111916; --surf2: #151f1c; --line: #22302b; --line2: #2f403a; --fg: #e8f0ed; --muted: #9baea7; --subtle: #6f837c;
+  --pri: #2dd4bf; --pri-lt: rgba(45,212,191,.12); --pri-ink: #04201c;
+  --ok: #4ade80; --ok-lt: rgba(74,222,128,.13); --warn: #fbbf24; --warn-lt: rgba(251,191,36,.13); --bad: #f87171; --bad-lt: rgba(248,113,113,.14); --info: #60a5fa; --info-lt: rgba(96,165,250,.14);
+  --s12: #60a5fa; --s3: #a78bfa; --tgt: #fbbf24; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 14px/1.55 var(--ui); -webkit-font-smoothing: antialiased }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surf) }
+button, input, select, textarea { font: inherit; color: inherit }
+:focus-visible { outline: 2px solid var(--pri); outline-offset: 2px; border-radius: 4px }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surf); border-bottom: 1px solid var(--line); padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.bar-in, .wrap { max-width: 1280px; margin: 0 auto }
+.bar-in { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px }
+.mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #14b8a6, #0f766e 55%, #065f46); flex: none }
+.who { min-width: 0 } .who b { display: block; font-size: 1.05rem; letter-spacing: -.01em } .who span { font-size: .8rem; color: var(--muted) }
+.live { display: inline-flex; align-items: center; gap: 7px; font-size: .78rem; color: var(--muted); padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surf2) }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--subtle) }
+.live.on .pulse { background: var(--ok); box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); animation: pulse 2s infinite }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px transparent } }
+.spacer { flex: 1 }
+.wrap { padding-block: 22px 60px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px }
+.c7 { grid-column: span 7 } .c5 { grid-column: span 5 } .c12 { grid-column: 1 / -1 }
+@media (max-width: 1000px) { .c7, .c5 { grid-column: 1 / -1 } }
+.card { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; min-width: 0 }
+.hd { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 14px }
+.hd h2 { font-size: 1rem; margin: 0; letter-spacing: -.01em; text-wrap: balance }
+.hd .s { font-size: .78rem; color: var(--muted) }
+.hd .r { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px }
+.tile { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px }
+.tile .k { font-size: .74rem; font-weight: 600; color: var(--muted) }
+.tile .v { font-size: 1.7rem; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1.15; margin-top: 4px }
+.tile .v small { font-size: .78rem; font-weight: 500; color: var(--muted); margin-left: 4px; letter-spacing: 0 }
+.tile .f { font-size: .76rem; color: var(--muted); margin-top: 4px }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; white-space: nowrap; line-height: 1.6 }
+.p-ok { background: var(--ok-lt); color: var(--ok) } .p-warn { background: var(--warn-lt); color: var(--warn) } .p-bad { background: var(--bad-lt); color: var(--bad) }
+.p-info { background: var(--info-lt); color: var(--info) } .p-pri { background: var(--pri-lt); color: var(--pri) } .p-na { background: var(--surf2); color: var(--muted); border: 1px solid var(--line) }
+.chart { width: 100%; height: auto; display: block }
+.chart text { fill: var(--muted); font: 11px var(--ui) }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .76rem; color: var(--muted); margin-top: 8px }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px }
+.road { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px }
+.col { background: var(--surf2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 7px; align-content: start }
+.col h3 { margin: 0; font-size: .82rem; display: flex; justify-content: space-between; gap: 6px }
+.col h3 span { color: var(--pri); font-variant-numeric: tabular-nums }
+.it { background: var(--surf); border: 1px solid var(--line); border-left: 3px solid var(--line2); border-radius: 6px; padding: 7px 9px; font-size: .8rem }
+.it small { display: block; color: var(--muted); font-size: .72rem }
+.it.Implemented, .it.Done { border-left-color: var(--ok) } .it.In { border-left-color: var(--info) } .it.Planned { border-left-color: var(--warn) }
+.meter { position: relative; height: 8px; border-radius: 999px; background: var(--surf2); box-shadow: inset 0 0 0 1px var(--line); margin: 6px 0 4px }
+.meter i { position: absolute; top: 0; height: 100%; border-radius: 999px 0 0 999px }
+.meter .sec { background: var(--ok) } .meter .lik { background: var(--warn); opacity: .6; border-radius: 0 }
+.meter .need { position: absolute; top: -4px; width: 2px; height: 16px; background: var(--fg) }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px }
+table { width: 100%; border-collapse: collapse; font-size: .84rem }
+th { text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); background: var(--surf2); padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top }
+tr:last-child td { border-bottom: 0 }
+code { font-family: var(--mono); font-size: .76rem; color: var(--pri); white-space: nowrap }
+.bar8 { display: flex; height: 10px; border-radius: 999px; overflow: hidden; gap: 1px; background: var(--surf2) }
+.grp { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); margin: 14px 0 6px }
+.req { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; padding: 12px 0; border-bottom: 1px solid var(--line) }
+.req:last-child { border-bottom: 0 }
+.req h4 { margin: 0; font-size: .9rem } .req .meta { font-size: .76rem; color: var(--muted) }
+.req .note { font-size: .82rem; margin-top: 6px; padding: 7px 10px; border-radius: 8px; background: var(--surf2); border: 1px solid var(--line) }
+.req .acts { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; justify-content: flex-end }
+.req .reply { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap }
+.req .reply textarea { flex: 1 1 260px; min-height: 38px; resize: vertical }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 8px; border: 1px solid var(--line); background: var(--surf); font-weight: 600; font-size: .82rem; cursor: pointer }
+.btn:hover:not(:disabled) { border-color: var(--line2); background: var(--surf2) }
+.btn.pri { background: var(--pri); color: var(--pri-ink); border-color: var(--pri) }
+.btn.sm { padding: 4px 10px; font-size: .76rem }
+.btn:disabled { opacity: .5; cursor: not-allowed }
+input, select, textarea { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--surf) }
+.form { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px }
+@media (max-width: 700px) { .form { grid-template-columns: 1fr } .req { grid-template-columns: 1fr } .req .acts { justify-content: flex-start } }
+.owner { border: 1px dashed var(--pri); background: var(--pri-lt) }
+.owner .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.empty { text-align: center; padding: 34px 16px; color: var(--muted) }
+.empty b { display: block; color: var(--fg); font-size: 1.02rem; margin-bottom: 6px }
+.note-banner { padding: 10px 14px; border-radius: 10px; background: var(--info-lt); border: 1px solid color-mix(in srgb, var(--info) 30%, transparent); font-size: .85rem; white-space: pre-wrap }
+.sample { background: var(--warn-lt); border-color: color-mix(in srgb, var(--warn) 30%, transparent) }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--fg); color: var(--bg); padding: 9px 14px; border-radius: 10px; font-size: .85rem; z-index: 20; max-width: calc(100% - 32px) }
+.foot { text-align: center; font-size: .74rem; color: var(--subtle) }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
+@media (prefers-reduced-motion: reduce) { .live.on .pulse { animation: none } }
+</style>
+
+<header class="bar"><div class="bar-in">
+  <span class="mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19 13 11"/></svg></span>
+  <div class="who"><b id="client">Client portal</b><span id="sub">Sustainability progress</span></div>
+  <span class="spacer"></span>
+  <span class="live" id="live"><span class="pulse"></span><span id="liveTxt">Connecting…</span></span>
+</div></header>
+
+<main class="wrap" id="app">
+  <section class="card owner" id="ownerBox" hidden>
+    <div class="hd"><h2>Consultant controls</h2><span class="s">Only you see this box. Clients see the dashboard below update live.</span></div>
+    <div class="row">
+      <label class="btn pri" for="file">Import update from SustainHub (.json)</label>
+      <input id="file" type="file" accept=".json,application/json" class="sr">
+      <label style="display:flex;gap:6px;align-items:center;font-size:.82rem"><input type="checkbox" id="autoReq" checked> Add a document request for each credit marked "Awaiting client"</label>
+    </div>
+    <div style="font-size:.78rem;color:var(--muted);margin-top:8px">In SustainHub: Client sharing → choose sections → Download portal update. Invite the client from this page's Share menu: Contributor lets them answer requests, Viewer is read-only.</div>
+  </section>
+
+  <section class="card" id="waiting">
+    <div class="empty"><b id="waitTitle">Loading the latest update…</b><span id="waitBody">This page shows your project's carbon and certification progress as soon as it is published.</span></div>
+  </section>
+
+  <div id="note" hidden></div>
+  <div class="tiles" id="tiles" hidden></div>
+
+  <div class="grid">
+    <section class="card c7" id="pathCard" hidden>
+      <div class="hd"><h2>Trajectory to net zero</h2><span class="s" id="pathSub"></span></div>
+      <div id="path"></div>
+      <div class="legend"><span><i class="sw" style="background:var(--s12)"></i>Scope 1+2 actual</span><span><i class="sw" style="background:var(--s3)"></i>Scope 3 actual</span><span>dashed = target path</span></div>
+    </section>
+    <section class="card c5" id="roadCard" hidden>
+      <div class="hd"><h2>Decarbonisation roadmap</h2><span class="s">Measures by delivery window</span></div>
+      <div class="road" id="road"></div>
+    </section>
+  </div>
+
+  <section class="card" id="certCard" hidden>
+    <div class="hd"><h2>Certification status</h2><span class="s">Secured (solid) and likely (light) against the target marker</span></div>
+    <div id="certs"></div>
+  </section>
+
+  <section class="card" id="docsCard" hidden>
+    <div class="hd"><h2>Documentation progress</h2><span class="s">Credit-by-credit status of the submission</span></div>
+    <div id="docs"></div>
+  </section>
+
+  <section class="card" id="reqCard">
+    <div class="hd"><h2>Documents we need from you</h2><span class="s" id="reqSub">Mark an item as sent and add a note; your consultant sees it straight away.</span>
+      <span class="r" id="reqCount"></span></div>
+    <form class="form" id="reqForm" hidden>
+      <input id="rqTitle" placeholder="What is needed, e.g. Approved site plan (SSP MR1)" required aria-label="Request">
+      <input id="rqRef" placeholder="Credit / ref (optional)" aria-label="Reference">
+      <input id="rqDue" type="date" aria-label="Due date">
+      <button class="btn pri" type="submit">Add request</button>
+    </form>
+    <div id="reqs"><div class="empty"><b>No open requests</b>Requests for drawings, invoices or reports will appear here.</div></div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</main>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (n, d = 0) => (n == null || !isFinite(n) ? '—' : Number(n).toLocaleString('en-IN', { maximumFractionDigits: d, minimumFractionDigits: d }));
+  const date = (s) => (s ? new Date(s.length <= 10 ? s + 'T00:00' : s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+  const ago = (s) => { const m = Math.round((Date.now() - new Date(s)) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : date(s); };
+  let toastT; const toast = (m) => { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 3200); };
+  const TONE = { 'Not started': 'p-na', Drafting: 'p-warn', 'Internal review': 'p-info', 'Awaiting client': 'p-bad', 'Ready to submit': 'p-pri', Submitted: 'p-info', 'Reviewer query': 'p-bad', Approved: 'p-ok' };
+  const SEG = { 'p-na': 'var(--line2)', 'p-warn': 'var(--warn)', 'p-info': 'var(--info)', 'p-bad': 'var(--bad)', 'p-pri': 'var(--pri)', 'p-ok': 'var(--ok)' };
+  const RQ = { Open: 'p-warn', Sent: 'p-info', Accepted: 'p-ok', 'Needs changes': 'p-bad' };
+
+  let db = null, isEditor = false, canWrite = null, update = null, requests = [];
+
+  /* ── rendering ── */
+  function render() {
+    const u = update;
+    $('waiting').hidden = !!u;
+    if (!u) return;
+    $('client').textContent = u.client || 'Client portal';
+    $('sub').textContent = [u.title, u.preparedBy ? 'by ' + u.preparedBy : ''].filter(Boolean).join(' · ');
+    document.title = 'Portal – ' + (u.client || 'Client');
+    $('foot').textContent = `Last update ${ago(u.generatedAt)} (${date(u.generatedAt)}) · figures reflect the data available at that time${u.isSample ? ' · SAMPLE DATA, NOT REAL' : ''}`;
+    const note = $('note');
+    note.hidden = !(u.note || u.isSample);
+    note.className = 'note-banner' + (u.isSample ? ' sample' : '');
+    note.textContent = (u.isSample ? 'This portal is showing sample data. ' : '') + (u.note || '');
+
+    const k = u.kpis; $('tiles').hidden = !k;
+    if (k) {
+      const down = k.s12VsBasePct <= 0, gap = k.gapS12 > 0;
+      $('tiles').innerHTML = [
+        ['Total emissions ' + k.year, fmt(k.total), 'tCO₂e', `Scope 1 ${fmt(k.s1)} · Scope 2 ${fmt(k.s2)} · Scope 3 ${fmt(k.s3)}`],
+        ['Scope 1+2 vs ' + k.baseYear, `${down ? '−' : '+'}${fmt(Math.abs(k.s12VsBasePct), 1)}%`, '', `<span class="pill ${down ? 'p-ok' : 'p-bad'}">${down ? 'Lower' : 'Higher'} than base year</span>`],
+        [`${k.targetYear} target (Scope 1+2)`, fmt(k.targetS12), 'tCO₂e', gap ? `<span class="pill p-warn">${fmt(k.gapS12)} t still to cut</span>` : '<span class="pill p-ok">On or below target</span>'],
+        ['Planned measures cover', fmt(Math.min(k.leverCoveragePct, 999)) + '%', '', `of the remaining gap · net zero ${k.netZeroYear}`],
+      ].map(([a, b, c, d]) => `<div class="tile"><div class="k">${esc(a)}</div><div class="v">${esc(b)}${c ? `<small>${esc(c)}</small>` : ''}</div><div class="f">${d}</div></div>`).join('');
+    }
+
+    $('pathCard').hidden = !u.trajectory?.length;
+    if (u.trajectory?.length) { $('pathSub').textContent = k ? `tCO₂e · Scope 2 ${k.s2Method}-based` : 'tCO₂e'; $('path').innerHTML = chart(u.trajectory); }
+
+    $('roadCard').hidden = !u.roadmap?.length;
+    if (u.roadmap?.length) {
+      const phases = ['Done', 'Now', 'Next', 'Later', 'Unscheduled'];
+      $('road').innerHTML = phases.map((p) => {
+        const items = u.roadmap.filter((r) => r.phase === p); if (!items.length) return '';
+        return `<div class="col"><h3>${p === 'Done' ? 'Implemented' : esc(p)}<span>${fmt(items.reduce((a, r) => a + r.abatement, 0))} t/yr</span></h3>${items.map((r) =>
+          `<div class="it ${esc(r.status.split(' ')[0])}">${esc(r.name)}<small>Scope ${r.scope} · ${fmt(r.abatement)} t/yr${r.year ? ' · ' + r.year : ''} · ${esc(r.status)}</small></div>`).join('')}</div>`;
+      }).join('');
+    }
+
+    $('certCard').hidden = !u.certs?.length;
+    if (u.certs?.length) {
+      $('certs').innerHTML = `<div class="tbl"><table><thead><tr><th>Project</th><th>System</th><th>Target</th><th style="min-width:200px">Progress</th><th>Stage</th><th>Next step</th></tr></thead><tbody>${u.certs.map((c) => {
+        const sec = Math.min((c.secured / c.max) * 100, 100), lik = Math.min((c.likely / c.max) * 100, 100 - sec), need = Math.min((c.needed / c.max) * 100, 100);
+        const st = c.secured >= c.needed ? '<span class="pill p-ok">Target met</span>' : c.secured + c.likely < c.needed && c.stage !== 'Certified' ? '<span class="pill p-bad">At risk</span>' : '<span class="pill p-warn">On track</span>';
+        return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.system)}</td><td>${esc(c.target)} (${fmt(c.needed)}${c.unit === '%' ? '%' : ' pts'})</td>
+          <td><div class="meter"><i class="sec" style="width:${sec}%"></i><i class="lik" style="left:${sec}%;width:${lik}%"></i><span class="need" style="left:${need}%"></span></div><span style="font-size:.74rem;color:var(--muted)">${fmt(c.secured)} secured · ${fmt(c.likely)} likely · ${st}</span></td>
+          <td><span class="pill p-na">${esc(c.stage)}</span></td><td style="font-size:.82rem">${esc(c.next)}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+    }
+
+    $('docsCard').hidden = !u.docs?.length;
+    if (u.docs?.length) {
+      $('docs').innerHTML = u.docs.map((d) => {
+        const statuses = Object.keys(d.byStatus).filter((s) => d.byStatus[s]);
+        const waiting = d.credits.filter((c) => c.status === 'Awaiting client');
+        const secs = [...new Set(d.credits.map((c) => c.section))];
+        return `<div style="margin-bottom:18px"><div class="hd" style="margin-bottom:8px"><h2 style="font-size:.95rem">${esc(d.name)}</h2><span class="s">${esc(d.system)}${d.totals.level ? ' · target ' + esc(d.totals.level) : ''}</span><span class="r"><span class="pill p-pri">${d.pctReady}% ready</span></span></div>
+          <div class="bar8">${statuses.map((s) => `<span title="${esc(s)}: ${d.byStatus[s]}" style="flex:${d.byStatus[s]};background:${SEG[TONE[s]]}"></span>`).join('')}</div>
+          <div class="legend">${statuses.map((s) => `<span><span class="pill ${TONE[s]}">${d.byStatus[s]}</span> ${esc(s)}</span>`).join('')}</div>
+          ${waiting.length ? `<div class="note-banner sample" style="margin-top:10px"><b>${waiting.length} credit${waiting.length > 1 ? 's are' : ' is'} waiting on your team:</b> ${waiting.map((c) => esc(c.id + ' ' + c.name) + (c.due ? ' (due ' + date(c.due) + ')' : '')).join(' · ')}</div>` : ''}
+          ${secs.map((sec) => `<div class="grp">${esc(sec)}</div><div class="tbl"><table><thead><tr><th>Credit</th><th>Name</th><th>Points</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead><tbody>${d.credits.filter((c) => c.section === sec).map((c) =>
+            `<tr><td><code>${esc(c.id)}</code></td><td>${esc(c.name)}</td><td style="color:var(--muted)">${esc(c.pts)}</td><td style="color:var(--muted)">${esc(c.owner || '—')}</td><td style="color:var(--muted)">${c.due ? date(c.due) : '—'}</td><td><span class="pill ${TONE[c.status] || 'p-na'}">${esc(c.status)}</span></td></tr>`).join('')}</tbody></table></div>`).join('')}</div>`;
+      }).join('');
+    }
+    renderRequests();
+  }
+
+  function chart(t) {
+    const W = 640, H = 260, L = 46, R = 12, T = 14, B = 26;
+    const ys = t.flatMap((p) => [p.s12, p.s3, p.s12t, p.s3t]).filter((v) => v != null);
+    const max = Math.max(1, ...ys) * 1.08, x0 = t[0].year, x1 = t[t.length - 1].year || x0 + 1;
+    const X = (y) => L + ((y - x0) / Math.max(x1 - x0, 1)) * (W - L - R), Y = (v) => T + (1 - v / max) * (H - T - B);
+    const step = Math.pow(10, Math.floor(Math.log10(max / 4))) * ([1, 2, 5, 10].find((m) => (max / 4) / Math.pow(10, Math.floor(Math.log10(max / 4))) <= m) || 10);
+    let g = ''; for (let v = 0; v <= max; v += step) g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="${v ? '3 3' : ''}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v >= 1000 ? +(v / 1000).toFixed(1) + 'k' : v}</text>`;
+    const every = Math.max(1, Math.ceil((x1 - x0) / 7));
+    for (let y = x0; y <= x1; y += every) g += `<text x="${X(y)}" y="${H - 8}" text-anchor="middle">${y}</text>`;
+    const line = (key) => { let d = '', pen = false; for (const p of t) { if (p[key] == null) { pen = false; continue; } d += (pen ? 'L' : 'M') + X(p.year).toFixed(1) + ' ' + Y(p[key]).toFixed(1) + ' '; pen = true; } return d; };
+    const dots = (key, c) => t.filter((p) => p[key] != null).map((p) => `<circle cx="${X(p.year)}" cy="${Y(p[key])}" r="3" fill="${c}"/>`).join('');
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Emissions trajectory from ${x0} to ${x1}">${g}
+      <path d="${line('s3t')}" fill="none" stroke="var(--s3)" stroke-width="1.6" stroke-dasharray="6 5"/><path d="${line('s12t')}" fill="none" stroke="var(--s12)" stroke-width="1.6" stroke-dasharray="6 5"/>
+      <path d="${line('s3')}" fill="none" stroke="var(--s3)" stroke-width="2.5"/><path d="${line('s12')}" fill="none" stroke="var(--s12)" stroke-width="2.5"/>${dots('s3', 'var(--s3)')}${dots('s12', 'var(--s12)')}</svg>`;
+  }
+
+  function renderRequests() {
+    const open = requests.filter((r) => r.status !== 'Accepted');
+    $('reqCount').innerHTML = requests.length ? `<span class="pill ${open.length ? 'p-warn' : 'p-ok'}">${open.length} open</span><span class="pill p-na">${requests.length - open.length} done</span>` : '';
+    $('reqForm').hidden = !isEditor;
+    if (!requests.length) { $('reqs').innerHTML = `<div class="empty"><b>No requests at the moment</b>${isEditor ? 'Add one above, or import an update with credits marked "Awaiting client".' : 'When your consultant needs drawings, invoices or reports, they will appear here.'}</div>`; return; }
+    const order = { Open: 0, 'Needs changes': 1, Sent: 2, Accepted: 3 };
+    const can = db && canWrite !== false;
+    $('reqs').innerHTML = [...requests].sort((a, b) => (order[a.status] - order[b.status]) || String(a.due || '9').localeCompare(String(b.due || '9'))).map((r) => {
+      const overdue = r.due && r.status !== 'Accepted' && new Date(r.due + 'T23:59') < new Date();
+      return `<div class="req" data-id="${esc(r.id)}"><div><h4>${esc(r.title)}</h4><div class="meta">${r.ref ? `<code>${esc(r.ref)}</code> · ` : ''}${r.due ? `due ${date(r.due)}${overdue ? ' · <span class="pill p-bad">Overdue</span>' : ''} · ` : ''}updated ${ago(r.updatedAt || r.createdAt)}</div>
+        ${r.clientNote ? `<div class="note"><b>Client:</b> ${esc(r.clientNote)}</div>` : ''}${r.consultantNote ? `<div class="note"><b>Consultant:</b> ${esc(r.consultantNote)}</div>` : ''}</div>
+        <div class="acts"><span class="pill ${RQ[r.status] || 'p-na'}">${esc(r.status)}</span>
+          ${isEditor ? `<button class="btn sm" data-act="Accepted">Accept</button><button class="btn sm" data-act="Needs changes">Needs changes</button><button class="btn sm" data-act="delete" aria-label="Remove request">Remove</button>` : ''}</div>
+        ${can && r.status !== 'Accepted' ? `<div class="reply"><textarea id="n-${esc(r.id)}" placeholder="${isEditor ? 'Note to the client' : 'Add a note, e.g. sent by email on 4 Nov, or a shared-drive link'}" aria-label="Note"></textarea>${isEditor ? `<button class="btn sm" data-act="note">Save note</button>` : `<button class="btn sm pri" data-act="Sent">Mark as sent</button>`}</div>` : ''}</div>`;
+    }).join('');
+  }
+
+  /* ── actions ── */
+  $('reqs').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-act]'); if (!b || !db) return;
+    const id = b.closest('.req').dataset.id, act = b.dataset.act, ref = db.collection('requests').doc(id);
+    const note = (document.getElementById('n-' + id)?.value || '').trim();
+    b.disabled = true;
+    try {
+      const now = new Date().toISOString();
+      if (act === 'delete') { await ref.delete(); toast('Request removed'); }
+      else if (act === 'note') { if (!note) { toast('Type a note first'); b.disabled = false; return; } await ref.update({ consultantNote: note, updatedAt: now }); toast('Note saved'); }
+      else if (act === 'Sent') { await ref.update({ status: 'Sent', updatedAt: now, ...(note ? { clientNote: note } : {}) }); toast('Marked as sent. Your consultant can see it now.'); }
+      else { await ref.update({ status: act, updatedAt: now, ...(note ? { consultantNote: note } : {}) }); toast(act === 'Accepted' ? 'Accepted' : 'Client asked for changes'); }
+    } catch (err) { b.disabled = false; toast(err?.code === 'not_granted' ? 'You can view this portal but not change requests. Ask your consultant for Contributor access.' : 'Could not save: ' + (err?.message || 'try again')); }
+  });
+
+  $('reqForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); if (!db) return;
+    const title = $('rqTitle').value.trim(); if (!title) return;
+    const now = new Date().toISOString();
+    try { await db.collection('requests').add({ title, ref: $('rqRef').value.trim(), due: $('rqDue').value || '', status: 'Open', createdAt: now, updatedAt: now }); $('reqForm').reset(); toast('Request added. The client sees it now.'); }
+    catch (err) { toast('Could not add: ' + (err?.message || 'try again')); }
+  });
+
+  $('file').addEventListener('change', async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f || !db) return;
+    let u; try { u = JSON.parse(await f.text()); } catch { toast('That file is not valid JSON. Download a fresh portal update from SustainHub.'); return; }
+    if (u?.kind !== 'sustainhub-portal' || u.v !== 1) { toast('This is not a SustainHub portal update. Use Client sharing → Download portal update.'); return; }
+    if (JSON.stringify(u).length > 240000) { toast('The update is too large for the portal. Untick some sections and download it again.'); return; }
+    try {
+      await db.doc('portal/current').set(u);
+      let added = 0;
+      if ($('autoReq').checked && u.docs) {
+        const have = new Set(requests.map((r) => r.ref));
+        for (const d of u.docs) for (const c of d.credits) {
+          if (c.status !== 'Awaiting client' || have.has(c.id)) continue;
+          const now = new Date().toISOString();
+          await db.collection('requests').add({ title: `Documents for ${c.id} ${c.name}`, ref: c.id, due: c.due || '', status: 'Open', createdAt: now, updatedAt: now });
+          have.add(c.id); added++;
+        }
+      }
+      toast(`Portal updated${added ? ` · ${added} new request${added > 1 ? 's' : ''}` : ''}. Open client views refresh now.`);
+    } catch (err) { toast('Could not publish the update: ' + (err?.message || 'try again')); }
+  });
+
+  /* ── live data ── */
+  const setLive = (on, txt) => { $('live').classList.toggle('on', on); $('liveTxt').textContent = txt; };
+  async function boot() {
+    if (!window.claude?.use) { setLive(false, 'Offline preview'); $('waitTitle').textContent = 'Open this portal on claude.ai'; $('waitBody').textContent = 'Live data loads when the page is opened from its claude.ai link.'; return; }
+    const [d, u] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    db = d;
+    isEditor = (await u?.canEdit()) ?? false;
+    canWrite = u ? await u.can('data.write') : null;
+    $('ownerBox').hidden = !isEditor;
+    if (!db) { setLive(false, 'Sign in to see live data'); $('waitTitle').textContent = 'Sign in to view this portal'; $('waitBody').textContent = 'Live progress is shown to people your consultant has invited. Sign in to claude.ai with the invited email.'; return; }
+    const timer = setTimeout(() => setLive(false, 'Still connecting…'), 10000);
+    db.doc('portal/current').onSnapshot((s) => {
+      clearTimeout(timer); update = s.exists ? s.data() : null; setLive(true, update ? 'Live · updated ' + ago(update.generatedAt) : 'Live');
+      if (!update) { $('waitTitle').textContent = isEditor ? 'Import the first update' : 'No update published yet'; $('waitBody').textContent = isEditor ? 'In SustainHub open Client sharing, choose what this client may see and download the portal update. Then use "Import update" above.' : 'Your consultant has not published progress here yet. This page updates by itself when they do.'; }
+      render();
+    }, (err) => { clearTimeout(timer); setLive(false, err.code === 'not_granted' ? 'No access' : 'Connection lost'); });
+    db.collection('requests').onSnapshot((s) => { requests = s.docs.map((x) => ({ id: x.id, ...x.data() })); renderRequests(); }, () => {});
+  }
+  setInterval(() => { if (update) $('liveTxt').textContent = 'Live · updated ' + ago(update.generatedAt); }, 60000);
+  boot();
+})();
+</script>

@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { useLCA } from '../../context/LCAContext';
 import type { Project, BuildingType } from '../../types/lca';
 import { BUILDING_TYPE_LABELS } from '../../types/lca';
+import { ask } from '../../utils/platform';
 
 const GRID: Record<string, number> = {
   US: 0.386, UK: 0.233, Germany: 0.366, France: 0.052, Australia: 0.656,
@@ -38,7 +39,7 @@ const ProjectSetup: React.FC = () => {
         <div><div className="ph-title">Project Setup</div><div className="ph-sub">Define building parameters and Reference Study Period</div></div>
         <div className="ph-actions">
           <button className="btn btn-pri" onClick={save}>{saved ? '✅ Saved' : '💾 Save Project'}</button>
-          <button className="btn btn-out" onClick={() => { if (confirm('Reset all data?')) dispatch({ type: 'RESET' }); }}>↺ Reset</button>
+          <button className="btn btn-out" onClick={async () => { if (await ask('Reset all data?')) dispatch({ type: 'RESET' }); }}>↺ Reset</button>
         </div>
       </div>
 

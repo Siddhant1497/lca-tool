@@ -25,7 +25,7 @@ const defaultProject = (): Project => ({
 
 const INITIAL: AppState = {
   project: defaultProject(), materialEntries: [], baselineEntries: [],
-  hasBaseline: false, activePage: 'dashboard',
+  hasBaseline: false, activePage: 'hub',
 };
 
 const reducer = (state: AppState, action: Action): AppState => {

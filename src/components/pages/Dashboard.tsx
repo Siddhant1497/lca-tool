@@ -37,7 +37,8 @@ const Dashboard: React.FC = () => {
     <div>
       <div className="ph">
         <div>
-          <div className="ph-title">Dashboard</div>
+          <div className="ph-eyebrow">Building LCA</div>
+          <div className="ph-title">LCA Overview</div>
           <div className="ph-sub">
             {project?.name} · {project?.buildingType.replace(/_/g,' ')} · {project?.grossFloorArea?.toLocaleString()} m² · {project?.lifespan} yr RSP
           </div>
@@ -49,14 +50,14 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* KPIs */}
-      <div className="kpi-grid">
+      <div className="kpi-grid six">
         {[
-          { lbl: 'Total GWP (A–D)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: 'Global Warming Potential', col: '#DC2626' },
-          { lbl: 'Embodied Carbon', val: hasData ? `${results!.perM2.GWP.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA', col: '#1D4ED8' },
-          { lbl: 'GWP Intensity', val: hasData ? `${results!.perM2PerYear.GWP.toFixed(3)} kg/m²/yr` : '—', sub: 'Annual intensity', col: '#059669' },
-          { lbl: 'Material Entries', val: String(materialEntries.length), sub: `${new Set(materialEntries.map(e=>e.component)).size} components`, col: '#6B7280' },
-          { lbl: 'LEED v4 MRc1', val: leed ? `${leed.creditPoints ?? 0}/3 pts` : '—', sub: leed?.summary ?? 'No data', col: leed?.compliant ? '#059669' : '#DC2626' },
-          { lbl: 'EN 15978', val: en ? (en.compliant ? 'Compliant' : 'Action Req.') : '—', sub: en?.summary ?? 'No data', col: en?.compliant ? '#059669' : '#DC2626' },
+          { lbl: 'Total GWP (A–D)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: 'Global Warming Potential', col: 'var(--err)' },
+          { lbl: 'Embodied Carbon', val: hasData ? `${results!.perM2.GWP.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA', col: 'var(--pri)' },
+          { lbl: 'GWP Intensity', val: hasData ? `${results!.perM2PerYear.GWP.toFixed(3)} kg/m²/yr` : '—', sub: 'Annual intensity', col: 'var(--acc)' },
+          { lbl: 'Material Entries', val: String(materialEntries.length), sub: `${new Set(materialEntries.map(e=>e.component)).size} components`, col: 'var(--text)' },
+          { lbl: 'LEED v4 MRc1', val: leed ? `${leed.creditPoints ?? 0}/3 pts` : '—', sub: leed?.summary ?? 'No data', col: leed?.compliant ? 'var(--acc)' : 'var(--err)' },
+          { lbl: 'EN 15978', val: en ? (en.compliant ? 'Compliant' : 'Action Req.') : '—', sub: en?.summary ?? 'No data', col: en?.compliant ? 'var(--acc)' : 'var(--err)' },
         ].map((k) => (
           <div className="kpi" key={k.lbl}>
             <div className="kpi-lbl">{k.lbl}</div>
