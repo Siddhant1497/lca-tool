@@ -19,11 +19,28 @@ sys.path.insert(0, os.path.dirname(HERE))
 import engine  # noqa: E402
 
 NARRATION = [
-    "This building finished most of its polluting, before anyone moved in.",
+    "The concrete in this building finished polluting, before anyone moved in.",
     "Zoom into the walls. Cement is made by heating limestone in a kiln, and that chemistry alone releases carbon dioxide.",
     "Add the steel in the frame, and together they make around fifteen percent of the world's CO2.",
     "It's called embodied carbon. The carbon you can't see.",
 ]
+
+
+def sfx(events, n):
+    """Synthesised sound cues: a soft pop when something appears, a whoosh on transitions."""
+    sr, out, rng = engine.SR, np.zeros(n, dtype=np.float32), np.random.default_rng(3)
+    for e in events:
+        i = int(e["t"] * sr)
+        if e["kind"] == "pop":
+            k = np.arange(int(0.12 * sr)) / sr
+            s = np.sin(2 * np.pi * (520 + 900 * k / 0.12) * k) * np.exp(-k * 38) * 0.22
+        else:
+            k = np.arange(int(0.7 * sr)) / sr
+            noise = np.convolve(rng.normal(size=len(k)), np.ones(30) / 30, mode="same")
+            s = noise * np.sin(np.pi * k / 0.7) ** 2 * 0.55
+        s = s[:max(0, n - i)]
+        out[i:i + len(s)] += s.astype(np.float32)
+    return out
 
 
 def main():
@@ -67,6 +84,9 @@ def main():
 
     silent = os.path.join(out, "video.mp4")
     subprocess.run(node + [silent, "30"], check=True, cwd=os.path.dirname(os.path.dirname(HERE)))
+    events = json.load(open(dpath.replace(".json", ".events.json")))
+    mixed = mixed + sfx(events, len(mixed))
+    sf.write(wav, mixed / max(1.0, np.abs(mixed).max()), engine.SR)
     final = os.path.join(out, "kurz-demo.mp4")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", silent, "-i", wav, "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
                     "-ar", "48000", "-shortest", "-movflags", "+faststart", final], check=True)

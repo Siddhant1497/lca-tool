@@ -13,11 +13,17 @@
 <body>
 <canvas id="c" width="1920" height="1080"></canvas>
 <script>
-// Flat-vector explainer scene: "the carbon you can't see".
-// render(t) draws the frame at time t (seconds) deterministically; setData() receives narration timings.
+// Animated explainer: "the carbon you can't see".
+// Illustrations: Microsoft Fluent Emoji (MIT, see assets/FLUENT_EMOJI_LICENSE.txt); everything else is drawn here.
+// render(t) draws the frame at t seconds deterministically; setData() gets narration timings; events() lists SFX cues.
 const W = 1920, H = 1080;
 const ctx = document.getElementById("c").getContext("2d");
-let DATA = { total: 25, sentences: [], captions: [] };
+let DATA = { total: 31, sentences: [], captions: [] };
+
+const ASSET_NAMES = ["office", "host", "rock", "fire", "factory", "cloud", "construction", "bolt", "brick", "globe", "monocle"];
+const IMG = {};
+window.loadAssets = () => Promise.all(ASSET_NAMES.map(n => new Promise(res => {
+  const im = new Image(); im.onload = () => res(); im.onerror = () => res(); im.src = `assets/${n}.svg`; IMG[n] = im; })));
 
 function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -27,13 +33,13 @@ const ease = x => { x = clamp(x); return x * x * (3 - 2 * x); };
 const easeOut = x => 1 - Math.pow(1 - clamp(x), 3);
 const easeIn = x => Math.pow(clamp(x), 3);
 const prog = (t, t0, d) => ease((t - t0) / d);
-const back = x => { x = clamp(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const back = x => { x = clamp(x); const c = 2.2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
 
 function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 function circle(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); }
 function lin(x0, y0, x1, y1, stops) { const g = ctx.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
 function rad(x, y, r0, r1, stops) { const g = ctx.createRadialGradient(x, y, r0, x, y, r1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
-function glowFill(color, blur) { ctx.shadowColor = color; ctx.shadowBlur = blur; }
+function glow(color, blur) { ctx.shadowColor = color; ctx.shadowBlur = blur; }
 function noGlow() { ctx.shadowBlur = 0; ctx.shadowColor = "transparent"; }
 
 function when(phrase, dflt) {
@@ -42,199 +48,203 @@ function when(phrase, dflt) {
   return dflt;
 }
 
-// ── shared pieces ──────────────────────────────────────────────
-const STARS = (() => { const r = rng(7); return Array.from({ length: 140 }, () => [r() * W, r() * H * 0.7, r() * 1.8 + 0.4, r() * 6]); })();
-function stars(t, a = 1) {
-  for (const [x, y, s, ph] of STARS) { ctx.globalAlpha = a * (0.45 + 0.55 * Math.abs(Math.sin(t * 0.8 + ph))); ctx.fillStyle = "#fff";
-    circle(x, y, s); ctx.fill(); }
-  ctx.globalAlpha = 1;
+// Draw an illustration centred at (x, y), `size` px wide, popping in from t0 with overshoot, gently bobbing.
+function art(name, x, y, size, t, t0 = -9, opts = {}) {
+  const a = clamp((t - t0) / 0.35); if (a <= 0 || !IMG[name]) return;
+  const s = back(a) * (opts.scale || 1), bob = Math.sin(t * (opts.bobSpeed || 1.6) + x * 0.01) * (opts.bob ?? 6);
+  ctx.save(); ctx.globalAlpha = (opts.alpha ?? 1) * clamp(a * 2);
+  if (opts.blur) ctx.filter = `blur(${opts.blur}px)`;
+  if (opts.shadow !== false) { ctx.fillStyle = "rgba(10,5,35,0.35)"; ctx.beginPath(); ctx.ellipse(x, y + size * 0.48, size * 0.36 * s, size * 0.06 * s, 0, 0, Math.PI * 2); ctx.fill(); }
+  ctx.translate(x, y + bob); ctx.rotate((opts.rot || 0) + Math.sin(t * 0.9 + x) * (opts.wobble ?? 0.015)); ctx.scale(s, s);
+  if (opts.glow) glow(opts.glow, 50);
+  ctx.drawImage(IMG[name], -size / 2, -size / 2, size, size);
+  ctx.restore();
 }
 
 function pill(x, y, text, bg, fg = "#fff", a = 1, size = 30) {
   if (a <= 0.01) return;
-  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${size}px Inter`;
-  const w = ctx.measureText(text).width + size * 1.2, h = size * 1.7;
+  ctx.save(); ctx.globalAlpha = clamp(a * 2); ctx.font = `700 ${size}px Inter`;
+  const w = ctx.measureText(text).width + size * 1.2, h = size * 1.75;
   const s = back(a); ctx.translate(x, y); ctx.scale(s, s);
-  glowFill("rgba(0,0,0,0.35)", 18); ctx.fillStyle = bg; rr(-w / 2, -h / 2, w, h, h / 2); ctx.fill(); noGlow();
+  glow("rgba(0,0,0,0.35)", 20); ctx.fillStyle = bg; rr(-w / 2, -h / 2, w, h, h / 2); ctx.fill(); noGlow();
   ctx.fillStyle = fg; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(text, 0, 2);
   ctx.restore();
 }
 
-function character(x, y, s, t, lookX = 1) {
-  ctx.save(); ctx.translate(x, y + Math.sin(t * 2) * 2); ctx.scale(s, s);
-  ctx.fillStyle = "rgba(10,6,30,0.35)"; ctx.beginPath(); ctx.ellipse(0, 0, 70, 14, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#26307a"; rr(-32, -110, 26, 108, 12); ctx.fill(); rr(6, -110, 26, 108, 12); ctx.fill();   // legs
-  ctx.fillStyle = "#1b1f4a"; rr(-38, -14, 36, 16, 8); ctx.fill(); rr(4, -14, 36, 16, 8); ctx.fill();         // shoes
-  ctx.fillStyle = lin(0, -260, 0, -100, [[0, "#ff5b4f"], [1, "#d63a35"]]); rr(-58, -262, 116, 168, 40); ctx.fill(); // hoodie
-  ctx.fillStyle = "#c2302d"; rr(-36, -150, 72, 30, 12); ctx.fill();                                           // pocket
-  ctx.fillStyle = "#e7473f"; rr(-82, -248, 30, 130, 15); ctx.fill(); rr(52, -248, 30, 130, 15); ctx.fill(); // arms
-  ctx.fillStyle = "#f4b48a"; circle(-67, -114, 15); ctx.fill(); circle(67, -114, 15); ctx.fill();            // hands
-  ctx.fillStyle = "#b52b29"; ctx.beginPath(); ctx.ellipse(0, -258, 46, 16, 0, 0, Math.PI * 2); ctx.fill();  // hood rim
-  ctx.save(); ctx.rotate(Math.sin(t * 0.9) * 0.04);
-  ctx.fillStyle = "#f4b48a"; circle(0, -330, 62); ctx.fill();                                                  // head
-  circle(-60, -326, 13); ctx.fill(); circle(60, -326, 13); ctx.fill();                                         // ears
-  ctx.fillStyle = "#2b1a33"; ctx.beginPath(); ctx.ellipse(0, -372, 66, 36, 0, Math.PI, 0); ctx.fill();         // hair
-  ctx.beginPath(); ctx.ellipse(-28, -372, 40, 24, -0.4, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(26, -378, 38, 22, 0.5, 0, Math.PI * 2); ctx.fill();
-  const blink = (t % 3.7) < 0.12 ? 0.12 : 1;
-  for (const ex of [-22, 22]) {
-    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.ellipse(ex, -330, 14, 17 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    if (blink > 0.5) { ctx.fillStyle = "#1e1530"; circle(ex + 5 * lookX, -328, 8); ctx.fill(); ctx.fillStyle = "#fff"; circle(ex + 7 * lookX, -332, 2.5); ctx.fill(); }
-    ctx.strokeStyle = "#2b1a33"; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(ex - 12, -356); ctx.lineTo(ex + 12, -354 - (ex > 0 ? 3 : 0)); ctx.stroke();
-  }
-  ctx.strokeStyle = "#a8573c"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, -300, 12, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke(); // mouth
-  ctx.restore(); ctx.restore();
+function arrow(x0, y, x1, k, color = "rgba(255,255,255,0.85)") {
+  if (k <= 0) return; const xe = lerp(x0, x1, easeOut(k));
+  ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 8; ctx.lineCap = "round"; ctx.setLineDash([2, 18]);
+  ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(xe - 18, y); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(xe, y); ctx.lineTo(xe - 26, y - 18); ctx.lineTo(xe - 26, y + 18); ctx.closePath(); ctx.fill(); ctx.restore();
 }
 
-// ── shot 1: the building at night ───────────────────────────────
-const WIN = (() => { const r = rng(3); const out = []; for (let c = 0; c < 5; c++) for (let row = 0; row < 11; row++) out.push([c, row, r() < 0.62, r() * 9]); return out; })();
-const SKY = (() => { const r = rng(11); let x = -20; const out = []; while (x < W) { const w = 60 + r() * 110, h = 120 + r() * 260; out.push([x, w, h]); x += w + 8; } return out; })();
-function shot1(t, d) {
-  ctx.fillStyle = lin(0, 0, 0, H, [[0, "#140f3c"], [0.6, "#2f1d66"], [1, "#4b2a7e"]]); ctx.fillRect(0, 0, W, H);
-  stars(t, 0.9);
-  ctx.fillStyle = rad(1300, 760, 40, 760, [[0, "rgba(255,140,200,0.45)"], [1, "rgba(255,140,200,0)"]]); ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = "#2a1c62"; for (const [x, w, h] of SKY) { rr(x, 880 - h, w, h + 40, 10); ctx.fill(); }      // distant city
-  ctx.fillStyle = "rgba(255,210,122,0.35)"; for (const [x, w, h] of SKY) for (let yy = 900 - h; yy < 860; yy += 34) for (let xx = x + 12; xx < x + w - 14; xx += 26) if (((xx * 7 + yy * 3) | 0) % 5 === 0) { rr(xx, yy, 10, 14, 2); ctx.fill(); }
-  // main building
-  const bx = 1080, by = 230, bw = 420, bh = 690;
-  ctx.fillStyle = "#3a2a8c"; ctx.beginPath(); ctx.moveTo(bx + bw, by + 30); ctx.lineTo(bx + bw + 90, by + 70); ctx.lineTo(bx + bw + 90, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.fill(); // side
-  ctx.fillStyle = lin(bx, by, bx + bw, by + bh, [[0, "#7b5ce6"], [1, "#523cb5"]]); rr(bx, by, bw, bh, 18); ctx.fill();
-  ctx.fillStyle = "#9278f0"; rr(bx, by, bw, 26, 13); ctx.fill();                                              // roof lip
-  for (const [c, row, lit, ph] of WIN) {
-    const on = lit && Math.sin(t * 0.7 + ph) > -0.85;
-    const x = bx + 34 + c * 76, y = by + 60 + row * 56;
-    if (on) { glowFill("rgba(255,200,110,0.9)", 22); ctx.fillStyle = "#ffd27a"; } else { noGlow(); ctx.fillStyle = "#3b2c94"; }
-    rr(x, y, 48, 36, 6); ctx.fill();
-  }
-  noGlow();
-  // ground
-  ctx.fillStyle = lin(0, 880, 0, H, [[0, "#2b2163"], [1, "#1a1440"]]); ctx.beginPath(); ctx.moveTo(0, 900);
-  ctx.quadraticCurveTo(W / 2, 860, W, 905); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill();
-  character(560, 935, 1.0, t, 1);
-  // a thought bubble that hints at the hidden carbon
-  const a = prog(t, when("before anyone", 3.2), 0.5) * (1 - prog(t, d - 1.6, 0.4));
-  pill(1290, 170, "built: 2026", "#ff8a3d", "#fff", a);
-}
+const STARS = (() => { const r = rng(7); return Array.from({ length: 160 }, () => [r() * W, r() * H * 0.75, r() * 1.8 + 0.4, r() * 6]); })();
+function stars(t, a = 1) { ctx.fillStyle = "#fff";
+  for (const [x, y, s, ph] of STARS) { ctx.globalAlpha = a * (0.4 + 0.6 * Math.abs(Math.sin(t * 0.8 + ph))); circle(x, y, s); ctx.fill(); }
+  ctx.globalAlpha = 1; }
 
-// ── shot 2: inside the concrete ─────────────────────────────────
-const STONES = (() => { const r = rng(21); const out = []; for (let i = 0; i < 70; i++) { const cx = r() * (W + 200) - 100, cy = r() * (H + 200) - 100, rad = 40 + r() * 90, n = 7 + (r() * 4 | 0);
-  const pts = Array.from({ length: n }, (_, k) => { const a = k / n * Math.PI * 2; const rr2 = rad * (0.75 + r() * 0.35); return [cx + Math.cos(a) * rr2, cy + Math.sin(a) * rr2 * 0.85]; });
-  out.push([pts, ["#b9bfe0", "#9aa1cc", "#c9cdea", "#878fbf"][i % 4]]); } return out; })();
-const MOLS = (() => { const r = rng(31); return Array.from({ length: 22 }, () => [r() * W, r() * H, 40 + r() * 50, r() * 6, 0.7 + r() * 0.6]); })();
 function molecule(x, y, s, rot, a) {
-  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
-  glowFill("rgba(255,255,255,0.35)", 20);
-  ctx.fillStyle = rad(-26, -4, 2, 18, [[0, "#ff8a9b"], [1, "#e0465f"]]); circle(-26, 0, 15); ctx.fill();
-  ctx.fillStyle = rad(26, -4, 2, 18, [[0, "#ff8a9b"], [1, "#e0465f"]]); circle(26, 0, 15); ctx.fill();
-  ctx.fillStyle = rad(0, -5, 2, 22, [[0, "#5b5b78"], [1, "#24243a"]]); circle(0, 0, 19); ctx.fill();
-  noGlow(); ctx.restore(); ctx.globalAlpha = 1;
+  if (a <= 0.01) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s); glow("rgba(255,120,150,0.6)", 22);
+  ctx.fillStyle = rad(-26, -5, 2, 18, [[0, "#ffa0ae"], [1, "#e0465f"]]); circle(-26, 0, 15); ctx.fill();
+  ctx.fillStyle = rad(26, -5, 2, 18, [[0, "#ffa0ae"], [1, "#e0465f"]]); circle(26, 0, 15); ctx.fill();
+  ctx.fillStyle = rad(-4, -6, 2, 22, [[0, "#6a6a8c"], [1, "#22223a"]]); circle(0, 0, 19); ctx.fill();
+  noGlow(); ctx.restore();
 }
-function rebar(y, x0, x1) {
-  ctx.fillStyle = lin(0, y - 26, 0, y + 26, [[0, "#f0a060"], [0.45, "#c46a34"], [1, "#7d3c1c"]]); rr(x0, y - 26, x1 - x0, 52, 26); ctx.fill();
-  ctx.strokeStyle = "rgba(90,40,15,0.55)"; ctx.lineWidth = 6;
-  for (let x = x0 + 40; x < x1 - 20; x += 64) { ctx.beginPath(); ctx.moveTo(x, y - 22); ctx.lineTo(x + 12, y + 22); ctx.stroke(); }
-  ctx.fillStyle = "rgba(255,220,180,0.45)"; rr(x0 + 10, y - 18, x1 - x0 - 20, 8, 4); ctx.fill();
+
+// ── shot 1: the building at night ─────────────────────────────
+const SKY = (() => { const r = rng(11); let x = -40; const out = []; while (x < W + 40) { const w = 70 + r() * 120, h = 140 + r() * 300; out.push([x, w, h]); x += w + 10; } return out; })();
+function shot1(t, d) {
+  ctx.fillStyle = lin(0, 0, 0, H, [[0, "#120c38"], [0.55, "#2c1b64"], [1, "#55307f"]]); ctx.fillRect(0, 0, W, H);
+  stars(t);
+  ctx.fillStyle = rad(1240, 640, 30, 700, [[0, "rgba(255,150,210,0.5)"], [1, "rgba(255,150,210,0)"]]); ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.filter = "blur(5px)"; ctx.translate(-t * 6, 0);                                     // far skyline, out of focus
+  ctx.fillStyle = "#2b1d66"; for (const [x, w, h] of SKY) { rr(x, 900 - h, w, h + 60, 12); ctx.fill(); }
+  ctx.fillStyle = "rgba(255,210,122,0.45)";
+  for (const [x, w, h] of SKY) for (let yy = 925 - h; yy < 880; yy += 36) for (let xx = x + 14; xx < x + w - 16; xx += 28)
+    if (((xx * 7 + yy * 3) | 0) % 5 === 0) { rr(xx, yy, 11, 15, 2); ctx.fill(); }
+  ctx.restore();
+  art("office", 300, 690, 300, t, -9, { blur: 3, alpha: 0.75, bob: 0, wobble: 0 });                 // mid-ground buildings
+  art("office", 1700, 700, 340, t, -9, { blur: 3, alpha: 0.75, bob: 0, wobble: 0 });
+  ctx.fillStyle = lin(0, 860, 0, H, [[0, "#2e2268"], [1, "#160f3a"]]); ctx.beginPath(); ctx.moveTo(0, 905);
+  ctx.quadraticCurveTo(W / 2, 865, W, 910); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill();
+  art("office", 1240, 560, 700, t, -9, { glow: "rgba(150,200,255,0.55)", bob: 0, wobble: 0.004 }); // hero building
+  art("host", 470, 860, 620, t, 0.4, { bob: 4, shadow: false });                                     // presenter
+  pill(1240, 175, "concrete: emissions already spent", "#ff7a3d", "#fff", prog(t, when("finished polluting", 2.4), 0.45));
 }
-function shot2(t, d, tSteel, off = 0) {
-  const whenL = (p, dflt) => when(p, dflt + off) - off;
-  const z = lerp(1.0, 1.08, ease(t / d));
-  ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2);
-  ctx.fillStyle = lin(0, 0, W, H, [[0, "#6f78ad"], [1, "#4f5791"]]); ctx.fillRect(-50, -50, W + 100, H + 100);
-  const r = rng(5); ctx.fillStyle = "rgba(40,45,90,0.35)"; for (let i = 0; i < 900; i++) { circle(r() * W, r() * H, r() * 3 + 1); ctx.fill(); } // cement paste grain
+
+// ── shot 2: the chemistry ──────────────────────────────────────
+const STONES = (() => { const r = rng(21); const out = []; for (let i = 0; i < 70; i++) { const cx = r() * (W + 200) - 100, cy = r() * (H + 200) - 100, rd = 40 + r() * 90, n = 7 + (r() * 4 | 0);
+  out.push([Array.from({ length: n }, (_, k) => { const a = k / n * Math.PI * 2, q = rd * (0.75 + r() * 0.35); return [cx + Math.cos(a) * q, cy + Math.sin(a) * q * 0.85]; }),
+    ["#b9bfe0", "#9aa1cc", "#c9cdea", "#878fbf"][i % 4]]); } return out; })();
+function concrete(t, blur) {
+  ctx.save(); if (blur > 0.2) ctx.filter = `blur(${blur}px)`;
+  ctx.fillStyle = lin(0, 0, W, H, [[0, "#6f78ad"], [1, "#4f5791"]]); ctx.fillRect(-60, -60, W + 120, H + 120);
   for (const [pts, col] of STONES) {
     ctx.fillStyle = "rgba(30,30,70,0.35)"; ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x + 8, y + 10) : ctx.moveTo(x + 8, y + 10)); ctx.fill();
     ctx.fillStyle = col; ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.beginPath(); const [cx, cy] = pts[0]; ctx.ellipse(cx - 20, cy - 10, 18, 8, -0.5, 0, Math.PI * 2); ctx.fill();
   }
-  // steel slides in
-  const ks = easeOut((t - tSteel) / 1.4);
-  if (ks > 0) for (const [y, dl] of [[330, 0], [560, 0.15], [790, 0.3]]) { const k = easeOut((t - tSteel - dl) / 1.4); rebar(y, -40, lerp(-40, W + 40, k)); }
   ctx.restore();
-  // CO2 rising out of the cement
-  const a = prog(t, 0.6, 1.0);
-  for (const [x, y0, sp, ph, s] of MOLS) { const y = ((y0 - t * sp) % (H + 120) + H + 120) % (H + 120) - 60; molecule(x + Math.sin(t + ph) * 18, y, s, t * 0.6 + ph, a * 0.9); }
-  const tl = whenL("kiln", 2.0);
-  molecule(980, 420 - easeOut((t - tl) / 1.5) * 60, 2.2, Math.sin(t) * 0.2, prog(t, tl - 0.3, 0.5));
-  pill(980, 300 - easeOut((t - tl) / 1.5) * 60, "CO₂", "#e0465f", "#fff", prog(t, tl, 0.5), 34);
-  pill(420, 180, "cement", "#5b6ad8", "#fff", prog(t, 0.8, 0.5));
-  pill(560, 260, "limestone + heat → lime + CO₂", "#2d2a5e", "#fff", prog(t, tl + 0.8, 0.5), 28);
-  pill(300, 560, "steel", "#c46a34", "#fff", prog(t, tSteel + 0.6, 0.5));
-  // stat card
-  const ta = whenL("fifteen", tSteel + 2), sa = prog(t, ta - 0.2, 0.5);
-  if (sa > 0.01) {
-    ctx.save(); ctx.globalAlpha = sa; ctx.translate(1560, 240); const sc = back(sa); ctx.scale(sc, sc);
-    glowFill("rgba(0,0,0,0.4)", 30); ctx.fillStyle = "rgba(25,20,60,0.88)"; rr(-230, -120, 460, 240, 28); ctx.fill(); noGlow();
-    ctx.fillStyle = "#ffcf4a"; ctx.font = "800 120px Inter"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(`~${Math.round(15 * easeOut((t - ta) / 1.2))}%`, 0, -20);
-    ctx.fillStyle = "#fff"; ctx.font = "600 28px Inter"; ctx.fillText("of global CO₂: cement + steel", 0, 62);
-    ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "500 20px Inter"; ctx.fillText("Source: IEA", 0, 96); ctx.restore();
-  }
+}
+const PLUME = (() => { const r = rng(31); return Array.from({ length: 16 }, () => [r(), r() * 6, 0.55 + r() * 0.4]); })();
+function shot2(t, d, off) {
+  const L = (p, dflt) => when(p, dflt + off) - off;
+  const tc = L("Cement is made", 2), tl = L("limestone", 3), tk = L("kiln", 4), tr = L("releases", 6);
+  const focus = prog(t, tc - 0.3, 0.8);                                                               // rack focus to the process
+  concrete(t, lerp(0, 9, focus));
+  ctx.fillStyle = `rgba(20,14,60,${0.45 * focus})`; ctx.fillRect(0, 0, W, H);
+  pill(W / 2, 120, "CaCO₃  +  heat  →  CaO  +  CO₂", "rgba(20,16,60,0.92)", "#fff", prog(t, tr - 0.2, 0.45), 34);
+  art("rock", 380, 560, 280, t, tl, { glow: "rgba(255,255,255,0.25)" });
+  pill(380, 760, "limestone", "#5b6ad8", "#fff", prog(t, tl + 0.2, 0.4));
+  arrow(540, 560, 700, (t - tk + 0.3) / 0.6);
+  art("fire", 860, 540, 280, t, tk, { glow: "rgba(255,140,60,0.8)", bob: 8 });
+  pill(860, 760, "kiln ≈ 1,450 °C", "#e8662f", "#fff", prog(t, tk + 0.2, 0.4));
+  arrow(1020, 560, 1180, (t - tk - 0.4) / 0.6);
+  art("factory", 1400, 540, 380, t, tc, {});
+  pill(1400, 760, "cement", "#5b6ad8", "#fff", prog(t, tc + 0.2, 0.4));
+  const pa = prog(t, tr, 0.6);                                                                         // CO2 plume from the chimneys
+  for (const [u, ph, s] of PLUME) { const k = ((t - tr) * 0.35 + u) % 1; if (t < tr) continue;
+    molecule(1340 + Math.sin(ph + t * 1.5) * 40 + (u - 0.5) * 60, 400 - k * 330, s * (0.6 + k * 0.6), ph + t, pa * (1 - k * 0.7)); }
+  pill(1560, 230, "CO₂", "#e0465f", "#fff", prog(t, tr + 0.3, 0.4), 34);
 }
 
-// ── shot 3: the planet ──────────────────────────────────────────
-const LAND = (() => { const r = rng(41); return Array.from({ length: 9 }, () => [r() * 2 - 1, r() * 1.6 - 0.8, 0.18 + r() * 0.3, 0.1 + r() * 0.2, r() * 3]); })();
-const LIGHTS = (() => { const r = rng(51); return Array.from({ length: 260 }, () => [r() * 2 - 1, r() * 2 - 1]); })();
-function shot3(t, d, off = 0) {
-  ctx.fillStyle = lin(0, 0, 0, H, [[0, "#090725"], [1, "#22134a"]]); ctx.fillRect(0, 0, W, H);
-  stars(t, 1);
-  const cx = W / 2, cy = 640, R = 300 * lerp(0.82, 1.0, easeOut(t / 2.5));
-  ctx.fillStyle = rad(cx, cy, R * 0.9, R * 1.35, [[0, "rgba(120,160,255,0.55)"], [1, "rgba(120,160,255,0)"]]); circle(cx, cy, R * 1.4); ctx.fill(); // atmosphere glow
-  ctx.save(); circle(cx, cy, R); ctx.clip();
-  ctx.fillStyle = rad(cx - R * 0.3, cy - R * 0.4, R * 0.1, R * 1.2, [[0, "#4f7cf0"], [1, "#1b2a7a"]]); ctx.fillRect(cx - R, cy - R, 2 * R, 2 * R);
-  const rot = t * 0.06;
-  for (const [u, v, w, h, ph] of LAND) { const x = cx + ((u + rot + 1) % 2 - 1) * R * 1.1, y = cy + v * R;
-    ctx.fillStyle = "#2fbf9a"; ctx.beginPath(); ctx.ellipse(x, y, w * R, h * R, ph, 0, Math.PI * 2); ctx.fill(); }
-  ctx.fillStyle = lin(cx - R, 0, cx + R, 0, [[0, "rgba(5,5,30,0)"], [0.45, "rgba(5,5,30,0.15)"], [0.7, "rgba(5,5,30,0.7)"], [1, "rgba(5,5,30,0.8)"]]); ctx.fillRect(cx - R, cy - R, 2 * R, 2 * R);
-  glowFill("rgba(255,210,120,0.9)", 8); ctx.fillStyle = "#ffd27a";
-  for (const [u, v] of LIGHTS) { const x = cx + u * R, y = cy + v * R; if (u > 0.15 && Math.hypot(u, v) < 0.97) { circle(x, y, 1.8); ctx.fill(); } }
-  noGlow(); ctx.restore();
-  // CO2 haze thickening around the planet
-  const hz = prog(t, 0.8, 4);
-  ctx.strokeStyle = `rgba(200,120,255,${0.28 * hz})`; ctx.lineWidth = 60 * hz + 1; circle(cx, cy, R + 45); ctx.stroke();
-  for (const [u, , , ph, s] of MOLS.slice(0, 10)) { const ang = u / W * Math.PI * 2 + t * 0.15; molecule(cx + Math.cos(ang) * (R + 70), cy + Math.sin(ang) * (R + 70), 0.7 * s, ph + t, hz * 0.8); }
-  // title
-  const ta = prog(t, when("can't see", 1.0 + off) - off - 0.2, 0.5);
-  if (ta > 0.01) {
-    ctx.save(); ctx.globalAlpha = ta; ctx.translate(W / 2, 200); const s = back(ta); ctx.scale(s, s);
-    ctx.fillStyle = "#fff"; ctx.font = "800 96px Inter"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    glowFill("rgba(0,0,0,0.5)", 20); ctx.fillText("THE CARBON", 0, -56); ctx.fillText("YOU CAN'T SEE", 0, 52); noGlow(); ctx.restore();
-  }
+// ── shot 2b: steel + the share of global CO2 ──────────────────
+function donut(cx, cy, R, frac, t, ta) {
+  ctx.save(); ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(255,255,255,0.14)"; ctx.lineWidth = 64; circle(cx, cy, R); ctx.stroke();
+  const k = easeOut((t - ta) / 1.6) * frac;
+  if (k > 0.002) { glow("rgba(255,200,80,0.7)", 30); ctx.strokeStyle = lin(cx - R, cy - R, cx + R, cy + R, [[0, "#ffd45a"], [1, "#ff8a3d"]]);
+    ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.stroke(); noGlow(); }
+  ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.font = "800 120px Inter";
+  ctx.fillText(`~${Math.round(100 * k)}%`, cx, cy - 14);
+  ctx.font = "600 28px Inter"; ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.fillText("of global CO₂", cx, cy + 62);
+  ctx.restore();
+}
+function shot2b(t, d, off) {
+  const L = (p, dflt) => when(p, dflt + off) - off;
+  const tf = L("fifteen", 3);
+  ctx.fillStyle = lin(0, 0, W, H, [[0, "#1d1550"], [1, "#3a1f6b"]]); ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = rad(560, 560, 20, 620, [[0, "rgba(120,170,255,0.35)"], [1, "rgba(120,170,255,0)"]]); ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = rad(1340, 520, 20, 520, [[0, "rgba(255,180,90,0.28)"], [1, "rgba(255,180,90,0)"]]); ctx.fillRect(0, 0, W, H);
+  stars(t, 0.5);
+  art("construction", 560, 560, 560, t, 0.15, { glow: "rgba(255,210,120,0.35)" });
+  art("bolt", 330, 300, 170, t, 0.6, { rot: -0.3, bob: 12 });
+  art("brick", 820, 310, 150, t, 0.9, { rot: 0.2, bob: 10 });
+  pill(560, 880, "steel frame", "#c46a34", "#fff", prog(t, 0.5, 0.4));
+  donut(1340, 520, 230, 0.15, t, tf);
+  pill(1340, 850, "cement + steel  ·  IEA", "rgba(255,255,255,0.12)", "#fff", prog(t, tf + 0.6, 0.4), 26);
+  art("factory", 1690, 690, 150, t, tf + 0.3, { bob: 6 });
 }
 
-// ── captions + timeline ─────────────────────────────────────────
+// ── shot 3: the planet ─────────────────────────────────────────
+const ORBIT = (() => { const r = rng(61); return Array.from({ length: 14 }, () => [r() * Math.PI * 2, 0.6 + r() * 0.5, r() * 6, r() * 0.4]); })();
+function shot3(t, d, off) {
+  const ta = when("can't see", 1.0 + off) - off;
+  ctx.fillStyle = lin(0, 0, 0, H, [[0, "#080622"], [1, "#24144d"]]); ctx.fillRect(0, 0, W, H);
+  stars(t);
+  const cx = W / 2, cy = 600, S = lerp(560, 620, easeOut(t / 3));
+  ctx.fillStyle = rad(cx, cy, S * 0.3, S * 0.85, [[0, "rgba(110,170,255,0.55)"], [1, "rgba(110,170,255,0)"]]); circle(cx, cy, S); ctx.fill();
+  const hz = prog(t, 0.6, 4);
+  ctx.strokeStyle = `rgba(210,120,255,${0.3 * hz})`; ctx.lineWidth = 50 * hz + 1; circle(cx, cy, S * 0.53); ctx.stroke();
+  art("globe", cx, cy, S, t, -9, { shadow: false, bob: 0, rot: t * 0.03, wobble: 0 });
+  for (const [ang, r, ph, sz] of ORBIT) { const a = ang + t * 0.25; molecule(cx + Math.cos(a) * S * 0.62 * (0.9 + 0.1 * r), cy + Math.sin(a) * S * 0.62 * 0.9, 0.55 + sz, ph + t, hz * 0.95); }
+  const k = prog(t, ta - 0.25, 0.45);
+  if (k > 0.01) { ctx.save(); ctx.globalAlpha = clamp(k * 2); ctx.translate(W / 2, 150); const s = back(k); ctx.scale(s, s);
+    ctx.fillStyle = "#fff"; ctx.font = "800 92px Inter"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; glow("rgba(0,0,0,0.6)", 24);
+    ctx.fillText("THE CARBON YOU CAN'T SEE", 0, 0); noGlow(); ctx.restore(); }
+  pill(W / 2, 250, "embodied carbon", "#e0465f", "#fff", prog(t, when("embodied", 0.3 + off) - off, 0.45), 32);
+}
+
+// ── captions, timeline, sound cues ─────────────────────────────
 function captions(t) {
   const c = DATA.captions.find(c => c.t0 <= t && t < c.t1); if (!c) return;
-  ctx.font = "500 40px Inter"; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  ctx.font = "600 40px Inter"; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
   const words = c.text.split(" "); const lines = []; let cur = "";
   for (const w of words) { const nx = cur ? cur + " " + w : w; if (ctx.measureText(nx).width > 1500 && cur) { lines.push(cur); cur = w; } else cur = nx; }
   lines.push(cur);
-  lines.forEach((ln, i) => { const y = H - 70 - (lines.length - 1 - i) * 52;
-    ctx.lineWidth = 7; ctx.strokeStyle = "rgba(0,0,0,0.75)"; ctx.strokeText(ln, W / 2, y); ctx.fillStyle = "#fff"; ctx.fillText(ln, W / 2, y); });
+  lines.forEach((ln, i) => { const y = H - 60 - (lines.length - 1 - i) * 52;
+    ctx.lineWidth = 8; ctx.strokeStyle = "rgba(0,0,0,0.8)"; ctx.lineJoin = "round"; ctx.strokeText(ln, W / 2, y); ctx.fillStyle = "#fff"; ctx.fillText(ln, W / 2, y); });
 }
 
+function cuts() { return { s2: when("Zoom into", 6), s2b: when("Add the steel", 15), s3: when("embodied carbon", 22), T: DATA.total }; }
+
 function render(t) {
-  const s2 = when("Zoom into", 6), s3 = when("Add the steel", 13), s4 = when("embodied carbon", 19), T = DATA.total;
-  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; noGlow();
-  if (t < s2) {
-    // shot 1 with a push-in, ending in a fast zoom into the wall
-    const zin = easeIn((t - (s2 - 1.0)) / 1.0);
-    const z = lerp(1.0, 1.06, ease(t / s2)) * lerp(1, 9, zin);
-    ctx.save(); ctx.translate(lerp(W / 2, 1290, zin), lerp(H / 2, 600, zin)); ctx.scale(z, z); ctx.translate(-lerp(W / 2, 1290, zin), -lerp(H / 2, 600, zin));
+  const { s2, s2b, s3, T } = cuts();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = "none"; noGlow();
+  if (t < s2) {                                                    // push in, then zoom through a window
+    const zin = easeIn((t - (s2 - 1.0)) / 1.0), fx = 1180, fy = 470;
+    const z = lerp(1.0, 1.07, ease(t / s2)) * lerp(1, 10, zin);
+    ctx.save(); ctx.translate(lerp(W / 2, fx, zin), lerp(H / 2, fy, zin)); ctx.scale(z, z); ctx.translate(-lerp(W / 2, fx, zin), -lerp(H / 2, fy, zin));
     shot1(t, s2); ctx.restore();
-    if (zin > 0.6) { ctx.globalAlpha = (zin - 0.6) / 0.4; shot2(0, s4 - s2, 99); ctx.globalAlpha = 1; }
-  } else if (t < s4) {
-    shot2(t - s2, s4 - s2, s3 - s2, s2);
-    const k = ease((t - (s4 - 0.8)) / 0.8);                                                      // pull back to space
-    if (k > 0) { ctx.globalAlpha = k; shot3(0, T - s4); ctx.globalAlpha = 1; }
+    if (zin > 0.55) { ctx.globalAlpha = (zin - 0.55) / 0.45; shot2(0, s2b - s2, s2); ctx.globalAlpha = 1; }
+  } else if (t < s2b) {
+    shot2(t - s2, s2b - s2, s2);
+    const k = easeIn((t - (s2b - 0.5)) / 0.5);                     // whip pan out to the left
+    if (k > 0) { ctx.save(); ctx.filter = `blur(${k * 18}px)`; ctx.drawImage(ctx.canvas, -k * W * 0.4, 0); ctx.restore(); }
+  } else if (t < s3) {
+    const k = 1 - easeOut((t - s2b) / 0.5);                        // whip pan in from the right
+    ctx.save(); ctx.translate(k * W * 0.4, 0); if (k > 0.02) ctx.filter = `blur(${k * 18}px)`; shot2b(t - s2b, s3 - s2b, s2b); ctx.restore();
+    const z = ease((t - (s3 - 0.9)) / 0.9);                       // pull back to space
+    if (z > 0) { ctx.globalAlpha = z; ctx.save(); const sc = lerp(1.5, 1, z); ctx.translate(W / 2, H / 2); ctx.scale(sc, sc); ctx.translate(-W / 2, -H / 2); shot3(0, T - s3, s3); ctx.restore(); ctx.globalAlpha = 1; }
   } else {
-    shot3(t - s4, T - s4, s4);
+    shot3(t - s3, T - s3, s3);
   }
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = "none";
   const fade = clamp((T - t) / 0.8); if (fade < 1) { ctx.fillStyle = `rgba(0,0,0,${1 - fade})`; ctx.fillRect(0, 0, W, H); }
   const fin = clamp(t / 0.6); if (fin < 1) { ctx.fillStyle = `rgba(0,0,0,${1 - fin})`; ctx.fillRect(0, 0, W, H); }
   captions(t);
 }
-window.render = render;
+
+// Sound cues (seconds): "whoosh" on transitions, "pop" when things appear.
+function events() {
+  const { s2, s2b, s3 } = cuts(), ev = [];
+  const W_ = t => ev.push({ t, kind: "whoosh" }), P = t => ev.push({ t, kind: "pop" });
+  P(0.4); P(when("finished polluting", 2.4)); W_(s2 - 0.9);
+  for (const p of ["Cement is made", "limestone", "kiln", "releases"]) P(when(p, s2 + 2));
+  W_(s2b - 0.45); P(s2b + 0.15); P(s2b + 0.5); P(when("fifteen", s2b + 3)); W_(s3 - 0.8); P(when("can't see", s3 + 1));
+  return ev;
+}
+window.render = render; window.events = events;
 window.setData = d => { DATA = d; };
 </script>
 </body>

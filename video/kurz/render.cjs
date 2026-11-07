@@ -12,8 +12,11 @@ const path = require("path");
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   await page.goto("file://" + path.resolve(page_));
-  await page.evaluate(async d => { window.setData(d); await document.fonts.load("800 40px Inter"); await document.fonts.load("500 40px Inter");
-    await document.fonts.load("700 40px Inter"); }, data);
+  const events = await page.evaluate(async d => { window.setData(d); await document.fonts.load("800 40px Inter"); await document.fonts.load("500 40px Inter");
+    await document.fonts.load("700 40px Inter"); await document.fonts.load("600 40px Inter");
+    if (window.loadAssets) await window.loadAssets();
+    return window.events ? window.events() : []; }, data);
+  fs.writeFileSync(dataPath.replace(/\.json$/, ".events.json"), JSON.stringify(events));
   const canvas = await page.$("#c");
   if (stillAt > 0) {
     const t = parseFloat(process.argv[stillAt + 1]);
