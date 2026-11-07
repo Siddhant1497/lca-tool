@@ -177,7 +177,7 @@ const LIGHTS = (() => { const r = rng(51); return Array.from({ length: 260 }, ()
 function shot3(t, d, off = 0) {
   ctx.fillStyle = lin(0, 0, 0, H, [[0, "#090725"], [1, "#22134a"]]); ctx.fillRect(0, 0, W, H);
   stars(t, 1);
-  const cx = W / 2, cy = 700, R = 330 * lerp(0.82, 1.0, easeOut(t / 2.5));
+  const cx = W / 2, cy = 640, R = 300 * lerp(0.82, 1.0, easeOut(t / 2.5));
   ctx.fillStyle = rad(cx, cy, R * 0.9, R * 1.35, [[0, "rgba(120,160,255,0.55)"], [1, "rgba(120,160,255,0)"]]); circle(cx, cy, R * 1.4); ctx.fill(); // atmosphere glow
   ctx.save(); circle(cx, cy, R); ctx.clip();
   ctx.fillStyle = rad(cx - R * 0.3, cy - R * 0.4, R * 0.1, R * 1.2, [[0, "#4f7cf0"], [1, "#1b2a7a"]]); ctx.fillRect(cx - R, cy - R, 2 * R, 2 * R);
