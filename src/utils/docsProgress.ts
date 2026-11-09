@@ -30,4 +30,10 @@ export function summarise(d: DocSet, DATA: NData): DocSummary | null {
   };
 }
 
-export const loadNarratives = async (): Promise<NData> => (await import('../data/narratives/igbc.json')).default as unknown as NData;
+/** All narrative template sets: IGBC (from the IGBC Narrative Builder, workbook-filled) plus LEED and GRIHA (project facts). */
+export const loadNarratives = async (): Promise<NData> => {
+  const [igbc, leed, griha] = await Promise.all([import('../data/narratives/igbc.json'), import('../data/narratives/leed'), import('../data/narratives/griha')]);
+  const I = igbc.default as unknown as NData;
+  for (const k of Object.keys(I)) I[k].family ??= 'IGBC';
+  return { ...I, leed41bdc: leed.LEED_V41_BDC, griha2019: griha.GRIHA_V2019 };
+};

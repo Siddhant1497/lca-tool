@@ -13,7 +13,8 @@ export interface NSource {
   project: string; sample: boolean; uncached?: boolean; blank: number; total: number; file?: string;
   totals: { pts?: unknown; level?: unknown; mand?: unknown; stage?: unknown };
 }
-export interface NRating { title: string; sections: NSection[]; tokens: [string, string][]; sample: Omit<NSource, 'rating'> }
+/** facts: no calculation workbook; the project's figures are typed once in a Project facts form. */
+export interface NRating { title: string; sections: NSection[]; tokens: [string, string][]; sample: Omit<NSource, 'rating'>; facts?: boolean; family?: string }
 export type NData = Record<string, NRating>;
 
 export const TOK = /\{\{([A-Za-z0-9_]+)\|([^}]*)\}\}|\[\[(.+?)\]\]/g;
@@ -72,7 +73,11 @@ export function creditDoc(c: NCredit, src: NSource, edits: Record<string, string
 }
 
 /* ── Workbook reading (no SheetJS): defined names → cached cell values ── */
-const unxml = (s: string) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+// Decode XML entities, including numeric references (&#8211; &#x20B9;) that some Excel writers use for non-ASCII text.
+const unxml = (s: string) => s
+  .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+  .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
 const attr = (tag: string, a: string) => { const m = new RegExp(`\\b${a}="([^"]*)"`).exec(tag); return m ? unxml(m[1]) : undefined; };
 export function parseRef(ref: string) {
   const m = /^'?(.*?)'?!\$?([A-Z]+)\$?(\d+)(?::\$?([A-Z]+)\$?(\d+))?$/.exec(ref || '');

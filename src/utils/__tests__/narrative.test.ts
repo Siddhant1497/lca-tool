@@ -136,3 +136,33 @@ describe('live portal update', async () => {
     expect(u.trajectory).toBeUndefined(); expect(u.certs).toBeUndefined(); expect(u.docs).toBeUndefined(); expect(u.roadmap).toBeUndefined();
   });
 });
+
+describe('LEED v4.1 BD+C and GRIHA v2019 templates', async () => {
+  const { loadNarratives } = await import('../docsProgress');
+  const ALL = await loadNarratives();
+  it('are registered alongside the six IGBC sets', () => {
+    expect(Object.keys(ALL).sort()).toEqual(['fac', 'griha2019', 'homes', 'leed41bdc', 'nb', 'nb3', 'svc', 'wh']);
+    expect(ALL.leed41bdc.facts).toBe(true); expect(ALL.nb.family).toBe('IGBC');
+  });
+  it('LEED points add up to the 110-point scorecard', () => {
+    const pts = ALL.leed41bdc.sections.flatMap((s) => s.credits).map((c) => parseInt(c.pts)).filter((n) => !Number.isNaN(n));
+    expect(pts.reduce((a, b) => a + b, 0) - 16).toBe(110);   // LT c1 (ND location, 16) is an alternative to the other LT credits
+    expect(ALL.leed41bdc.sections.flatMap((s) => s.credits).filter((c) => c.pts === 'Required')).toHaveLength(12);
+  });
+  it('GRIHA points add up to 100 + 5 innovation', () => {
+    const pts = ALL.griha2019.sections.flatMap((s) => s.credits).filter((c) => c.id !== 'Cr 30').map((c) => parseInt(c.pts)).filter((n) => !Number.isNaN(n));
+    expect(pts.reduce((a, b) => a + b, 0)).toBe(100);
+    expect(ALL.griha2019.sections.flatMap((s) => s.credits).filter((c) => c.id.startsWith('Cr '))).toHaveLength(30);
+  });
+  it('every template token has a project fact and every credit renders', () => {
+    for (const key of ['leed41bdc', 'griha2019']) {
+      const R = ALL[key]; const names = new Set(R.tokens.map(([n]) => n));
+      for (const c of R.sections.flatMap((s) => s.credits)) for (const t of [c.intent, c.result, ...c.approach, ...c.evidence])
+        for (const m of t.matchAll(/\{\{([A-Za-z0-9_]+)\|/g)) expect(names.has(m[1]), `${key} ${c.id}: ${m[1]}`).toBe(true);
+      const src = { ...R.sample, rating: key } as never;
+      const sum = summarise({ id: 'x', name: 'x', rating: key, updatedAt: '', src, edits: {}, meta: {} }, ALL)!;
+      expect(sum.credits.length).toBeGreaterThan(25);
+      expect(sum.credits.every((c) => c.miss === 0)).toBe(true);   // sample facts fill every figure
+    }
+  });
+});

@@ -9,7 +9,7 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 | Area | What it does |
 |---|---|
 | **Clients** | Separate workspace per client (switcher in the header). **Client sharing** builds a read-only, single-file dashboard per client with only the sections, disclosure frameworks and certification projects you tick; activity data and factor libraries never leave your workspace. See [docs/HOSTING.md](docs/HOSTING.md). |
-| **Documentation** | Your IGBC narrative templates (from the IGBC Narrative Builder): 6 rating systems, 271 credits. Open the filled calculation workbook to fill every figure from its named ranges; type project facts in place; per-credit status, owner and due date; Copy for Word. |
+| **Documentation** | Credit narrative templates: **IGBC** (from the IGBC Narrative Builder: 6 rating systems, 271 credits, filled from the calculation workbook's named ranges), **LEED v4.1 BD+C** (55 credits and prerequisites) and **GRIHA v2019** (30 criteria), filled from a Project facts form. Type project facts in place; per-credit status, owner and due date; Copy for Word. Sample IGBC workbooks for every rating are in `docs/samples/` (`python3 scripts/make_sample_workbooks.py` rebuilds them). |
 | **Live client portal** | A private claude.ai page per client that updates in real time when you import an update from Client sharing, with a two-way "documents we need from you" board. See [docs/HOSTING.md](docs/HOSTING.md). |
 | **Workspace** | First-run choice: carbon only, or add certifications and/or building LCA. Switch modules on or off any time; hidden modules disappear from the navigation, the dashboard and the Excel export. |
 | **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors from **bundled official packs**: CEA CO₂ Baseline Database v22.0 (India grid FY 2013-14 to 2025-26), UK DESNZ 2025 and 2026 (all kg CO₂e rows), GHG Protocol GWPs (AR5/AR6), plus import of any other official file (US EPA, IPCC…). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
@@ -31,7 +31,7 @@ Merge PR #1 into the default branch (`claude/lca-analysis-tool-CQfCB`), then set
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 48 unit tests: pathway, strategy, factor packs, sharing, narratives, workbook reader, portal
+npm test           # 58 unit tests: pathway, strategy, factor packs, sharing, narratives, workbook reader, sample workbooks, portal
 npm run build      # production build in dist/
 ```
 

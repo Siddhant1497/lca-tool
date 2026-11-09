@@ -16,6 +16,7 @@ export type HubAction =
   | { type: 'UPSERT_ACTIVITY'; item: Activity } | { type: 'DELETE_ACTIVITY'; id: string }
   | { type: 'UPSERT_DOC'; item: DocSet } | { type: 'DELETE_DOC'; id: string }
   | { type: 'DOC_EDIT'; id: string; key: string; value: string }
+  | { type: 'UPDATE_DOC_SRC'; id: string; src: DocSet['src'] }
   | { type: 'DOC_META'; id: string; credit: string; patch: DocSet['meta'][string] };
 
 export const EMPTY: HubState = {
@@ -70,6 +71,7 @@ export const reducer = (s: HubState, a: HubAction): HubState => {
       const now = new Date().toISOString();
       return { ...live, docs: s.docs.map((d) => (d.id !== a.id ? d : { ...d, updatedAt: now, edits: { ...d.edits, [a.key]: a.value } })) };
     }
+    case 'UPDATE_DOC_SRC': return { ...live, docs: s.docs.map((d) => (d.id !== a.id ? d : { ...d, src: a.src, updatedAt: new Date().toISOString() })) };
     case 'DOC_META': {
       const now = new Date().toISOString();
       return { ...live, docs: s.docs.map((d) => (d.id !== a.id ? d : { ...d, updatedAt: now, meta: { ...d.meta, [a.credit]: { ...d.meta[a.credit], ...a.patch } } })) };
