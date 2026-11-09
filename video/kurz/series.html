@@ -292,7 +292,7 @@ function branding(t, T) {
 }
 function outro(t, T) {
   const t0 = T - 3.4, a = prog(t, t0, 0.5); if (a <= 0.01) return;
-  ctx.fillStyle = `rgba(8,5,28,${0.82 * a})`; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = `rgba(8,5,28,${0.95 * a})`; ctx.fillRect(0, 0, W, H);
   const sp = DATA.spec;
   if (sp.next) {
     ctx.save(); ctx.globalAlpha = a; ctx.font = "800 40px Inter"; ctx.fillStyle = "#ff9d3d"; ctx.textAlign = "center"; ctx.textBaseline = "middle";

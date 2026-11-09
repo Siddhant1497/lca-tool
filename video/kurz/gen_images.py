@@ -25,6 +25,20 @@ def curl(method, path, body=None):
     return json.loads(subprocess.run(cmd, capture_output=True, text=True, check=True).stdout)
 
 
+def submit(item, spec):
+    neg = NEGATIVE.replace(", people, person", "") if item.get("people") else NEGATIVE
+    body = {"prompt": f"{item['prompt']}, {spec['style']} ### {neg}",
+            "params": {"width": spec.get("width", 1024), "height": spec.get("height", 576), "steps": 30, "cfg_scale": 6, "sampler_name": "k_dpmpp_2m",
+                       "karras": True, "seed": str(item.get("seed", 7)), "post_processing": ["RealESRGAN_x2plus"], "n": 1},
+            "models": [spec.get("model", "AlbedoBase XL (SDXL)")], "nsfw": False, "censor_nsfw": True, "r2": True, "shared": False}
+    r = curl("POST", "/generate/async", body)
+    if "id" not in r:
+        print("submit failed", item["name"], r, flush=True)
+        return None
+    print("queued", item["name"], r["id"], flush=True)
+    return r["id"]
+
+
 def main():
     spec = json.load(open(sys.argv[1], encoding="utf-8"))
     os.makedirs(OUT, exist_ok=True)
@@ -32,17 +46,9 @@ def main():
     for item in spec["images"]:
         if os.path.exists(os.path.join(OUT, item["name"] + ".png")):
             continue
-        neg = NEGATIVE.replace(", people, person", "") if item.get("people") else NEGATIVE
-        body = {"prompt": f"{item['prompt']}, {spec['style']} ### {neg}",
-                "params": {"width": spec.get("width", 1024), "height": spec.get("height", 576), "steps": 30, "cfg_scale": 6, "sampler_name": "k_dpmpp_2m", "karras": True,
-                           "seed": str(item.get("seed", 7)), "post_processing": ["RealESRGAN_x2plus"], "n": 1},
-                "models": [spec.get("model", "AlbedoBase XL (SDXL)")], "nsfw": False, "censor_nsfw": True, "r2": True, "shared": False}
-        r = curl("POST", "/generate/async", body)
-        if "id" not in r:
-            print("submit failed", item["name"], r, flush=True)
-            continue
-        jobs[item["name"]] = r["id"]
-        print("queued", item["name"], r["id"], flush=True)
+        jid = submit(item, spec)
+        if jid:
+            jobs[item["name"]] = jid
         time.sleep(2)
     while jobs:
         time.sleep(20)
@@ -56,8 +62,16 @@ def main():
                 tmp = os.path.join(OUT, name + ".webp")
                 subprocess.run(["curl", "-sS", "-m", "120", "-o", tmp, gen["img"]], check=True)
                 from PIL import Image
-                Image.open(tmp).convert("RGB").save(os.path.join(OUT, name + ".png"))
+                im = Image.open(tmp).convert("RGB")
                 os.remove(tmp)
+                if gen.get("censored") or im.width < 600:  # false-positive NSFW block: resubmit with a new seed
+                    print("censored, retrying", name, flush=True)
+                    item = next(i for i in spec["images"] if i["name"] == name)
+                    item["seed"] = item.get("seed", 7) + 1000
+                    del jobs[name]
+                    jobs[name] = submit(item, spec)
+                    continue
+                im.save(os.path.join(OUT, name + ".png"))
                 print("saved", name, gen.get("model"), flush=True)
                 del jobs[name]
         print("waiting:", ", ".join(f"{n}" for n in jobs), flush=True) if jobs else None
