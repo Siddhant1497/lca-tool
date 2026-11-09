@@ -3,6 +3,7 @@ import { useHub } from '../../context/HubContext';
 import type { DocSet } from '../../types/hub';
 import { segments, parts, creditCounts, isTargeted, creditDoc, readIgbcWorkbook, DOC_STATUSES, DOC_DONE, type NData, type NCredit, type NSource, type DocStatus } from '../../utils/narrative';
 import { loadNarratives, summarise } from '../../utils/docsProgress';
+import { OFFICIAL } from '../../data/narratives/official';
 import { uid } from '../../utils/hub';
 import { ask } from '../../utils/platform';
 import Icon from '../ui/Icon';
@@ -85,7 +86,7 @@ const Documentation: React.FC = () => {
           const id = uid(); const smp = DATA[create.rating].sample;
           dispatch({ type: 'UPSERT_DOC', item: { id, name: create.name.trim(), rating: create.rating, projectId: create.projectId || undefined, updatedAt: new Date().toISOString(),
             src: { ...smp, rating: create.rating, sample: true }, edits: {}, meta: {} } });
-          setActiveId(id); setCreate(null); toast('Created. Showing the worked example until you open the filled workbook.');
+          setActiveId(id); setCreate(null); toast(DATA[create.rating]?.facts ? 'Created with an example project. Open Project facts to enter yours.' : 'Created. Showing the worked example until you open the filled workbook.');
         }}><Icon name="plus" size={15} />Create</button></>}>
       <div className="form-grid" style={{ gridTemplateColumns: '1fr' }}>
         <div className="field"><label>Name</label><input value={create.name} onChange={(e) => setCreate({ ...create, name: e.target.value })} placeholder="e.g. Tower A – precertification" /></div>
@@ -144,6 +145,7 @@ const Documentation: React.FC = () => {
 
       {S.uncached && <div className="notice err-n"><Icon name="alert" size={16} /><span>This workbook has no calculated values stored. Open it in Excel, let it calculate, save, then open it here again.</span></div>}
       {!S.sample && S.blank > 0 && <div className="notice"><Icon name="info" size={16} /><span className="grow">{S.total - S.blank} of {S.total} {R.facts ? 'project facts are entered. Red items are still blank: open Project facts.' : 'workbook figures are filled. Red items are still blank in the workbook.'}</span></div>}
+      {OFFICIAL[doc.rating] && <div className="notice"><Icon name="info" size={16} /><span className="grow">Credit names and maximum points match the official {OFFICIAL[doc.rating].publisher} source: <a href={OFFICIAL[doc.rating].url} target="_blank" rel="noreferrer">{OFFICIAL[doc.rating].document}</a>. Levels: {OFFICIAL[doc.rating].levels}.{doc.rating === 'griha2019' ? ' GRIHA Version 6 is now the current version; v2019 projects can apply to convert. Start a GRIHA Version 6 set to compare.' : ''}</span></div>}
       <div className="notice info"><Icon name="check" size={16} /><span className="grow">Every figure, name and document reference must be checked by the project lead before submission. <b>Green</b> = {R.facts ? 'from Project facts' : 'read from the workbook (hover for its cell)'} · <b>yellow</b> = project fact to type and confirm · <b>red</b> = {R.facts ? 'project fact not yet entered' : 'figure not yet filled in the workbook'}.</span></div>
 
       <div className="docs-wrap">

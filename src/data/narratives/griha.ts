@@ -1,8 +1,9 @@
 /**
  * GRIHA v2019 narrative templates (new construction), in the same structure as the IGBC set.
  * {{Name|fmt}} = project fact entered once in the Project facts form; [[hint]] = fact typed per criterion.
- * Criterion names and points follow the GRIHA v2019 structure (100 points + 5 innovation). Mandatory /
- * partly-mandatory status and appraisal thresholds are left to the team: confirm them in the current manual.
+ * Criterion names, points and appraisal types follow GRIHA V.2019 Volume 1, Table 6 (see official.ts; 100 points
+ * + 5 innovation). Appraisal thresholds are fill-ins: confirm them in the criterion volumes and addenda.
+ * GRIHA Version 6 is the current version (griha6.ts); v2019 projects can convert to it.
  */
 import type { NRating, NCredit } from '../../utils/narrative';
 
@@ -33,10 +34,10 @@ export const GRIHA_V2019: NRating = {
       c('Cr 1', 'Green Infrastructure', '5 points', 'Preserve and enhance the site\'s natural features and green cover.',
         ['Existing trees: [[number]] surveyed, [[number]] preserved in situ, [[number]] transplanted; compensatory planting of [[number]] trees.', 'Soft landscape over [[area]] m2 ([[percent]]% of site area), with [[percent]]% native species.'],
         ['Tree survey and site plan marking preserved, transplanted and new trees; landscape plan with species list.'], 'The project targets [[points]] of 5 points.', ['Keep the tree survey dated before site clearance.']),
-      c('Cr 2', 'Low Impact Design', '5 points', 'Reduce the impact of development through passive, climate-responsive design.',
+      c('Cr 2', 'Low Impact Design Strategies', '5 points', 'Reduce the impact of development through passive, climate-responsive design.',
         ['Passive strategies for the {{Climate_Zone|@}} zone: [[orientation, shading, courtyards, thermal mass, natural ventilation]].', 'Site planning that reduces disturbance: [[cut-and-fill balance, footprint, contours retained]].'],
         ['Climate analysis; drawings showing passive strategies; shading and orientation analysis.'], 'The project targets [[points]] of 5 points.'),
-      c('Cr 3', 'Design to Mitigate Urban Heat Island Effect', '2 points', 'Reduce heat absorbed by site and roof surfaces.',
+      c('Cr 3', 'Design to Mitigate UHIE', '2 points', 'Reduce heat absorbed by site and roof surfaces.',
         ['Non-roof: [[tree shade, grass pavers, high-SRI paving]] over [[percent]]% of hard-paved area.', 'Roof: [[high-SRI finish, vegetated roof, solar PV]] over [[percent]]% of exposed roof area.'],
         ['Site and roof plans marking treatments; SRI data sheets; area calculation.'], 'The project targets [[points]] of 2 points.'),
     ] },
@@ -44,7 +45,7 @@ export const GRIHA_V2019: NRating = {
       c('Cr 4', 'Air and Soil Pollution Control', '1 point', 'Limit air and soil pollution during construction.',
         ['Dust control: [[barricading to height, water sprinkling, covered transport, wheel washing]]. Soil: [[erosion control, spill management]].'],
         ['Construction management plan; dated photographs of measures.'], 'The project targets [[0 / 1]] of 1 point.'),
-      c('Cr 5', 'Top Soil Preservation', '1 point', 'Preserve fertile topsoil for reuse in landscaping.',
+      c('Cr 5', 'Topsoil Preservation', '1 point', 'Preserve fertile topsoil for reuse in landscaping.',
         ['Topsoil of [[volume]] m3 stripped to [[depth]] and stored at [[location]], [[covered / stabilised]], and reused for [[landscape areas]].'],
         ['Topsoil management plan; soil test; photographs of storage and reuse.'], 'The project targets [[0 / 1]] of 1 point.'),
       c('Cr 6', 'Construction Management Practices', '2 points', 'Manage construction waste, energy and water use responsibly.',
@@ -52,7 +53,7 @@ export const GRIHA_V2019: NRating = {
         ['Waste log and receipts; metering records; photographs.'], 'The project targets [[points]] of 2 points.'),
     ] },
     { title: 'Section 3: Energy Optimization', credits: [
-      c('Cr 7', 'Energy Optimization', '12 points', 'Reduce building energy consumption beyond the ECBC benchmark.',
+      c('Cr 7', 'Energy Optimization', '12 points', 'Reduce building energy consumption below the GRIHA EPI benchmark while meeting ECBC requirements.',
         ['Compliance path: [[prescriptive / whole-building simulation in software]] against [[ECBC 2017 / ECSBC]] for a {{Bld_Type|@}} building of {{BUA_Total|#,##0}} m2.', 'EPI of proposed design: [[kWh/m2/yr]] against benchmark [[kWh/m2/yr]] ([[percent]]% reduction). Key measures: [[envelope U-values, glazing SHGC/VLT, LPD, HVAC efficiency, controls]].'],
         ['Energy simulation report or ECBC compliance forms; equipment schedules and cut sheets.'], 'The project targets [[points]] of 12 points.', ['Use the same area and operating hours as the area statement.']),
       c('Cr 8', 'Renewable Energy Utilization', '5 points', 'Meet part of the energy demand from on-site renewable sources.',
@@ -69,17 +70,17 @@ export const GRIHA_V2019: NRating = {
       c('Cr 11', 'Thermal and Acoustic Comfort', '2 points', 'Maintain thermal and acoustic comfort for occupants.',
         ['Thermal: [[percent]]% of occupied hours within [[NBC / IMAC adaptive]] comfort band for [[spaces]]. Acoustic: background noise within [[limits]] for [[spaces]].'],
         ['Thermal comfort simulation; acoustic design narrative and calculations.'], 'The project targets [[points]] of 2 points.'),
-      c('Cr 12', 'Maintaining Good Indoor Air Quality', '6 points', 'Ensure healthy indoor air through ventilation and low-emitting materials.',
+      c('Cr 12', 'Indoor Air Quality', '6 points', 'Ensure healthy indoor air through ventilation and low-emitting materials.',
         ['Fresh air per [[ASHRAE 62.1 / NBC]] for [[spaces]]; low-VOC [[paints, adhesives, sealants]]; [[CO2 / PM monitoring]].'],
         ['Ventilation calculation; product data sheets with VOC content; monitoring layout.'], 'The project targets [[points]] of 6 points.'),
     ] },
     { title: 'Section 5: Water Management', credits: [
-      c('Cr 13', 'Water Demand Reduction', '3 points', 'Reduce water demand through efficient fixtures and landscape.',
+      c('Cr 13', 'Water Demand Reduction', '4 points', 'Reduce water demand through efficient fixtures and landscape.',
         ['Fixture demand is [[percent]]% below the GRIHA baseline for {{Occupants|#,##0}} occupants, using [[low-flow fixtures with flow rates]]. Landscape demand reduced by [[percent]]% through [[native species, drip]].'],
-        ['Water demand calculation; fixture cut sheets; landscape plan.'], 'The project targets [[points]] of 3 points.'),
-      c('Cr 14', 'Wastewater Treatment', '3 points', 'Treat wastewater on site for reuse.',
+        ['Water demand calculation; fixture cut sheets; landscape plan.'], 'The project targets [[points]] of 4 points.'),
+      c('Cr 14', 'Wastewater Treatment', '2 points', 'Treat wastewater on site for reuse.',
         ['On-site [[STP technology]] of [[KLD]] capacity treats [[percent]]% of wastewater to [[CPCB / SPCB]] reuse standards; treated water reused for [[flushing, landscape]].'],
-        ['STP design and capacity calculation; water balance; layout.'], 'The project targets [[points]] of 3 points.'),
+        ['STP design and capacity calculation; water balance; layout.'], 'The project targets [[points]] of 2 points.'),
       c('Cr 15', 'Rainwater Management', '5 points', 'Reduce run-off and recharge ground water or store rainwater for use.',
         ['Run-off from [[area]] m2 managed through [[recharge pits, storage tanks]] of [[volume]] m3, capturing [[percent]]% of run-off.'],
         ['Rainwater calculation with rainfall data source; drainage layout; percolation report if recharge.'], 'The project targets [[points]] of 5 points.'),
@@ -91,15 +92,15 @@ export const GRIHA_V2019: NRating = {
       c('Cr 17', 'Waste Management – Post Occupancy', '4 points', 'Segregate and manage waste during operation.',
         ['Source segregation into [[streams]] with bins on [[floors / areas]]; central collection at [[location]]; tie-ups with [[authorised recyclers]].'],
         ['Waste management plan; layout of bins and storage; agreements.'], 'The project targets [[points]] of 4 points.'),
-      c('Cr 18', 'Organic Waste Treatment On-Site', '2 points', 'Treat organic waste on site.',
+      c('Cr 18', 'Organic Waste Treatment', '2 points', 'Treat organic waste on site.',
         ['Organic waste of [[kg/day]] treated by [[composter / biogas]] of [[capacity]] at [[location]].'],
         ['Waste generation calculation; equipment specification; layout.'], 'The project targets [[points]] of 2 points.'),
     ] },
     { title: 'Section 7: Sustainable Building Materials', credits: [
-      c('Cr 19', 'Utilization of Alternative Materials in Buildings', '5 points', 'Reduce embodied impacts by using alternative and recycled materials.',
+      c('Cr 19', 'Utilization of Alternative Materials in Building', '5 points', 'Reduce embodied impacts by using alternative and recycled materials.',
         ['Materials with recycled or industrial-waste content: [[fly ash bricks / AAC blocks, PPC/PSC cement, recycled steel]] making up [[percent]]% of [[material category]].'],
         ['Material calculation; manufacturer certificates and invoices.'], 'The project targets [[points]] of 5 points.'),
-      c('Cr 20', 'Reduction in GWP through Life Cycle Assessment', '5 points', 'Reduce embodied carbon through life-cycle assessment of the building.',
+      c('Cr 20', 'Reduction in Global Warming Potential through Life Cycle Assessment', '5 points', 'Reduce embodied carbon through life-cycle assessment of the building.',
         ['Cradle-to-gate LCA in [[tool]] shows [[percent]]% reduction in GWP against a baseline building of the same function and area ({{BUA_Total|#,##0}} m2).'],
         ['LCA report with baseline and proposed, scope, data sources and results.'], 'The project targets [[points]] of 5 points.', ['Use the same scope and data sources for baseline and proposed.']),
       c('Cr 21', 'Alternative Materials for External Site Development', '2 points', 'Use low-impact materials for external works.',
@@ -126,15 +127,15 @@ export const GRIHA_V2019: NRating = {
         ['Narrative with evidence for each measure.'], 'The project targets [[points]] of 3 points.'),
     ] },
     { title: 'Section 10: Performance Metering and Monitoring', credits: [
-      c('Cr 27', 'Commissioning for Final Rating', '7 points', 'Verify that building systems perform as designed.',
-        ['Commissioning of [[HVAC, lighting, RE, water systems]] by [[agency]] on [[dates]], with performance data for [[period]].'],
-        ['Commissioning report; performance monitoring data.'], 'The project targets [[points]] of 7 points.'),
-      c('Cr 28', 'Smart Metering and Monitoring', '', 'Monitor energy and water use through metering.',
-        ['Meters on [[energy and water end uses]] linked to [[BMS / monitoring system]].'],
-        ['Metering layout; BMS points list; cut sheets.'], 'Status: [[met / pending]].', ['Confirm points and mandatory status in the GRIHA v2019 manual.']),
-      c('Cr 29', 'Operation and Maintenance Protocol', '', 'Keep the building performing as designed through planned O&M.',
-        ['O&M manual covering [[systems]], with training for [[facility staff]] on [[dates]].'],
-        ['O&M manual; training records.'], 'Status: [[met / pending]].', ['Confirm points and mandatory status in the GRIHA v2019 manual.']),
+      c('Cr 27', 'Project Commissioning', 'Mandatory', 'Verify that building systems are installed and perform as designed.',
+        ['Commissioning of [[HVAC, lighting, RE, water and other electro-mechanical systems]] by [[agency]] on [[dates]], against the design intent.'],
+        ['Commissioning plan and report; test records.'], 'Mandatory: [[met / pending]].', ['Mandatory criterion with no points in GRIHA v2019 (Volume 1, Table 6).']),
+      c('Cr 28', 'Smart Metering and Monitoring', '7 points', 'Monitor energy and water use through metering to track performance.',
+        ['Meters on [[energy and water end uses]] linked to [[BMS / monitoring system]]; data recorded at [[interval]] and shared with [[GRIHA Council / owner]].'],
+        ['Metering layout; BMS points list; cut sheets.'], 'The project targets [[points]] of 7 points.', ['Partly mandatory: the mandatory metering appraisals must be met whatever points are targeted.']),
+      c('Cr 29', 'Operation and Maintenance Protocol', 'Mandatory', 'Keep the building performing as designed through planned O&M.',
+        ['O&M manual covering [[systems]], supplier training clauses in contracts, and training for [[facility staff]] on [[dates]].'],
+        ['O&M manual; contract clauses; training records.'], 'Mandatory: [[met / pending]].', ['Mandatory criterion with no points in GRIHA v2019 (Volume 1, Table 6).']),
     ] },
     { title: 'Section 11: Innovation', credits: [
       c('Cr 30', 'Innovation', '5 points', 'Reward measures beyond the rating requirements.',
@@ -142,3 +143,12 @@ export const GRIHA_V2019: NRating = {
     ] },
   ],
 };
+
+/** Appraisal type per criterion from GRIHA V.2019 Volume 1, Table 6 (shown as the first reviewer note). */
+const TYPE_2019: Record<number, string> = { 1: 'Partly mandatory', 2: 'Optional', 3: 'Optional', 4: 'Partly mandatory', 5: 'Optional', 6: 'Partly mandatory', 7: 'Partly mandatory', 8: 'Partly mandatory', 9: 'Partly mandatory',
+  10: 'Partly mandatory', 11: 'Partly mandatory', 12: 'Partly mandatory', 13: 'Partly mandatory', 14: 'Optional', 15: 'Optional', 16: 'Partly mandatory', 17: 'Partly mandatory', 18: 'Optional', 19: 'Optional', 20: 'Optional',
+  21: 'Optional', 22: 'Optional', 23: 'Partly mandatory', 24: 'Optional', 25: 'Optional', 26: 'Partly mandatory', 27: 'Mandatory', 28: 'Partly mandatory', 29: 'Mandatory', 30: 'Optional' };
+for (const s of GRIHA_V2019.sections) for (const cr of s.credits) {
+  const t = TYPE_2019[parseInt(cr.id.replace('Cr ', ''))];
+  if (t && cr.id.startsWith('Cr ') && t !== 'Mandatory') cr.preempt = [`Appraisal type (GRIHA v2019): ${t}.`, ...(cr.preempt ?? [])];
+}
