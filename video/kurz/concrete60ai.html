@@ -209,12 +209,12 @@ function donut(cx, cy, R, frac, g, ta) {
 function shotC(t, g) {
   const tf = when("fifteen", 0);
   plate("c_crane", t, { z0: 1.12, z1: 1.02, dur: 8, px: 0.3 });
-  ctx.fillStyle = lin(W * 0.45, 0, W, 0, [[0, "rgba(12,8,40,0)"], [1, "rgba(12,8,40,0.7)"]]); ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = lin(W * 0.5, 0, W * 0.85, 0, [[0, "rgba(12,8,40,0)"], [1, "rgba(12,8,40,0.82)"]]); ctx.fillRect(0, 0, W, H);
   dust(t, 0.2);
   pill(560, 880, "steel frame", "#c46a34", prog(t, 0.5, 0.4));
-  donut(1340, 520, 230, 0.15, g, tf);
-  pill(1340, 850, "cement + steel  ·  source: IEA", "rgba(255,255,255,0.12)", prog(g, tf + 0.6, 0.4), 26);
-  art("factory", 1690, 690, 150, g, tf + 0.3, { bob: 6 });
+  donut(1540, 470, 210, 0.15, g, tf);
+  pill(1540, 770, "cement + steel  ·  source: IEA", "rgba(20,14,60,0.85)", prog(g, tf + 0.6, 0.4), 26);
+  art("factory", 1800, 700, 140, g, tf + 0.3, { bob: 6 });
 }
 
 // ── shot D: compared with aviation ──
@@ -226,8 +226,8 @@ function shotD(t, g) {
   const t7 = when("seven times", 0), t2 = when("two percent", 0), ta = when("aviation", 0);
   plate("d_plane", t, { z0: 1.0, z1: 1.1, dur: 6, dim: 0.55, blur: 2 });
   const px = lerp(-250, W + 250, (t - 0.2) / 7.5);                                                // a plane crossing, with its contrail
-  ctx.save(); ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.lineWidth = 10; ctx.setLineDash([24, 16]); ctx.beginPath(); ctx.moveTo(-200, 175); ctx.lineTo(px - 90, 175); ctx.stroke(); ctx.restore();
-  art("airplane", px, 170, 150, t, -9, { shadow: false, rot: 0.75, bob: 4 });
+
+  if (false) art("airplane", px, 170, 150, t, -9, { shadow: false, rot: 0.75, bob: 4 });
   const base = 880;
   bar(640, base, 15 * 34, (t + 0.5) / 1.2, "#ffd45a", "#ff8a3d");
   bar(1280, base, 2 * 34, (g - ta) / 0.9, "#8fd0ff", "#4b7bff");

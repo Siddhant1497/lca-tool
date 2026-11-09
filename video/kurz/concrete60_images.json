@@ -10,8 +10,8 @@
     },
     {
       "name": "b_concrete",
-      "seed": 12,
-      "prompt": "extreme close-up cross-section of concrete, rounded grey and lilac aggregate stones embedded in cement paste, abstract macro pattern, soft depth of field"
+      "seed": 22,
+      "prompt": "cross-section of a concrete slab showing many grey rounded pebbles and gravel stones embedded in smooth grey cement, flat vector texture pattern, top-down view"
     },
     {
       "name": "b_kiln",
@@ -35,13 +35,13 @@
     },
     {
       "name": "f_timber",
-      "seed": 17,
-      "prompt": "hopeful sustainable construction site, a wooden mass timber building being assembled, warm wood panels, green trees and plants, morning light, teal and green palette"
+      "seed": 27,
+      "prompt": "a modern multi-storey building made of light wood panels under construction, wooden beams, cranes, green trees around it, bright morning sky, teal and green palette"
     },
     {
       "name": "g_earth",
-      "seed": 18,
-      "prompt": "planet Earth seen from space, wrapped in a thin glowing violet haze, city lights twinkling on the night side, stars and distant nebula"
+      "seed": 28,
+      "prompt": "planet Earth from orbit with blue oceans and green continents, thin glowing atmosphere, city lights on the night side, starry space background"
     }
   ],
   "model": "AlbedoBase XL (SDXL)"
