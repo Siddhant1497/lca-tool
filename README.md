@@ -24,7 +24,7 @@ Plus: dark mode, a collapsible sidebar (`[`), a **Ctrl/⌘ + K** command palette
 
 ## Host it
 
-Merge to `main`, then set **Settings → Pages → Source: GitHub Actions**. The app goes live at https://siddhant1497.github.io/lca-tool/ and redeploys on every merge. Details and client-sharing options are in [docs/HOSTING.md](docs/HOSTING.md).
+Merge PR #1 into the default branch (`claude/lca-analysis-tool-CQfCB`), then set **Settings → Pages → Source: GitHub Actions**. The app goes live at https://siddhant1497.github.io/lca-tool/ and redeploys on every merge. Details and client-sharing options are in [docs/HOSTING.md](docs/HOSTING.md).
 
 ## Run it
 

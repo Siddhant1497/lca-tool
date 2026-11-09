@@ -1,10 +1,11 @@
-# Builds SustainHub and publishes it to GitHub Pages on every push to main.
+# Builds SustainHub and publishes it to GitHub Pages on every push to the default branch.
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # The repository's default branch (merging PR #1 deploys). main is listed in case it is renamed later.
+    branches: [claude/lca-analysis-tool-CQfCB, main]
   workflow_dispatch:
 
 permissions:

@@ -4,13 +4,13 @@
 
 The app is a static website: no server or database. Your clients' data never goes to the host; it stays in the browser where you enter it.
 
-1. Merge pull request #1 into `main`.
+1. Merge pull request #1 into the default branch (`claude/lca-analysis-tool-CQfCB`).
 2. In the repository go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
 3. The workflow in `.github/workflows/deploy.yml` builds, tests and publishes the app. After about 2 minutes it is live at:
 
    **https://siddhant1497.github.io/lca-tool/**
 
-Every later merge to `main` redeploys automatically (Actions tab shows progress).
+Every later merge to the default branch redeploys automatically (Actions tab shows progress).
 
 > The repository is public, so the app's *code* is public. That is fine: no client data is in the code. Do **not** commit client files or backups to the repository.
 
