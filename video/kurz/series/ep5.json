@@ -1,0 +1,272 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep5",
+ "narration": [
+  "Ranking green building certifications like street food stalls.",
+  "LEED. By the US Green Building Council, the most recognised name worldwide. The famous biryani place with a queue round the block. Bring patience.",
+  "EDGE. By IFC, part of the World Bank Group, for emerging markets. At least twenty percent less energy, water and embodied energy. The stall with no signboard every local swears by.",
+  "IGBC. The Indian Green Building Council, set up by CII, built around Indian codes and climate. The hometown favourite.",
+  "GRIHA. Developed by TERI, India's national rating system. The place your uncle swears by, and he's usually right.",
+  "None is universally better. Pick the one that fits your project. Otherwise it's biryani at a sushi bar.",
+  "Which one should I break down next? Comment below."
+ ],
+ "voices": {},
+ "spec": {
+  "ep": 5,
+  "title": "Green Certifications, Rated Like Street Food",
+  "next": "What a green building audit really finds",
+  "names": {},
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_street"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "GREEN CERTIFICATIONS, RATED LIKE STREET FOOD",
+      "y": 520,
+      "size": 92,
+      "at": 0.1
+     }
+    ]
+   },
+   {
+    "at": "LEED.",
+    "trans": "whip",
+    "plate": {
+     "img": "s_us",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "LEED",
+      "y": 380,
+      "size": 200,
+      "color": "yellow",
+      "at": "LEED."
+     },
+     {
+      "type": "checklist",
+      "y": 600,
+      "color": "amber",
+      "items": [
+       {
+        "text": "US Green Building Council",
+        "at": "US Green"
+       },
+       {
+        "text": "Most recognised worldwide",
+        "at": "recognised"
+       },
+       {
+        "text": "The famous place with the queue",
+        "at": "queue"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "EDGE.",
+    "trans": "whip",
+    "plate": {
+     "img": "s_emerging",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "EDGE",
+      "y": 380,
+      "size": 200,
+      "color": "mint",
+      "at": "EDGE."
+     },
+     {
+      "type": "checklist",
+      "y": 600,
+      "color": "teal",
+      "items": [
+       {
+        "text": "IFC · World Bank Group",
+        "at": "IFC"
+       },
+       {
+        "text": "≥20% less energy, water + embodied energy",
+        "at": "twenty"
+       },
+       {
+        "text": "No signboard, every local knows it",
+        "at": "signboard"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "IGBC.",
+    "trans": "whip",
+    "plate": {
+     "img": "s_india",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "IGBC",
+      "y": 380,
+      "size": 200,
+      "color": "pink",
+      "at": "IGBC."
+     },
+     {
+      "type": "checklist",
+      "y": 600,
+      "color": "pink",
+      "items": [
+       {
+        "text": "Indian Green Building Council · CII",
+        "at": "Indian Green"
+       },
+       {
+        "text": "Built around Indian codes + climate",
+        "at": "codes"
+       },
+       {
+        "text": "The hometown favourite",
+        "at": "hometown"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "GRIHA.",
+    "trans": "whip",
+    "plate": {
+     "img": "s_gov",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "GRIHA",
+      "y": 380,
+      "size": 200,
+      "color": "orange",
+      "at": "GRIHA."
+     },
+     {
+      "type": "checklist",
+      "y": 600,
+      "color": "orange",
+      "items": [
+       {
+        "text": "Developed by TERI",
+        "at": "TERI"
+       },
+       {
+        "text": "India's national rating system",
+        "at": "national"
+       },
+       {
+        "text": "Your uncle's pick (usually right)",
+        "at": "uncle"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "None is",
+    "trans": "iris",
+    "plate": {
+     "img": "s_street",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "PICK THE ONE THAT FITS",
+      "y": 460,
+      "size": 108,
+      "color": "mint",
+      "at": "fits"
+     },
+     {
+      "type": "pill",
+      "text": "biryani at a sushi bar?",
+      "y": 820,
+      "color": "red",
+      "rot": -0.05,
+      "at": "sushi"
+     }
+    ]
+   },
+   {
+    "at": "Which one",
+    "trans": "pull",
+    "plate": {
+     "img": "s_street"
+    },
+    "els": [
+     {
+      "type": "pill",
+      "text": "LEED",
+      "x": 330,
+      "y": 560,
+      "color": "amber",
+      "size": 60,
+      "at": 0.1
+     },
+     {
+      "type": "pill",
+      "text": "EDGE",
+      "x": 750,
+      "y": 560,
+      "color": "teal",
+      "size": 60,
+      "at": 0.25
+     },
+     {
+      "type": "pill",
+      "text": "IGBC",
+      "x": 330,
+      "y": 720,
+      "color": "pink",
+      "size": 60,
+      "at": 0.4
+     },
+     {
+      "type": "pill",
+      "text": "GRIHA",
+      "x": 750,
+      "y": 720,
+      "color": "orange",
+      "size": 60,
+      "at": 0.55
+     },
+     {
+      "type": "pill",
+      "text": "Comment below",
+      "y": 960,
+      "color": "violet",
+      "size": 50,
+      "at": "Comment"
+     }
+    ]
+   }
+  ]
+ }
+}

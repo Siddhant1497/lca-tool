@@ -1,0 +1,196 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep6",
+ "narration": [
+  "I audit green buildings for a living. People picture a clipboard and a few approving nods. It's not that.",
+  "Most of the job is finding the gap between what the drawings say and what was actually installed. And there's almost always a gap.",
+  "The occupancy sensor that's on the plan, but not on the ceiling. The low-flow fixture swapped late to save a few dollars a unit. The solar array that looks beautiful on paper, and nowhere else.",
+  "Nobody here is a villain. A sustainability decision made in a design meeting has to survive a construction site, a budget cut, and subcontractors who've never worked to that standard.",
+  "So the job isn't approving good intentions. It's verifying they survived contact with reality.",
+  "Certification isn't a trophy. It's proof that something that could easily have been cut, wasn't."
+ ],
+ "voices": {},
+ "spec": {
+  "ep": 6,
+  "title": "What a Green Building Audit Really Finds",
+  "next": null,
+  "names": {},
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_audit"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "WHAT A GREEN AUDIT REALLY FINDS",
+      "y": 470,
+      "size": 100,
+      "at": 0.1
+     },
+     {
+      "type": "art",
+      "icon": "clipboard",
+      "x": 800,
+      "y": 900,
+      "size": 230,
+      "at": "clipboard"
+     }
+    ]
+   },
+   {
+    "at": "Most of the job",
+    "trans": "zoom",
+    "focus": [
+     540,
+     900
+    ],
+    "plate": {
+     "img": "s_plans"
+    },
+    "els": [
+     {
+      "type": "versus",
+      "left": "DRAWINGS",
+      "right": "REALITY",
+      "y": 820,
+      "at": "drawings say"
+     },
+     {
+      "type": "kinetic",
+      "text": "THERE'S ALWAYS A GAP",
+      "y": 420,
+      "size": 104,
+      "color": "yellow",
+      "at": "always a gap"
+     }
+    ]
+   },
+   {
+    "at": "The occupancy sensor",
+    "trans": "whip",
+    "plate": {
+     "img": "s_ceiling",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "checklist",
+      "y": 520,
+      "mark": "x",
+      "color": "red",
+      "items": [
+       {
+        "text": "Sensor on the plan, not the ceiling",
+        "at": "occupancy sensor"
+       },
+       {
+        "text": "Low-flow fixture swapped to save a few dollars",
+        "at": "low-flow"
+       },
+       {
+        "text": "Solar array that exists only on paper",
+        "at": "solar array"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Nobody here",
+    "trans": "slide",
+    "plate": {
+     "img": "s_workers",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "THE OBSTACLE COURSE",
+      "y": 400,
+      "size": 100,
+      "color": "orange",
+      "at": "has to survive"
+     },
+     {
+      "type": "checklist",
+      "y": 580,
+      "color": "amber",
+      "items": [
+       {
+        "text": "Design meeting",
+        "at": "design meeting"
+       },
+       {
+        "text": "Construction site",
+        "at": "construction site"
+       },
+       {
+        "text": "Budget cut",
+        "at": "budget cut"
+       },
+       {
+        "text": "New subcontractors",
+        "at": "subcontractors"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "So the job",
+    "trans": "iris",
+    "plate": {
+     "img": "s_audit",
+     "z0": 1.2,
+     "z1": 1.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "VERIFY IT SURVIVED",
+      "y": 460,
+      "size": 116,
+      "color": "mint",
+      "at": "verifying"
+     }
+    ]
+   },
+   {
+    "at": "Certification isn't",
+    "trans": "pull",
+    "plate": {
+     "img": "s_finished"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "NOT A TROPHY. PROOF.",
+      "y": 440,
+      "size": 116,
+      "color": "yellow",
+      "at": "trophy"
+     },
+     {
+      "type": "art",
+      "icon": "check",
+      "x": 540,
+      "y": 860,
+      "size": 260,
+      "at": "wasn't",
+      "glow": "rgba(80,255,150,0.7)"
+     }
+    ]
+   }
+  ]
+ }
+}

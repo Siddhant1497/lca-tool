@@ -1,0 +1,259 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep2",
+ "narration": [
+  "When a building says net zero, ask one question before you believe it.",
+  "Net zero what? Operational, or embodied?",
+  "A building can be net zero on the energy it uses every day, and still carry a large carbon debt in its concrete, steel and glass from the day it was built.",
+  "Most net zero claims only count the first one. That's not exactly dishonest. It's incomplete. Like a car ad bragging about mileage that says nothing about how the car was made.",
+  "The most credible projects report both numbers, ideally as whole-life carbon. If a project only shows you one, ask about the other.",
+  "Not saying don't trust green buildings. Ask which carbon they're counting, like reading the ingredients, not just the front of the box.",
+  "Save this for the next time someone says net zero in a sales pitch."
+ ],
+ "voices": {},
+ "spec": {
+  "ep": 2,
+  "title": "Why \"Net Zero\" Can Mislead You",
+  "next": "Old building vs LEED Platinum",
+  "names": {},
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_tower"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "\"NET ZERO\"?",
+      "y": 480,
+      "size": 150,
+      "color": "mint",
+      "at": 0.1
+     },
+     {
+      "type": "art",
+      "icon": "host",
+      "x": 250,
+      "y": 1080,
+      "size": 440,
+      "at": 0.5,
+      "bob": 4,
+      "shadow": false
+     },
+     {
+      "type": "pill",
+      "text": "ask one question",
+      "x": 720,
+      "y": 800,
+      "color": "orange",
+      "at": "ask one question"
+     }
+    ]
+   },
+   {
+    "at": "Net zero what",
+    "trans": "zoom",
+    "focus": [
+     540,
+     700
+    ],
+    "dur": 0.7,
+    "plate": {
+     "img": "s_tower",
+     "blur": 10,
+     "dim": 0.45
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "NET ZERO WHAT?",
+      "y": 430,
+      "size": 120,
+      "at": "Net zero what"
+     },
+     {
+      "type": "versus",
+      "left": "OPERATIONAL",
+      "right": "EMBODIED",
+      "y": 860,
+      "at": "Operational"
+     }
+    ]
+   },
+   {
+    "at": "A building can be",
+    "trans": "whip",
+    "plate": [
+     {
+      "img": "s_solar"
+     },
+     {
+      "img": "s_site",
+      "at": "carbon debt"
+     }
+    ],
+    "els": [
+     {
+      "type": "pill",
+      "text": "energy use: net zero",
+      "y": 640,
+      "color": "green",
+      "size": 46,
+      "at": "every day"
+     },
+     {
+      "type": "pill",
+      "text": "concrete · steel · glass: carbon debt",
+      "y": 800,
+      "color": "red",
+      "size": 40,
+      "at": "carbon debt"
+     },
+     {
+      "type": "molecules",
+      "x": 540,
+      "y": 1150,
+      "rise": 500,
+      "at": "carbon debt"
+     }
+    ]
+   },
+   {
+    "at": "Most net zero claims",
+    "trans": "slide",
+    "plate": {
+     "img": "s_car"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "INCOMPLETE",
+      "y": 420,
+      "size": 140,
+      "color": "yellow",
+      "at": "incomplete"
+     },
+     {
+      "type": "pill",
+      "text": "mileage: amazing!",
+      "x": 640,
+      "y": 720,
+      "color": "green",
+      "rot": -0.05,
+      "at": "mileage"
+     },
+     {
+      "type": "pill",
+      "text": "how it was made: ?",
+      "x": 440,
+      "y": 880,
+      "color": "red",
+      "rot": 0.04,
+      "at": "how the car was made"
+     }
+    ]
+   },
+   {
+    "at": "The most credible",
+    "trans": "iris",
+    "plate": {
+     "img": "s_skyline",
+     "dim": 0.45
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "REPORT BOTH",
+      "y": 400,
+      "size": 120,
+      "color": "mint",
+      "at": "report both"
+     },
+     {
+      "type": "checklist",
+      "y": 620,
+      "items": [
+       {
+        "text": "Operational carbon",
+        "at": "both numbers"
+       },
+       {
+        "text": "Embodied (upfront) carbon",
+        "at": [
+         "both numbers",
+         0.5
+        ]
+       },
+       {
+        "text": "Ideally: whole-life carbon",
+        "at": "whole-life"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Not saying",
+    "trans": "whip",
+    "plate": {
+     "img": "s_shelf"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "READ THE INGREDIENTS",
+      "y": 420,
+      "size": 110,
+      "color": "yellow",
+      "at": "ingredients"
+     },
+     {
+      "type": "art",
+      "icon": "monocle",
+      "x": 540,
+      "y": 860,
+      "size": 300,
+      "at": "which carbon"
+     }
+    ]
+   },
+   {
+    "at": "Save this",
+    "trans": "pull",
+    "plate": {
+     "img": "s_tower"
+    },
+    "els": [
+     {
+      "type": "art",
+      "icon": "host",
+      "x": 250,
+      "y": 1080,
+      "size": 440,
+      "at": 0.2,
+      "bob": 4,
+      "shadow": false
+     },
+     {
+      "type": "pill",
+      "text": "SAVE THIS",
+      "x": 700,
+      "y": 760,
+      "color": "orange",
+      "size": 60,
+      "at": "Save this"
+     }
+    ]
+   }
+  ]
+ }
+}

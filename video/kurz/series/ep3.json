@@ -1,0 +1,225 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep3",
+ "narration": [
+  "OLD: I've been standing since 1987. I don't need your fancy solar panels.",
+  "NEW: I'm LEED Platinum. Solar roof, smart glass, and my panels cover every kilowatt I use.",
+  "OLD: Cool. I needed zero new concrete. Zero new steel. My construction carbon was spent decades ago. You just poured yours, and you'll spend years paying it back.",
+  "NEW: Okay. But I have really nice windows.",
+  "Joke aside, this is one of the industry's biggest blind spots. A major US study found a new energy-efficient building can take ten to eighty years to make up for the impacts of building it.",
+  "So reusing and retrofitting what's already standing often wins on total carbon. Not always. It depends on what the retrofit uses.",
+  "We just don't market renovations, because there's no ribbon-cutting photo."
+ ],
+ "voices": {
+  "OLD": "am_adam",
+  "NEW": "bm_lewis"
+ },
+ "spec": {
+  "ep": 3,
+  "title": "Old Building vs LEED Platinum",
+  "next": "Your AC is a climate supervillain",
+  "names": {
+   "OLD": "OLD BUILDING · 1987",
+   "NEW": "NEW BUILDING · LEED PLATINUM"
+  },
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_old"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "TWO BUILDINGS. ONE ARGUMENT.",
+      "y": 560,
+      "size": 100,
+      "at": 0.1,
+      "until": "fancy solar"
+     }
+    ]
+   },
+   {
+    "at": "I'm LEED Platinum",
+    "trans": "whip",
+    "plate": {
+     "img": "s_new"
+    },
+    "els": [
+     {
+      "type": "pill",
+      "text": "solar roof",
+      "x": 330,
+      "y": 640,
+      "color": "green",
+      "at": "Solar roof"
+     },
+     {
+      "type": "pill",
+      "text": "smart glass",
+      "x": 750,
+      "y": 760,
+      "color": "teal",
+      "at": "smart glass"
+     },
+     {
+      "type": "art",
+      "icon": "sparkles",
+      "x": 820,
+      "y": 520,
+      "size": 170,
+      "at": "Platinum",
+      "shadow": false
+     }
+    ]
+   },
+   {
+    "at": "Cool.",
+    "trans": "whip",
+    "plate": {
+     "img": "s_old",
+     "z0": 1.15,
+     "z1": 1.3
+    },
+    "els": [
+     {
+      "type": "pill",
+      "text": "zero new concrete",
+      "y": 620,
+      "color": "orange",
+      "at": "zero new concrete"
+     },
+     {
+      "type": "pill",
+      "text": "zero new steel",
+      "y": 760,
+      "color": "orange",
+      "at": "Zero new steel"
+     },
+     {
+      "type": "pill",
+      "text": "you: years of payback",
+      "y": 920,
+      "color": "red",
+      "at": "paying it back"
+     }
+    ]
+   },
+   {
+    "at": "Okay.",
+    "trans": "whip",
+    "dur": 0.4,
+    "plate": {
+     "img": "s_new",
+     "z0": 1.2,
+     "z1": 1.35
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "…NICE WINDOWS",
+      "y": 640,
+      "size": 110,
+      "color": "mint",
+      "at": "nice windows"
+     }
+    ]
+   },
+   {
+    "at": "Joke aside",
+    "trans": "iris",
+    "plate": {
+     "img": "s_city",
+     "dim": 0.4
+    },
+    "els": [
+     {
+      "type": "pill",
+      "text": "joke aside",
+      "y": 330,
+      "color": "violet",
+      "at": "Joke aside"
+     },
+     {
+      "type": "stat",
+      "value": "10–80 yrs",
+      "noCount": true,
+      "caption": "for a new efficient building to offset the impacts of its construction",
+      "source": "Preservation Green Lab, 2011",
+      "y": 800,
+      "at": "ten to eighty"
+     }
+    ]
+   },
+   {
+    "at": "So reusing",
+    "trans": "slide",
+    "plate": {
+     "img": "s_retrofit",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "checklist",
+      "y": 560,
+      "items": [
+       {
+        "text": "Reuse + retrofit often win on total carbon",
+        "at": "often wins"
+       },
+       {
+        "text": "…depending on the materials the retrofit uses",
+        "at": "depends",
+        "color": "amber"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "We just don't",
+    "trans": "pull",
+    "plate": {
+     "img": "s_retrofit"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "NO RIBBON-CUTTING PHOTO",
+      "y": 430,
+      "size": 100,
+      "color": "yellow",
+      "at": "ribbon-cutting"
+     },
+     {
+      "type": "art",
+      "icon": "camera",
+      "x": 760,
+      "y": 820,
+      "size": 240,
+      "rot": 0.2,
+      "at": [
+       "ribbon-cutting",
+       -0.4
+      ]
+     },
+     {
+      "type": "flash",
+      "at": [
+       "ribbon-cutting",
+       0.2
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

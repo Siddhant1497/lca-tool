@@ -32,8 +32,9 @@ def main():
     for item in spec["images"]:
         if os.path.exists(os.path.join(OUT, item["name"] + ".png")):
             continue
-        body = {"prompt": f"{item['prompt']}, {spec['style']} ### {NEGATIVE}",
-                "params": {"width": 1024, "height": 576, "steps": 30, "cfg_scale": 6, "sampler_name": "k_dpmpp_2m", "karras": True,
+        neg = NEGATIVE.replace(", people, person", "") if item.get("people") else NEGATIVE
+        body = {"prompt": f"{item['prompt']}, {spec['style']} ### {neg}",
+                "params": {"width": spec.get("width", 1024), "height": spec.get("height", 576), "steps": 30, "cfg_scale": 6, "sampler_name": "k_dpmpp_2m", "karras": True,
                            "seed": str(item.get("seed", 7)), "post_processing": ["RealESRGAN_x2plus"], "n": 1},
                 "models": [spec.get("model", "AlbedoBase XL (SDXL)")], "nsfw": False, "censor_nsfw": True, "r2": True, "shared": False}
         r = curl("POST", "/generate/async", body)

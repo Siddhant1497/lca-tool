@@ -1,0 +1,195 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep4",
+ "narration": [
+  "Your air conditioner is lying to you right now. It's acting innocent. It is not.",
+  "Running buildings uses about thirty percent of the world's final energy.",
+  "But the sneaky part is the refrigerant. A common one, R-410A, traps around two thousand times more heat than CO2.",
+  "If a home system's full charge escapes, that's roughly a year of driving.",
+  "The fix? A heat pump. An AC that also runs in reverse, giving three to four units of heat for every unit of electricity.",
+  "It costs more upfront, and the payback depends on your climate and energy prices.",
+  "The villain was never the AC. It was never upgrading it, or servicing it."
+ ],
+ "voices": {},
+ "spec": {
+  "ep": 4,
+  "title": "Your AC Is a Climate Supervillain",
+  "next": "Green certifications, rated like street food",
+  "names": {},
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_facade"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "YOUR AC IS LYING TO YOU",
+      "y": 460,
+      "size": 108,
+      "at": 0.1
+     },
+     {
+      "type": "art",
+      "icon": "horns",
+      "x": 800,
+      "y": 860,
+      "size": 240,
+      "at": "acting innocent"
+     }
+    ]
+   },
+   {
+    "at": "Running buildings",
+    "trans": "whip",
+    "plate": {
+     "img": "s_heat"
+    },
+    "els": [
+     {
+      "type": "stat",
+      "value": "~30%",
+      "caption": "of the world's final energy is used to run buildings",
+      "source": "IEA",
+      "y": 780,
+      "at": "thirty percent"
+     }
+    ]
+   },
+   {
+    "at": "But the sneaky",
+    "trans": "zoom",
+    "focus": [
+     540,
+     900
+    ],
+    "plate": {
+     "img": "s_night"
+    },
+    "els": [
+     {
+      "type": "pill",
+      "text": "the real villain: refrigerant",
+      "y": 330,
+      "color": "red",
+      "size": 42,
+      "at": "refrigerant"
+     },
+     {
+      "type": "stat",
+      "value": "2,088×",
+      "caption": "warming power of R-410A vs CO₂ (100 years)",
+      "source": "IPCC AR4",
+      "y": 820,
+      "at": "two thousand"
+     }
+    ]
+   },
+   {
+    "at": "If a home",
+    "trans": "whip",
+    "plate": {
+     "img": "s_car",
+     "dim": 0.3
+    },
+    "els": [
+     {
+      "type": "stat",
+      "value": "≈1 year",
+      "noCount": true,
+      "caption": "of driving = one home AC's full refrigerant charge escaping",
+      "source": "EPA: 4.6 t CO₂ per car per year",
+      "y": 800,
+      "at": "year of driving"
+     }
+    ]
+   },
+   {
+    "at": "The fix?",
+    "trans": "iris",
+    "plate": {
+     "img": "s_heatpump"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "THE FIX: A HEAT PUMP",
+      "y": 420,
+      "size": 104,
+      "color": "mint",
+      "at": "A heat pump"
+     },
+     {
+      "type": "stat",
+      "value": "3–4×",
+      "noCount": true,
+      "caption": "units of heat for every unit of electricity",
+      "source": "IEA",
+      "y": 900,
+      "at": "three to four"
+     }
+    ]
+   },
+   {
+    "at": "It costs more",
+    "trans": "slide",
+    "plate": {
+     "img": "s_heatpump",
+     "dim": 0.45,
+     "blur": 4
+    },
+    "els": [
+     {
+      "type": "checklist",
+      "y": 640,
+      "items": [
+       {
+        "text": "Costs more upfront",
+        "at": "upfront",
+        "color": "amber"
+       },
+       {
+        "text": "Payback depends on your climate and tariffs",
+        "at": "depends"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "The villain",
+    "trans": "pull",
+    "plate": {
+     "img": "s_night"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "NEVER UPGRADED. NEVER SERVICED.",
+      "y": 440,
+      "size": 96,
+      "color": "yellow",
+      "at": "never upgrading"
+     },
+     {
+      "type": "art",
+      "icon": "horns",
+      "x": 540,
+      "y": 860,
+      "size": 300,
+      "at": "The villain"
+     }
+    ]
+   }
+  ]
+ }
+}

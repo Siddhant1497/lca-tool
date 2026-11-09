@@ -1,0 +1,369 @@
+{
+ "html": "series.html",
+ "fps": 60,
+ "music": "pulse",
+ "voice": "bm_george",
+ "speed": 1.06,
+ "size": [
+  1080,
+  1920
+ ],
+ "outro": 3.8,
+ "out": "series-ep1",
+ "narration": [
+  "The concrete under your feet already finished polluting. Before the building even opened.",
+  "Cement and steel produce around fifteen percent of global CO2. Not construction emissions. All emissions.",
+  "That's roughly seven times all of aviation, at about two percent.",
+  "And it happens before day one. The building has spent a big chunk of its lifetime carbon just by existing as material.",
+  "This is embodied carbon, and most net zero marketing leaves it out. Solar panels make a better photo than a spreadsheet about fly ash.",
+  "The fix exists. Blended cements with fly ash or slag, mass timber where it fits, and recycled steel.",
+  "Nobody in a finished lobby asks what the concrete used to be. Now you will."
+ ],
+ "voices": {},
+ "spec": {
+  "ep": 1,
+  "title": "The Concrete Under Your Feet",
+  "next": "Why \"net zero\" can mislead you",
+  "names": {},
+  "scenes": [
+   {
+    "plate": {
+     "img": "s_concrete",
+     "z0": 1.0,
+     "z1": 1.18
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "YOUR FLOOR ALREADY POLLUTED",
+      "y": 470,
+      "size": 100,
+      "at": 0.1
+     },
+     {
+      "type": "art",
+      "icon": "host",
+      "x": 250,
+      "y": 1080,
+      "size": 440,
+      "at": 0.5,
+      "bob": 4,
+      "shadow": false
+     },
+     {
+      "type": "pill",
+      "text": "before day one",
+      "x": 720,
+      "y": 860,
+      "color": "orange",
+      "at": "Before the building",
+      "rot": -0.05
+     }
+    ]
+   },
+   {
+    "at": "Cement and steel",
+    "trans": "zoom",
+    "focus": [
+     540,
+     900
+    ],
+    "dur": 0.8,
+    "plate": {
+     "img": "s_kiln"
+    },
+    "els": [
+     {
+      "type": "donut",
+      "value": 0.15,
+      "label": "of global CO₂",
+      "source": "IEA",
+      "y": 760,
+      "at": "fifteen"
+     },
+     {
+      "type": "pill",
+      "text": "cement ~7%",
+      "x": 290,
+      "y": 1150,
+      "color": "violet",
+      "at": "Cement and"
+     },
+     {
+      "type": "pill",
+      "text": "steel ~8%",
+      "x": 790,
+      "y": 1150,
+      "color": "orange",
+      "at": "steel produce"
+     },
+     {
+      "type": "kinetic",
+      "text": "ALL EMISSIONS",
+      "y": 330,
+      "size": 96,
+      "color": "yellow",
+      "at": "All emissions"
+     }
+    ]
+   },
+   {
+    "at": "That's roughly",
+    "trans": "whip",
+    "plate": {
+     "img": "s_plane",
+     "dim": 0.35
+    },
+    "els": [
+     {
+      "type": "bars",
+      "y": 1150,
+      "scale": 38,
+      "items": [
+       {
+        "label": "cement + steel ~15%",
+        "value": 15,
+        "color": "orange",
+        "icon": "factory",
+        "at": -0.4
+       },
+       {
+        "label": "aviation ~2%",
+        "value": 2,
+        "color": "blue",
+        "icon": "airplane",
+        "at": "all of aviation"
+       }
+      ]
+     },
+     {
+      "type": "kinetic",
+      "text": "×7",
+      "y": 360,
+      "size": 220,
+      "color": "yellow",
+      "at": "seven times"
+     },
+     {
+      "type": "pill",
+      "text": "sources: IEA · ATAG",
+      "y": 1250,
+      "color": "dark",
+      "size": 28,
+      "at": "two percent"
+     }
+    ]
+   },
+   {
+    "at": "And it happens",
+    "trans": "iris",
+    "plate": {
+     "img": "s_site"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "BEFORE DAY ONE",
+      "y": 420,
+      "size": 120,
+      "at": "before day one"
+     },
+     {
+      "type": "molecules",
+      "x": 540,
+      "y": 1050,
+      "rise": 600,
+      "at": "lifetime carbon"
+     },
+     {
+      "type": "pill",
+      "text": "CO₂ already emitted",
+      "y": 760,
+      "color": "red",
+      "at": "lifetime carbon"
+     }
+    ]
+   },
+   {
+    "at": "This is embodied",
+    "trans": "slide",
+    "plate": {
+     "img": "s_solar"
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "THIS IS EMBODIED CARBON",
+      "y": 400,
+      "size": 96,
+      "color": "pink",
+      "at": "This is embodied"
+     },
+     {
+      "type": "pill",
+      "text": "NET ZERO!",
+      "x": 700,
+      "y": 760,
+      "color": "green",
+      "rot": -0.08,
+      "wiggle": true,
+      "at": "net zero marketing"
+     },
+     {
+      "type": "art",
+      "icon": "camera",
+      "x": 260,
+      "y": 820,
+      "size": 220,
+      "rot": 0.2,
+      "at": [
+       "better photo",
+       -0.3
+      ]
+     },
+     {
+      "type": "flash",
+      "at": [
+       "better photo",
+       0.15
+      ]
+     },
+     {
+      "type": "art",
+      "icon": "clipboard",
+      "x": 760,
+      "y": 1080,
+      "size": 230,
+      "at": "spreadsheet"
+     },
+     {
+      "type": "art",
+      "icon": "sleeping",
+      "x": 920,
+      "y": 930,
+      "size": 130,
+      "at": [
+       "spreadsheet",
+       0.4
+      ]
+     }
+    ]
+   },
+   {
+    "at": "The fix exists",
+    "trans": "whip",
+    "plate": {
+     "img": "s_timber",
+     "dim": 0.45
+    },
+    "els": [
+     {
+      "type": "kinetic",
+      "text": "THE FIX EXISTS",
+      "y": 420,
+      "size": 110,
+      "color": "mint",
+      "at": "The fix"
+     },
+     {
+      "type": "cards",
+      "y": 930,
+      "items": [
+       {
+        "title": "Blended\ncements",
+        "icons": [
+         [
+          "rock",
+          -10,
+          -60,
+          170
+         ],
+         [
+          "recycle",
+          70,
+          20,
+          90
+         ]
+        ],
+        "at": "Blended"
+       },
+       {
+        "title": "Mass\ntimber",
+        "icons": [
+         [
+          "wood",
+          -20,
+          -60,
+          180
+         ],
+         [
+          "tree",
+          70,
+          -10,
+          110
+         ]
+        ],
+        "at": "mass timber"
+       },
+       {
+        "title": "Recycled\nsteel",
+        "icons": [
+         [
+          "bolt",
+          -10,
+          -60,
+          170
+         ],
+         [
+          "recycle",
+          70,
+          20,
+          90
+         ]
+        ],
+        "at": "recycled steel"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Nobody in",
+    "trans": "pull",
+    "dur": 0.8,
+    "plate": {
+     "img": "s_lobby"
+    },
+    "els": [
+     {
+      "type": "art",
+      "icon": "shrug",
+      "x": 280,
+      "y": 1060,
+      "size": 380,
+      "at": 0.3
+     },
+     {
+      "type": "art",
+      "icon": "thinking",
+      "x": 820,
+      "y": 700,
+      "size": 220,
+      "at": [
+       "Now you",
+       -0.4
+      ]
+     },
+     {
+      "type": "kinetic",
+      "text": "NOW YOU'LL ASK",
+      "y": 430,
+      "size": 120,
+      "color": "yellow",
+      "at": "Now you will"
+     }
+    ]
+   }
+  ]
+ }
+}

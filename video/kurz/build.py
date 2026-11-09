@@ -72,17 +72,22 @@ def main():
     os.makedirs(out, exist_ok=True)
     os.makedirs(engine.CACHE, exist_ok=True)
 
-    t, sents, chunks = 0.8, [], []
+    voices = proj.get("voices", {})
+    short = proj.get("size", [1920, 1080])[1] > proj.get("size", [1920, 1080])[0]
+    gap, para_gap = (0.22, 0.4) if short else (0.35, 0.6)
+    t, sents, chunks = (0.5 if short else 0.8), [], []
     for para in proj["narration"]:
-        for s in engine.sentences(para):
-            a = engine.tts(s, voice, speed)
+        who, _, text = para.partition(": ") if para.split(": ", 1)[0] in voices else (None, "", para)
+        for s in engine.sentences(text):
+            a = engine.tts(s, voices.get(who, voice), speed)
             d = len(a) / engine.SR
-            sents.append({"text": s, "t0": t, "t1": t + d, "speaker": None})
+            sents.append({"text": s, "t0": t, "t1": t + d, "speaker": who})
             chunks.append((t, a))
-            t += d + 0.35
-        t += 0.6
-    total = round(t + 2.2, 2)
-    data = {"total": total, "sentences": sents, "captions": engine.caption_chunks(sents, False)}
+            t += d + gap
+        t += para_gap
+    total = round(t + (proj.get("outro", 0) or 2.2), 2)
+    data = {"total": total, "sentences": sents, "captions": engine.caption_chunks(sents, short), "size": proj.get("size", [1920, 1080]),
+            "spec": proj.get("spec", {})}
     dpath = os.path.join(out, "data.json")
     json.dump(data, open(dpath, "w"))
 
