@@ -1,0 +1,48 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "style": "flat vector illustration, modern animated science explainer style, bold clean geometric shapes, smooth gradients, soft glowing rim light, rich deep indigo and violet palette with warm orange and pink accents, high detail, cinematic wide composition",
+  "images": [
+    {
+      "name": "a_city",
+      "seed": 11,
+      "prompt": "a modern concrete apartment tower at night in a city, many warm glowing windows, crescent moon and stars, softly lit skyline behind, empty foreground street"
+    },
+    {
+      "name": "b_concrete",
+      "seed": 12,
+      "prompt": "extreme close-up cross-section of concrete, rounded grey and lilac aggregate stones embedded in cement paste, abstract macro pattern, soft depth of field"
+    },
+    {
+      "name": "b_kiln",
+      "seed": 13,
+      "prompt": "a cement plant at dusk with a long rotating kiln glowing bright orange inside, limestone piles, tall chimneys releasing pink smoke clouds"
+    },
+    {
+      "name": "c_crane",
+      "seed": 14,
+      "prompt": "a steel building frame under construction with a tall yellow tower crane lifting a steel beam, rebar and girders, starry night sky"
+    },
+    {
+      "name": "d_plane",
+      "seed": 15,
+      "prompt": "a small passenger jet flying across a twilight sky above a huge industrial factory with smokestacks, dramatic sense of scale, the factory far bigger than the plane"
+    },
+    {
+      "name": "e_house",
+      "seed": 16,
+      "prompt": "a cheerful suburban house with shiny solar panels on its roof under a bright sun, green lawn, blue sky with soft clouds, sunny and optimistic"
+    },
+    {
+      "name": "f_timber",
+      "seed": 17,
+      "prompt": "hopeful sustainable construction site, a wooden mass timber building being assembled, warm wood panels, green trees and plants, morning light, teal and green palette"
+    },
+    {
+      "name": "g_earth",
+      "seed": 18,
+      "prompt": "planet Earth seen from space, wrapped in a thin glowing violet haze, city lights twinkling on the night side, stars and distant nebula"
+    }
+  ],
+  "model": "AlbedoBase XL (SDXL)"
+}
