@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { saveFile } from '../../utils/platform';
 import { useLCA } from '../../context/LCAContext';
 import { IMPACT_META, LIFECYCLE_STAGES, STAGE_META } from '../../types/lca';
 import type { ImpactValues } from '../../types/lca';
@@ -10,11 +11,7 @@ const ExportReport: React.FC = () => {
   const [done, setDone] = useState<string | null>(null);
 
   const dl = (filename: string, content: string) => {
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
+    void saveFile(filename, content, 'text/csv;charset=utf-8');
   };
 
   const now = new Date().toISOString().slice(0,10);
@@ -77,11 +74,7 @@ const ExportReport: React.FC = () => {
   };
 
   const saveJSON = () => {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `LCA_${proj}_${now}.json`; a.click();
-    URL.revokeObjectURL(url);
+    void saveFile(`LCA_${proj}_${now}.json`, JSON.stringify(state, null, 2), 'application/json');
     setDone('json'); setTimeout(() => setDone(null), 2500);
   };
 

@@ -78,9 +78,9 @@ const LCAResults: React.FC = () => {
               <div className="card-title">⚡ Embodied vs. Operational Carbon</div>
               <div className="row" style={{ gap: '24px', flexWrap: 'wrap' }}>
                 {[
-                  { lbl: 'Embodied Carbon', val: results.embodiedCarbon, col: '#3B82F6' },
-                  { lbl: 'Operational B6', val: results.operationalCarbon, col: '#10B981' },
-                  { lbl: 'Whole-Life GWP', val: results.total.GWP, col: '#1D4ED8' },
+                  { lbl: 'Embodied Carbon', val: results.embodiedCarbon, col: 'var(--s2)' },
+                  { lbl: 'Operational B6', val: results.operationalCarbon, col: 'var(--acc)' },
+                  { lbl: 'Whole-Life GWP', val: results.total.GWP, col: 'var(--pri)' },
                 ].map((x) => (
                   <div key={x.lbl} style={{ flex: '1', minWidth: '150px' }}>
                     <div style={{ fontSize: '.78rem', color: 'var(--muted)', marginBottom: '3px' }}>{x.lbl}</div>
