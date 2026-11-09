@@ -1,0 +1,17 @@
+{
+  "html": "concrete60.html",
+  "out": "concrete-60s",
+  "fps": 60,
+  "music": "drone",
+  "voice": "bm_george",
+  "speed": 0.95,
+  "narration": [
+    "The concrete under your feet already finished polluting, before the building even opened.",
+    "Here's why. Cement is made by heating limestone in a kiln, at around fourteen hundred and fifty degrees, and that chemistry alone releases carbon dioxide.",
+    "Add the steel in the frame, and together they produce around fifteen percent of global CO2.",
+    "That's roughly seven times all of aviation, at about two percent.",
+    "And it all happens before day one. This is embodied carbon, and most net zero marketing leaves it out. Solar panels make a better photo than a spreadsheet about fly ash.",
+    "The fix already exists. Blended cements with fly ash or slag, mass timber where it fits, and recycled steel.",
+    "Nobody in a finished lobby asks what the concrete used to be. Now you will."
+  ]
+}
