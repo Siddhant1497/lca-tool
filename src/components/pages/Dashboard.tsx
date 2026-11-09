@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLCA } from '../../context/LCAContext';
 import { formatGWP } from '../../utils/lcaCalculator';
-import { IMPACT_META, PHASE_COLORS } from '../../types/lca';
+import { IMPACT_META, PHASE_COLORS, BUILDING_TYPE_LABELS, PHASE_LABEL } from '../../types/lca';
+
 import { EMBODIED_CARBON_BENCHMARKS } from '../../data/standards';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 
@@ -18,7 +19,7 @@ const Dashboard: React.FC = () => {
 
   const phaseData = hasData
     ? Object.entries(results!.byPhase).map(([ph, v]) => ({
-        name: ph[0].toUpperCase() + ph.slice(1), gwp: Math.round(v.GWP),
+        name: PHASE_LABEL[ph] ?? ph, gwp: Math.round(v.GWP),
         fill: PHASE_COLORS[ph] ?? '#94A3B8',
       }))
     : [];
@@ -40,7 +41,7 @@ const Dashboard: React.FC = () => {
           <div className="ph-eyebrow">Building LCA</div>
           <div className="ph-title">LCA Overview</div>
           <div className="ph-sub">
-            {project?.name} · {project?.buildingType.replace(/_/g,' ')} · {project?.grossFloorArea?.toLocaleString()} m² · {project?.lifespan} yr RSP
+            {project?.name} · {project ? BUILDING_TYPE_LABELS[project.buildingType] : ''} · {project?.grossFloorArea?.toLocaleString()} m² · {project?.lifespan} yr RSP
           </div>
         </div>
         <div className="ph-actions">
@@ -52,7 +53,7 @@ const Dashboard: React.FC = () => {
       {/* KPIs */}
       <div className="kpi-grid six">
         {[
-          { lbl: 'Total GWP (A–D)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: 'Global Warming Potential', col: 'var(--err)' },
+          { lbl: 'Whole-life GWP (A–C)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: hasData && results!.moduleD.GWP ? `Module D reported separately: ${formatGWP(results!.moduleD.GWP)}` : 'Global Warming Potential', col: 'var(--err)' },
           { lbl: 'Embodied Carbon', val: hasData ? `${results!.perM2.GWP.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA', col: 'var(--pri)' },
           { lbl: 'GWP Intensity', val: hasData ? `${results!.perM2PerYear.GWP.toFixed(3)} kg/m²/yr` : '—', sub: 'Annual intensity', col: 'var(--acc)' },
           { lbl: 'Material Entries', val: String(materialEntries.length), sub: `${new Set(materialEntries.map(e=>e.component)).size} components`, col: 'var(--text)' },
@@ -117,7 +118,7 @@ const Dashboard: React.FC = () => {
             <div className="card" style={{ marginBottom: '16px' }}>
               <div className="card-title">📏 Embodied Carbon Benchmark</div>
               <div className="muted" style={{ fontSize: '.84rem', marginBottom: '10px' }}>
-                Typical range for {project?.buildingType.replace(/_/g,' ')} buildings (kg CO₂ eq/m² GFA, A1-A3)
+                Typical range for {project ? BUILDING_TYPE_LABELS[project.buildingType].toLowerCase() : ''} buildings (kg CO₂ eq/m² GFA, A1-A3)
               </div>
               <div className="row" style={{ marginBottom: '6px' }}>
                 <span style={{ fontSize: '1.3rem', fontWeight: 700, color: bmPct > 100 ? 'var(--err)' : bmPct > 60 ? 'var(--warn)' : 'var(--acc)' }}>

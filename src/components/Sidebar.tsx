@@ -20,7 +20,7 @@ const Sidebar: React.FC = () => {
             <React.Fragment key={item.page}>
               {item.sect && <div className="nav-sect">{item.sect}</div>}
               <button className={`nav-item${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined}
-                title={collapsed ? item.label : undefined} onClick={() => dispatch({ type: 'SET_PAGE', page: item.page })}>
+                title={item.label} aria-label={item.label} onClick={() => dispatch({ type: 'SET_PAGE', page: item.page })}>
                 <span className="ni"><Icon name={item.icon} /></span>
                 <span className="nl">{item.label}</span>
                 {item.page === 'hub' && hub.settings.modules.certs && risk > 0 && <span className="nav-badge" title={`${risk} certification(s) at risk`}>{risk}</span>}

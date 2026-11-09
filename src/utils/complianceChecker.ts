@@ -1,6 +1,6 @@
 import type { LCAResults, Project, ComplianceResult, RequirementResult, MaterialEntry, ImpactValues } from '../types/lca';
 import { percentDiff } from './lcaCalculator';
-import { LEED_THRESHOLDS, BREEAM_THRESHOLDS, EMBODIED_CARBON_BENCHMARKS } from '../data/standards';
+import { BREEAM_THRESHOLDS, EMBODIED_CARBON_BENCHMARKS } from '../data/standards';
 
 const p = (id: string, desc: string, value?: string, notes?: string): RequirementResult =>
   ({ id, description: desc, status: 'pass', value, notes });
@@ -41,34 +41,37 @@ export const checkLEEDv4 = (
     : w('impacts', 'Some impact categories show zero – verify EPD data'));
   if (!allNonZero) recs.push('Ensure EPD data covers all 6 mandatory categories.');
 
+  // LEED v4 BD+C MRc1 Option 4: ≥10% reduction vs baseline in at least 3 of 6 categories, one of them GWP,
+  // and no category more than 5% worse → 3 points.
   let creditPoints = 0;
   if (!hasBaseline || !baseline) {
     reqs.push(w('baseline', 'Baseline not defined – credit points cannot be calculated'));
-    recs.push('Define a baseline (code-minimum) building in the Materials → Baseline tab.');
+    recs.push('Define a baseline building in the Materials → Baseline tab.');
   } else {
     const diff = percentDiff(baseline.total, proposed.total);
-    for (const tier of LEED_THRESHOLDS.v4) {
-      if (IMPACT_KEYS.filter((k) => (diff[k] ?? 0) <= -tier.minReduction).length >= tier.minCategories) {
-        creditPoints = tier.points;
-      }
-    }
-    const reductions = IMPACT_KEYS.filter((k) => (diff[k] ?? 0) < 0).length;
-    reqs.push(reductions >= 3
-      ? p('reduction', `Improvement achieved in ${reductions}/6 impact categories (≥3 required)`, `${reductions} categories`)
-      : f('reduction', 'Need ≥10% reduction in at least 3 categories', `${reductions}`, '≥3 categories'));
+    const cut10 = IMPACT_KEYS.filter((k) => (diff[k] ?? 0) <= -0.10);
+    const worse = IMPACT_KEYS.filter((k) => (diff[k] ?? 0) > 0.05);
+    const ok = cut10.includes('GWP') && cut10.length >= 3 && worse.length === 0;
+    if (ok) creditPoints = 3;
+    reqs.push(cut10.length >= 3 && cut10.includes('GWP')
+      ? p('reduction', `≥10% reduction in ${cut10.length}/6 categories including GWP`, `${cut10.length} categories`, '≥3 incl. GWP')
+      : f('reduction', 'Need ≥10% reduction in at least 3 categories, one of them GWP', `${cut10.length}${cut10.includes('GWP') ? '' : ' (GWP not)'}`, '≥3 incl. GWP'));
+    reqs.push(worse.length === 0
+      ? p('no_increase', 'No impact category more than 5% above baseline')
+      : f('no_increase', `More than 5% above baseline: ${worse.join(', ')}`, `${worse.length}`, '0'));
     reqs.push({
       id: 'gwp_delta', description: 'GWP change vs. baseline',
       status: (diff.GWP ?? 0) <= -0.10 ? 'pass' : (diff.GWP ?? 0) < 0 ? 'warning' : 'fail',
       value: `${((diff.GWP ?? 0) * 100).toFixed(1)}%`, threshold: '≤ −10%',
     });
-    if (creditPoints === 0) recs.push('Improve material selection to achieve ≥10% reduction in ≥3 impact categories.');
+    if (!ok) recs.push('Reach ≥10% reduction in GWP and two other categories without any category rising more than 5%.');
   }
 
   const compliant = reqs.every((r) => r.status !== 'fail');
   return {
-    standard: 'LEED_v4_MRc1', label: 'LEED v4 – MRc1 Building LCA', compliant,
+    standard: 'LEED_v4_MRc1', label: 'LEED v4 – MRc1 Building LCA (Option 4)', compliant,
     score: creditPoints, maxScore: 3, creditPoints, requirements: reqs,
-    summary: compliant ? `Compliant – ${creditPoints}/3 pts` : 'Not fully compliant. Address failing items.',
+    summary: !compliant ? 'Not fully compliant. Address failing items.' : creditPoints ? `Option 4 achieved – ${creditPoints}/3 pts` : 'Inputs complete; no points until a baseline comparison meets the thresholds.',
     recommendations: recs,
   };
 };
@@ -84,36 +87,40 @@ export const checkLEEDv41 = (
     ? p('gfa', 'GFA defined', `${project.grossFloorArea} m²`)
     : f('gfa', 'GFA not set'));
 
+  // LEED v4.1 BD+C MRc1 Option 4 (whole-building LCA of structure and enclosure, 60-year service life):
+  // Path 1 conduct the LCA = 1 pt; Path 2 ≥5% GWP and ≥5% in two other categories = 2 pts;
+  // Path 3 ≥10% GWP and ≥5% in two others, no category >5% worse = 3 pts; Path 4 = Path 3 plus reuse/salvage = 4 pts.
   const stages = new Set(Object.keys(proposed.byStage));
-  for (const s of ['A1-A3', 'A4', 'A5']) {
-    reqs.push(stages.has(s)
-      ? p(`stage_${s}`, `Stage ${s} included`)
-      : f(`stage_${s}`, `Stage ${s} required by LEED v4.1`, 'Missing'));
-    if (!stages.has(s)) recs.push(`Add materials for stage ${s}.`);
+  const lcaDone = stages.has('A1-A3') && project.grossFloorArea > 0 && project.lifespan >= 60;
+  reqs.push(stages.has('A1-A3') ? p('stage_A1-A3', 'Product stage A1–A3 included') : f('stage_A1-A3', 'Product stage A1–A3 missing', 'Missing'));
+  for (const [st, label] of [['A4', 'Transport to site (A4)'], ['C1-C4', 'End of life (C1–C4)']] as const) {
+    const has = stages.has(st) || (st === 'C1-C4' && ['C1', 'C2', 'C3', 'C4'].some((x) => stages.has(x)));
+    reqs.push(has ? p(`stage_${st}`, `${label} included`) : w(`stage_${st}`, `${label} expected for cradle-to-grave`, 'Not reported'));
   }
-
+  reqs.push(project.lifespan >= 60 ? p('rsp', 'Service life ≥ 60 years', `${project.lifespan} yr`) : f('rsp', 'Service life must be at least 60 years', `${project.lifespan} yr`, '≥60 yr'));
+  if (lcaDone) creditPoints = 1;
   if (!hasBaseline || !baseline) {
-    reqs.push(w('baseline', 'Baseline not defined'));
-    recs.push('Create a baseline model to earn credit points.');
-  } else {
+    reqs.push(w('baseline', 'Baseline not defined – Path 1 only (1 pt)'));
+    recs.push('Add a baseline building to pursue Paths 2–3.');
+  } else if (lcaDone) {
     const diff = percentDiff(baseline.total, proposed.total);
-    for (const tier of LEED_THRESHOLDS.v4_1) {
-      if (IMPACT_KEYS.filter((k) => (diff[k] ?? 0) <= -tier.minReduction).length >= tier.minCategories) {
-        creditPoints = tier.points;
-      }
-    }
-    reqs.push({
-      id: 'pts', description: 'Credit points earned',
-      status: creditPoints > 0 ? 'pass' : 'fail',
-      value: `${creditPoints} pts`, threshold: '≥1 pt',
-    });
+    const others5 = IMPACT_KEYS.filter((k) => k !== 'GWP' && (diff[k] ?? 0) <= -0.05).length;
+    const worse = IMPACT_KEYS.filter((k) => (diff[k] ?? 0) > 0.05);
+    const g = diff.GWP ?? 0;
+    if (g <= -0.05 && others5 >= 2) creditPoints = 2;
+    if (g <= -0.10 && others5 >= 2 && worse.length === 0) creditPoints = 3;
+    reqs.push({ id: 'gwp_delta', description: 'GWP change vs. baseline', status: g <= -0.05 ? 'pass' : 'warning', value: `${(g * 100).toFixed(1)}%`, threshold: '≤ −5% (Path 2) / ≤ −10% (Path 3)' });
+    reqs.push(others5 >= 2 ? p('others', `≥5% reduction in ${others5} other categories`) : w('others', 'Need ≥5% reduction in two categories besides GWP', `${others5}`, '≥2'));
+    if (worse.length) reqs.push(w('no_increase', `More than 5% above baseline: ${worse.join(', ')} (blocks Path 3)`));
+    if (creditPoints === 3) recs.push('Path 4 (4 pts): show building reuse or salvaged materials in the LCA as well.');
   }
+  reqs.push({ id: 'pts', description: 'Option 4 points', status: creditPoints > 0 ? 'pass' : 'fail', value: `${creditPoints} pts`, threshold: '1–4 pts' });
 
   const compliant = reqs.every((r) => r.status !== 'fail');
   return {
-    standard: 'LEED_v4_1_MRc1', label: 'LEED v4.1 – MRc1 Building LCA', compliant,
-    score: creditPoints, maxScore: 5, creditPoints, requirements: reqs,
-    summary: compliant ? `Compliant – ${creditPoints}/5 pts` : 'Not fully compliant.',
+    standard: 'LEED_v4_1_MRc1', label: 'LEED v4.1 – MRc1 Building LCA (Option 4)', compliant,
+    score: creditPoints, maxScore: 4, creditPoints, requirements: reqs,
+    summary: compliant ? `Option 4 – ${creditPoints}/4 pts` : 'Not fully compliant.',
     recommendations: recs,
   };
 };
@@ -130,12 +137,16 @@ export const checkEN15978 = (results: LCAResults, project: Project): ComplianceR
   const stages = new Set(Object.keys(results.byStage));
   reqs.push(stages.has('A1-A3') ? p('a1a3', 'Stage A1–A3 included') : f('a1a3', 'Stage A1–A3 missing'));
 
-  for (const s of ['B6', 'C1', 'C2', 'C3', 'C4']) {
+  for (const s of ['A4', 'A5', 'B4', 'B6']) {
     reqs.push(stages.has(s)
-      ? p(`stage_${s}`, `Stage ${s} reported`)
-      : w(`stage_${s}`, `Stage ${s} recommended (or declare as NR)`, 'Not reported'));
-    if (!stages.has(s)) recs.push(`Include stage ${s} or declare it as "Not Relevant" with justification.`);
+      ? p(`stage_${s}`, `Module ${s} reported`)
+      : w(`stage_${s}`, `Module ${s} recommended (or declare as not relevant)`, 'Not reported'));
+    if (!stages.has(s)) recs.push(`Include module ${s} or declare it as "not relevant" with justification.`);
   }
+  const eol = stages.has('C1-C4') || ['C1', 'C2', 'C3', 'C4'].every((x) => stages.has(x));
+  reqs.push(eol ? p('stage_C', 'End of life C1–C4 reported') : w('stage_C', 'End of life C1–C4 recommended', 'Not reported'));
+  if (!eol) recs.push('Include end of life (C1–C4) from the EPDs.');
+  reqs.push(p('moduleD', 'Module D reported separately, outside the A–C total', `${results.moduleD.GWP.toFixed(0)} kg CO₂e`));
 
   const allPresent = IMPACT_KEYS.every((k) => results.total[k] !== 0);
   reqs.push(allPresent ? p('impacts', 'All impact categories reported') : w('impacts', 'Some impact categories are zero'));
@@ -187,7 +198,7 @@ export const checkBREEAM = (
   return {
     standard: 'BREEAM_Mat01', label: 'BREEAM Mat 01', compliant,
     score: credits, maxScore: 6, creditPoints: credits, requirements: reqs,
-    summary: compliant ? `${credits}/6 BREEAM credits.` : 'Not compliant.',
+    summary: compliant ? `${credits}/6 credits (indicative; confirm in the BREEAM Mat 01 tool).` : 'Not compliant (indicative).',
     recommendations: recs,
   };
 };

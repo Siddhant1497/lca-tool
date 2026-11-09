@@ -14,25 +14,25 @@ export const STANDARDS: StandardMeta[] = [
   {
     id: 'LEED_v4_MRc1', name: 'LEED v4 MRc1',
     organization: 'U.S. Green Building Council (USGBC)', year: 2013,
-    description: 'Whole-building LCA – at least 10% improvement in ≥3 of 6 impact categories vs baseline.',
+    description: 'Option 4 whole-building LCA (structure and enclosure, 60 years): ≥10% reduction vs baseline in at least 3 of 6 impact categories, one of them GWP, with no category more than 5% worse = 3 points.',
     creditPoints: 3, mandatoryStages: ['A1-A3'],
   },
   {
     id: 'LEED_v4_1_MRc1', name: 'LEED v4.1 MRc1',
     organization: 'U.S. Green Building Council (USGBC)', year: 2019,
-    description: 'Updated LCA credit – A1-A5 required; 1-5 points based on % reduction achieved.',
-    creditPoints: 5, mandatoryStages: ['A1-A3', 'A4', 'A5'],
+    description: 'Option 4 whole-building LCA, 60 years: Path 1 conduct the LCA (1 pt); Path 2 ≥5% GWP and ≥5% in two other categories (2 pts); Path 3 ≥10% GWP and ≥5% in two others, none >5% worse (3 pts); Path 4 Path 3 plus reuse/salvage (4 pts).',
+    creditPoints: 4, mandatoryStages: ['A1-A3'],
   },
   {
     id: 'EN_15978', name: 'EN 15978:2011',
     organization: 'European Committee for Standardization (CEN)', year: 2011,
-    description: 'European framework for whole-building LCA covering stages A–D.',
-    mandatoryStages: ['A1-A3', 'B6', 'C1', 'C2', 'C3', 'C4'],
+    description: 'European framework for whole-building LCA: modules A–C in the result, module D reported separately.',
+    mandatoryStages: ['A1-A3', 'B6', 'C1-C4'],
   },
   {
     id: 'BREEAM_Mat01', name: 'BREEAM Mat 01',
     organization: 'Building Research Establishment (BRE)', year: 2018,
-    description: 'Environmental impact of building materials – credits awarded for GWP reduction vs notional baseline.',
+    description: 'Environmental impact of building materials. Indicative only: credits here are scaled on GWP reduction vs a notional baseline; BREEAM awards Mat 01 through its own LCA tool and options.',
     creditPoints: 6, mandatoryStages: ['A1-A3'],
   },
   {
@@ -42,21 +42,6 @@ export const STANDARDS: StandardMeta[] = [
     mandatoryStages: [],
   },
 ];
-
-export const LEED_THRESHOLDS = {
-  v4: [
-    { points: 1, minReduction: 0.10, minCategories: 3 },
-    { points: 2, minReduction: 0.15, minCategories: 3 },
-    { points: 3, minReduction: 0.20, minCategories: 3 },
-  ],
-  v4_1: [
-    { points: 1, minReduction: 0.05, minCategories: 3 },
-    { points: 2, minReduction: 0.10, minCategories: 3 },
-    { points: 3, minReduction: 0.15, minCategories: 4 },
-    { points: 4, minReduction: 0.20, minCategories: 5 },
-    { points: 5, minReduction: 0.25, minCategories: 6 },
-  ],
-};
 
 export const BREEAM_THRESHOLDS = [
   { credits: 1, gwpReduction: 0.05 },
