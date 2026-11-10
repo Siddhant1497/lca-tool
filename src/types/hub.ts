@@ -94,4 +94,6 @@ export interface HubState {
   factors: EmissionFactor[]; activities: Activity[];
   docs: DocSet[];
   settings: HubSettings;
+  /** Cost–benefit analysis for the client's project (optional; created on first use). */
+  cba?: import('../utils/cba').CbaState;
 }

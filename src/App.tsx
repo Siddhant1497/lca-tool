@@ -19,6 +19,7 @@ const DataManager = lazy(() => import('./components/pages/DataManager'));
 const Disclosures = lazy(() => import('./components/pages/Disclosures'));
 const CarbonCalculator = lazy(() => import('./components/pages/CarbonCalculator'));
 const Strategy = lazy(() => import('./components/pages/Strategy'));
+const CostBenefit = lazy(() => import('./components/pages/CostBenefit'));
 const ClientShare = lazy(() => import('./components/pages/ClientShare'));
 const Documentation = lazy(() => import('./components/pages/Documentation'));
 
@@ -26,6 +27,7 @@ const PAGE_MAP = {
   hub:        CommandCenter,
   calculator: CarbonCalculator,
   strategy:   Strategy,
+  cba:        CostBenefit,
   share:      ClientShare,
   docs:       Documentation,
   data:       DataManager,

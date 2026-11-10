@@ -172,7 +172,7 @@ export interface ComplianceResult {
   recommendations: string[];
 }
 
-export type AppPage = 'hub'|'calculator'|'strategy'|'docs'|'data'|'reports'|'share'|'dashboard'|'project'|'materials'|'results'|'compliance'|'export';
+export type AppPage = 'hub'|'calculator'|'strategy'|'cba'|'docs'|'data'|'reports'|'share'|'dashboard'|'project'|'materials'|'results'|'compliance'|'export';
 
 export interface AppState {
   project: Project | null;

@@ -19,7 +19,7 @@ export function buildPayload(hub: HubState, client: string, config: ShareConfig,
       ...(keepCats && g.s3cats ? { s3cats: g.s3cats } : {}), ...(keepDenom && g.denom ? { denom: g.denom } : {}) })) : [],
     levers: has('levers', 'strategy', 'pathway', 'kpis') ? hub.levers : [],
     projects: has('certs') ? hub.projects.filter((p) => config.projectIds.includes(p.id)) : [],
-    factors: [], activities: [], docs: [],   // activity data, factor libraries and narrative text never leave the consultant's workspace
+    factors: [], activities: [], docs: [], cba: undefined,   // activity data, factor libraries and narrative text never leave the consultant's workspace
     settings: { ...hub.settings, orgName: hub.settings.orgName || client, modules: { certs: has('certs') && config.projectIds.length > 0, lca: false } },
   };
   const docs = has('docs') ? docSummaries.filter((d) => (config.docIds ?? []).includes(d.id)) : [];
