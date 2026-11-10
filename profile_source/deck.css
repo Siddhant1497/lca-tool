@@ -10,7 +10,7 @@ h1 { font-size:168px; } h2 { font-size:84px; max-width:1500px; } h2.sm { font-si
 h3 { font:600 32px/1.15 var(--body); letter-spacing:-.01em; }
 .eb { font:600 18px var(--body); letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink); display:flex; align-items:center; gap:14px; margin-bottom:26px; }
 .eb::before { content:""; width:30px; height:16px; transform:skewX(-20deg); background:repeating-linear-gradient(180deg,currentColor 0 3px,transparent 3px 6.5px); }
-.dark .eb, .brick .eb, .onphoto .eb { color:#F0B48E; } .brick .eb { color:#fff; }
+.dark .eb, .brick .eb, .onphoto .eb { color:#E8E3DA; } .brick .eb { color:#fff; }
 .mu { color:var(--muted); } .dark .mu { color:#A59D93; } .ac { color:var(--accent); } .mono { font-family:var(--mono); }
 .lede { font-size:32px; line-height:1.4; color:var(--muted); max-width:1150px; margin-top:28px; } .dark .lede { color:#B9B1A6; }
 .ft { position:absolute; left:110px; right:110px; bottom:44px; display:flex; justify-content:space-between; align-items:center; font:500 15px var(--mono); color:var(--muted); letter-spacing:.04em; }
@@ -45,3 +45,4 @@ ul.t { list-style:none; } ul.t li { padding:13px 0 13px 34px; border-top:1px sol
 .roomy .big { font-size:210px; } .roomy .stat h3 { font-size:34px; } .roomy .grid.g4 p.mu { font-size:26px; }
 .tall .card { min-height:600px; }
 .roomy .grid.g4.mt + .grid.g4.mt { margin-top:96px; }
+img[src*="hawa-mahal"] { filter: saturate(.38) sepia(.28) contrast(1.06) !important; }

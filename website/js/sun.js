@@ -270,7 +270,7 @@
     ctx.font = "600 11px 'Geist Mono', ui-monospace, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     [["N", 0, 1], ["E", 1, 0], ["S", 0, -1], ["W", -1, 0]].forEach(function (c) {
       var p = P(c[1] * (RD + 9), c[2] * (RD + 9), 0);
-      ctx.fillStyle = c[0] === "N" ? (L.night ? "#F0A070" : "#8E3D1C") : "rgba(" + L.hi + ",0.7)"; ctx.fillText(c[0], p[0], p[1]);
+      ctx.fillStyle = c[0] === "N" ? (L.night ? "#E9A23B" : "#8E3D1C") : "rgba(" + L.hi + ",0.7)"; ctx.fillText(c[0], p[0], p[1]);
     });
   }
 
@@ -284,10 +284,10 @@
   function render() {
     var s = sunAt(st.n, st.t), i;
     L.v = s.v; L.alt = s.alt; L.az = s.az;
-    L.beam = clamp(s.alt / 9, 0, 1); L.day = clamp((s.alt + 4.5) / 5.5, 0, 1); L.warm = clamp(1 - s.alt / 28, 0, 1);
+    L.beam = clamp(s.alt / 9, 0, 1); L.day = clamp((s.alt + 4.5) / 5.5, 0, 1); L.warm = 0;
     var w = clamp(1 - s.alt / 14, 0, 1); w = w * w * (3 - 2 * w);
     var nf = clamp((-1 - s.alt) / 3.5, 0, 1);
-    var top = mix(mix(PAPER, [240, 237, 230], w), [18, 21, 33], nf), bot = mix(mix(PAPER, [236, 230, 220], w), [46, 44, 70], nf);
+    var top = mix(mix(PAPER, PAPER, w), [18, 21, 33], nf), bot = mix(mix(PAPER, PAPER, w), [46, 44, 70], nf);
     L.night = nf > 0.5; L.hi = L.night ? "243,238,230" : "22,21,20";
     if (hero) { hero.style.setProperty("--sky-top", css(top)); hero.style.setProperty("--sky-bot", css(bot)); }
     document.body.classList.toggle("sun-night", L.night);

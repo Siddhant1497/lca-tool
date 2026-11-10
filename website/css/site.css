@@ -129,7 +129,7 @@ a:hover .arrow { transform: translateX(4px); }
 /* product (dark) */
 .dark { background: var(--dark); color: var(--dark-text); }
 .dark .lede, .dark .muted { color: var(--dark-muted); }
-.dark .eyebrow { color: #E39466; }
+.dark .eyebrow { color: #D9A441; }
 .product { display: grid; grid-template-columns: 1fr 1.35fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
 .shot { border-radius: 12px; overflow: hidden; box-shadow: 0 40px 90px -30px rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.08); }
 .ticks { list-style: none; margin-top: 28px; }
@@ -260,7 +260,7 @@ fieldset.q { border: 0; border-top: 1px solid var(--line); padding: 22px 0; marg
 .opts button:hover { border-color: var(--ink); }
 .opts button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 .result { background: var(--dark); color: var(--dark-text); padding: clamp(28px, 3vw, 44px); border-radius: 14px; position: sticky; top: 100px; }
-.result .eyebrow { color: #E39466; }
+.result .eyebrow { color: #D9A441; }
 .result h3 { font-size: clamp(30px, 3vw, 44px); margin-top: 12px; letter-spacing: -.02em; }
 .result p { color: var(--dark-muted); margin-top: 14px; }
 .result .also { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.12); font-size: 15px; }
@@ -356,9 +356,9 @@ h3 { font-weight: 600; }
 .sunhero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 3vw, 44px); align-items: center; padding-top: 100px; }
 .sunhero h1 { font-size: clamp(48px, min(7.2vw, 12.4vh), 108px); margin-top: 22px; line-height: .9; }
 .sunhero h1 em { font-style: normal; color: var(--accent); display: block; }
-.sun-night .sunhero h1 em { color: #F0A070; }
+.sun-night .sunhero h1 em { color: #E9A23B; }
 .sunhero .eyebrow { color: var(--accent-ink); }
-.sun-night .sunhero .eyebrow { color: #F0B48E; }
+.sun-night .sunhero .eyebrow { color: #E8E3DA; }
 .sunhero .lede { color: color-mix(in srgb, var(--hi) 72%, transparent); margin-top: 26px; max-width: 46ch; }
 .sunhero .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
 .sun-night .sunhero .btn-line:hover { background: #fff; color: var(--ink); border-color: #fff; }
@@ -564,7 +564,7 @@ h3 { font-weight: 600; }
 .acc-item.on img { transform: scale(1.04); }
 .acc-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(12,11,10,.86), rgba(12,11,10,.1) 62%); }
 .acc-item div { position: absolute; left: 22px; right: 22px; bottom: 22px; z-index: 1; }
-.acc-item .n { font-family: var(--mono); font-size: 12px; color: #F0B48E; }
+.acc-item .n { font-family: var(--mono); font-size: 12px; color: #E8E3DA; }
 .acc-item h3 { font-family: var(--display); font-stretch: 82%; font-weight: 600; font-size: clamp(22px, 2vw, 30px); letter-spacing: -.02em; line-height: 1.04; margin-top: 8px; }
 .acc-item p { font-size: 15px; color: rgba(255,255,255,.84); margin-top: 8px; max-width: 34ch; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
 .acc-item.on p { opacity: 1; transform: none; transition-delay: .2s; }
@@ -614,3 +614,8 @@ h3 { font-weight: 600; }
   .sun-hint { top: auto; bottom: 4px; }
   .sun-tag { font-size: 11px; }
 }
+
+/* neutral grade for the Hawa Mahal photo, and small refinements */
+img[src*="hawa-mahal"] { filter: saturate(.38) sepia(.28) contrast(1.06) !important; }
+@media (min-width: 961px) { .sunhero .ctas { flex-wrap: nowrap; } .sunhero .btn { padding-left: 20px; padding-right: 20px; white-space: nowrap; font-size: 15.5px; } }
+.progress { position: fixed; left: 0; top: 0; height: 3px; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); z-index: 120; pointer-events: none; }

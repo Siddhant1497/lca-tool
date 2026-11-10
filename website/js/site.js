@@ -147,3 +147,12 @@
   });
   render();
 })();
+
+/* ---------- reading progress line ---------- */
+(function () {
+  var bar = document.createElement("div"); bar.className = "progress"; bar.setAttribute("aria-hidden", "true"); document.body.appendChild(bar);
+  var q = false;
+  function run() { q = false; var h = document.documentElement.scrollHeight - window.innerHeight; bar.style.transform = "scaleX(" + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ")"; }
+  window.addEventListener("scroll", function () { if (!q) { q = true; requestAnimationFrame(run); } }, { passive: true });
+  run();
+})();
