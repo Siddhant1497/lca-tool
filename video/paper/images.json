@@ -1,0 +1,15 @@
+{
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {"name": "book", "seed": 21, "prompt": "an open pop-up storybook lying on a table, a paper apartment building and little paper trees standing up out of its pages"},
+    {"name": "quarry", "seed": 11, "prompt": "a limestone quarry in terraced hills with a cement kiln tower and a steel furnace glowing warm orange, thin paper smoke curls rising"},
+    {"name": "site", "seed": 31, "prompt": "a building under construction, a tall tower crane beside an unfinished concrete and steel frame with scaffolding, delivery lorries and stacks of beams on the ground"},
+    {"name": "life", "seed": 41, "prompt": "a finished mid-rise apartment building with many warm glowing windows and balconies, street trees and lamp posts around it, rolling hills behind"},
+    {"name": "end", "seed": 51, "prompt": "an old building being demolished by an excavator, half the walls broken open, piles of rubble and dust, a tipper lorry waiting"},
+    {"name": "reuse", "seed": 61, "prompt": "a tidy salvage yard with neat stacks of reclaimed bricks, timber beams and old window frames, a new small timber building being assembled from them, green seedlings sprouting"},
+    {"name": "city", "seed": 71, "prompt": "a hopeful green city at sunrise, buildings with roof gardens and solar panels, many trees, a winding river, a large round paper sun rising behind hills"}
+  ]
+}

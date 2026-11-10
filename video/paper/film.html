@@ -1,0 +1,458 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Paper Earth: "The Life of a Building". Paper-relief dioramas with a 2.5D depth camera (WebGL),
+     torn-page transitions, hand-inked notes and placed paper labels. Rendered by kurz/render.cjs. -->
+<style>
+@font-face{font-family:Fraunces;font-weight:500;src:url(fonts/fraunces-latin-500-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:600;src:url(fonts/fraunces-latin-600-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:700;src:url(fonts/fraunces-latin-700-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:900;src:url(fonts/fraunces-latin-900-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:500;font-style:italic;src:url(fonts/fraunces-latin-500-italic.woff2)}
+@font-face{font-family:Fraunces;font-weight:700;font-style:italic;src:url(fonts/fraunces-latin-700-italic.woff2)}
+@font-face{font-family:Fraunces;font-weight:900;font-style:italic;src:url(fonts/fraunces-latin-900-italic.woff2)}
+@font-face{font-family:Caveat;font-weight:500;src:url(fonts/caveat-latin-500-normal.woff2)}
+@font-face{font-family:Caveat;font-weight:700;src:url(fonts/caveat-latin-700-normal.woff2)}
+html,body{margin:0;background:#111}canvas{display:block}
+</style></head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const W = 1080, H = 1920, cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const P = { paper: '#F3ECDD', white: '#FBF7EE', ink: '#1F2A24', forest: '#1D4636', moss: '#7F9C5C', terra: '#C5623B', ochre: '#DDA53C', clay: '#8B5B45', sand: '#F1D9A0' };
+const NAMES = ['book', 'quarry', 'site', 'life', 'end', 'reuse', 'city'];
+let D = null, S = [], T = {}, EV = [], CAPS = [], IMG = {}, TEX = {}, NOW = 0;
+let PAGE_CREAM, PAGE_FOREST, GRAIN, PAT, FRAME, OFF, OG;
+
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const lerp = (a, b, k) => a + (b - a) * k;
+const hash = (a, b = 0) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); };
+const snoise = (x, s) => { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return lerp(hash(i, s), hash(i + 1, s), u); };
+function at(phrase, off = 0) {
+  const p = phrase.toLowerCase();
+  for (const s of D.sentences) { const i = s.text.toLowerCase().indexOf(p); if (i >= 0) return s.t0 + (s.t1 - s.t0) * i / Math.max(1, s.text.length) + off; }
+  console.warn('phrase not found: ' + phrase); return 0;
+}
+
+// ───────────── WebGL: 2.5D depth camera with tilt-shift focus ─────────────
+const glc = document.createElement('canvas'); glc.width = W; glc.height = H;
+const gl = glc.getContext('webgl2', { preserveDrawingBuffer: true, antialias: false });
+const VS = `#version 300 es
+in vec2 a; out vec2 v; void main(){ v = a*.5+.5; v.y = 1.-v.y; gl_Position = vec4(a,0.,1.); }`;
+const FS = `#version 300 es
+precision highp float;
+uniform sampler2D uC, uD; uniform vec2 uShift, uPan, uCover; uniform float uZoom, uFocus, uDof, uSat, uSky; uniform vec3 uTint, uOrbCol; uniform vec4 uOrb;
+in vec2 v; out vec4 o;
+void main(){
+  vec2 uv = (v-.5)*uCover/uZoom + .5 + uPan, p = uv;
+  for(int i=0;i<4;i++){ float d = texture(uD,p).r; p = uv + uShift*(d-uFocus); }
+  float d = texture(uD,p).r;
+  vec3 c = textureLod(uC, p, clamp(abs(d-uFocus)*uDof, 0., 3.5)).rgb;
+  float l = dot(c, vec3(.299,.587,.114));
+  c = mix(vec3(l), c, uSat) * uTint;
+  if(uOrb.w > 0.){
+    vec2 q = v - uOrb.xy; q.y *= ${(H / W).toFixed(4)};
+    float sky = 1. - smoothstep(uSky, uSky+.07, d);
+    vec2 q2 = q - vec2(.010,.012);
+    c = mix(c, c*.62, (1.-smoothstep(uOrb.z*.9, uOrb.z*1.25, length(q2)))*.55*sky*uOrb.w);
+    c = mix(c, uOrbCol, (1.-smoothstep(uOrb.z-.002, uOrb.z+.002, length(q)))*sky*uOrb.w);
+  }
+  o = vec4(c,1.);
+}`;
+let prog, U = {};
+function glInit() {
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
+  prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  for (const n of ['uC', 'uD', 'uShift', 'uPan', 'uCover', 'uZoom', 'uFocus', 'uDof', 'uSat', 'uSky', 'uTint', 'uOrbCol', 'uOrb']) U[n] = gl.getUniformLocation(prog, n);
+  gl.uniform1i(U.uC, 0); gl.uniform1i(U.uD, 1); gl.viewport(0, 0, W, H);
+}
+function tex(src, mip) {
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  if (mip) gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mip ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  return t;
+}
+function plate(g, name, c) {
+  const im = IMG[name], cA = W / H, iA = im.width / im.height;
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, TEX[name].c); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, TEX[name].d);
+  gl.uniform2f(U.uCover, Math.min(1, cA / iA), Math.min(1, iA / cA)); gl.uniform2f(U.uShift, c.shift[0], c.shift[1]); gl.uniform2f(U.uPan, c.pan[0], c.pan[1]);
+  gl.uniform1f(U.uZoom, c.zoom); gl.uniform1f(U.uFocus, c.focus); gl.uniform1f(U.uDof, c.dof); gl.uniform1f(U.uSat, c.sat); gl.uniform1f(U.uSky, c.sky ?? .12);
+  gl.uniform3f(U.uTint, ...c.tint); const o = c.orb || [0, 0, 0, 0]; gl.uniform4f(U.uOrb, ...o); gl.uniform3f(U.uOrbCol, ...(c.orbCol || [1, 1, 1]));
+  gl.drawArrays(gl.TRIANGLES, 0, 3); g.drawImage(glc, 0, 0);
+}
+// slow orbit + push-in + a rack focus as each scene opens
+function cam(t, t0, o = {}) {
+  const lt = t - t0, ph = o.ph || 0;
+  return { zoom: lerp(o.z0 ?? 1.10, o.z1 ?? 1.19, seg(lt, -1, o.dur || 11)), shift: [(o.ax ?? .06) * Math.sin(lt * .5 + ph), (o.ay ?? .022) * Math.cos(lt * .37 + ph)],
+    focus: lerp(o.f0 ?? 1.0, o.f1 ?? .5, eio(seg(lt, -.3, 1.6))), dof: o.dof ?? 3.2, pan: [o.px || 0, (o.py || 0) + (o.drift || 0) * seg(lt, -1, o.dur || 11)], tint: o.tint || [1, 1, 1], sat: o.sat ?? 1.05, orb: o.orb, orbCol: o.orbCol, sky: o.sky };
+}
+
+// ───────────── paper textures ─────────────
+function makePage(base, fiber, blot) {
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.fillStyle = base; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 150; i++) { g.fillStyle = `rgba(${blot},${.012 + hash(i, 1) * .022})`; g.beginPath(); g.ellipse(hash(i, 2) * W, hash(i, 3) * H, 80 + hash(i, 4) * 260, 60 + hash(i, 5) * 200, hash(i, 6) * 3, 0, 7); g.fill(); }
+  for (let i = 0; i < 3200; i++) {
+    const x = hash(i, 7) * W, y = hash(i, 8) * H, a = hash(i, 9) * 6.28, l = 5 + hash(i, 10) * 24;
+    g.strokeStyle = `rgba(${fiber},${.04 + hash(i, 11) * .10})`; g.lineWidth = .6 + hash(i, 12) * .9; g.beginPath(); g.moveTo(x, y);
+    g.quadraticCurveTo(x + Math.cos(a) * l * .5 + (hash(i, 13) - .5) * 8, y + Math.sin(a) * l * .5 + (hash(i, 14) - .5) * 8, x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke();
+  }
+  return c;
+}
+function makeGrain() {
+  const c = document.createElement('canvas'); c.width = 360; c.height = 640; const g = c.getContext('2d'), d = g.createImageData(360, 640);
+  for (let i = 0; i < d.data.length; i += 4) { const v = 128 + (hash(i, 3) - .5) * 150; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  g.putImageData(d, 0, 0); return c;
+}
+const FB = 26, FR = 38;  // frame border and inner radius
+function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+function makeFrame() {
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.save(); rr(g, FB, FB, W - 2 * FB, H - 2 * FB, FR); g.clip(); g.shadowColor = 'rgba(10,22,15,.6)'; g.shadowBlur = 34; g.shadowOffsetY = 8; g.lineWidth = 30; g.strokeStyle = '#000';
+  rr(g, FB - 15, FB - 15, W - 2 * FB + 30, H - 2 * FB + 30, FR + 15); g.stroke(); g.restore();
+  g.save(); g.beginPath(); g.rect(0, 0, W, H); g.roundRect(FB, FB, W - 2 * FB, H - 2 * FB, FR); g.clip('evenodd'); g.drawImage(PAGE_CREAM, 0, 0); g.restore();
+  return c;
+}
+
+// ───────────── drawing kit ─────────────
+function paperShape(g, path, fill, sh = 8) {
+  g.save(); g.shadowColor = 'rgba(12,24,17,.42)'; g.shadowBlur = sh * 2.4; g.shadowOffsetY = sh; g.shadowOffsetX = sh * .4; g.fillStyle = fill; g.fill(path); g.restore();
+  g.save(); g.clip(path); g.globalAlpha *= .16; g.globalCompositeOperation = 'multiply'; g.fillStyle = PAT; g.fillRect(-2000, -2000, 5000, 5000); g.restore();
+}
+function rectPath(x, y, w, h, r) { const p = new Path2D(); p.roundRect(x, y, w, h, r); return p; }
+// paper is "set down": it arrives larger with a long shadow, then lands
+function placed(g, t, t0, x, y, rot, fn, out) {
+  const p = seg(t, t0, t0 + .48); if (p <= 0) return false;
+  const e = eo(p), q = out ? eio(seg(t, out, out + .3)) : 0; if (q >= 1) return false;
+  g.save(); g.globalAlpha *= clamp(p * 5) * (1 - q); g.translate(x, y - (1 - e) * 50 - q * 36); g.rotate(rot + (1 - e) * .1); const s = 1 + (1 - e) * .24; g.scale(s, s); fn(7 + (1 - e) * 34); g.restore(); return true;
+}
+function tag(g, t, t0, x, y, text, o = {}) {
+  const size = o.size || 30, font = o.font || `800 ${size}px Inter`;
+  g.save(); g.font = font; g.letterSpacing = o.ls || '0px'; const tw = g.measureText(text).width - parseFloat(o.ls || 0); g.restore();
+  const w = tw + (o.padX ?? 48) + (o.chip ? 30 : 0), h = size + (o.padY ?? 34), ax = o.ax ?? 0;
+  placed(g, t, t0, x, y, o.rot || 0, sh => {
+    paperShape(g, rectPath(-w * ax, -h / 2, w, h, o.r ?? 9), o.bg || P.white, sh);
+    if (o.chip) { g.fillStyle = o.chip; g.beginPath(); g.arc(-w * ax + 28, 0, 9, 0, 7); g.fill(); }
+    g.font = font; g.letterSpacing = o.ls || '0px'; g.fillStyle = o.fg || P.ink; g.textBaseline = 'middle'; g.textAlign = 'left'; g.fillText(text, -w * ax + (w - tw) / 2 + (o.chip ? 17 : 0), size * .06); g.letterSpacing = '0px';
+  }, o.out);
+}
+function inkLine(g, pts, p, o = {}) {
+  if (p <= 0 || pts.length < 2) return;
+  const w = o.w || 7, seed = o.seed || 1, bf = Math.floor(NOW * 8), L = [0];
+  for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const lim = L[L.length - 1] * p;
+  g.save(); g.strokeStyle = o.color || P.white; g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = w;
+  if (o.shadow !== false) { g.shadowColor = 'rgba(8,20,14,.5)'; g.shadowBlur = 8; g.shadowOffsetY = 3; }
+  g.beginPath();
+  for (let i = 0; i < pts.length; i++) {
+    let [x, y] = pts[i];
+    if (L[i] > lim) { const k = (lim - L[i - 1]) / (L[i] - L[i - 1] + 1e-6); x = lerp(pts[i - 1][0], x, k); y = lerp(pts[i - 1][1], y, k); }
+    x += (hash(i * 1.3 + seed, bf) - .5) * w * .4; y += (hash(i * 1.7 + seed, bf + 9) - .5) * w * .4;  // hand-drawn "boil"
+    i ? g.lineTo(x, y) : g.moveTo(x, y); if (L[i] > lim) break;
+  }
+  g.stroke(); g.restore();
+}
+const quad = (a, c, b, n = 36) => Array.from({ length: n + 1 }, (_, i) => { const k = i / n; return [(1 - k) * (1 - k) * a[0] + 2 * (1 - k) * k * c[0] + k * k * b[0], (1 - k) * (1 - k) * a[1] + 2 * (1 - k) * k * c[1] + k * k * b[1]]; });
+const ell = (cx, cy, rx, ry, turns = 1.12, a0 = -2.2, n = 80) => Array.from({ length: n + 1 }, (_, i) => { const k = i / n, a = a0 + k * turns * 6.283, r = 1 + .05 * k; return [cx + Math.cos(a) * rx * r, cy + Math.sin(a) * ry * r]; });
+const wave = (x0, x1, y, amp = 5, n = 30) => Array.from({ length: n + 1 }, (_, i) => { const k = i / n; return [lerp(x0, x1, k), y + Math.sin(k * 7) * amp - k * amp]; });
+function arrow(g, a, c, b, p, o = {}) {
+  const pts = quad(a, c, b); inkLine(g, pts, seg(p, 0, .8), o);
+  if (p > .7) { const k = seg(p, .7, 1), [x1, y1] = pts[pts.length - 3], [x2, y2] = pts[pts.length - 1], an = Math.atan2(y2 - y1, x2 - x1), hl = (o.head || 28) * k;
+    for (const s of [-1, 1]) inkLine(g, [[x2, y2], [x2 - Math.cos(an + s * .5) * hl, y2 - Math.sin(an + s * .5) * hl]], 1, Object.assign({}, o, { seed: 5 + s })); }
+}
+function note(g, t, t0, text, x, y, size, o = {}) {
+  const p = seg(t, t0, t0 + (o.dur || .55)); if (p <= 0) return; const q = o.out ? seg(t, o.out, o.out + .3) : 0; if (q >= 1) return;
+  g.save(); g.globalAlpha *= 1 - q; g.translate(x, y); g.rotate(o.rot ?? -.04); g.font = `700 ${size}px Caveat`; const tw = g.measureText(text).width, ax = o.align === 'center' ? .5 : o.align === 'right' ? 1 : 0;
+  g.beginPath(); g.rect(-tw * ax - 12, -size * 1.1, (tw + 24) * (p < 1 ? p * .98 : 1), size * 1.6); g.clip();
+  if (o.shadow !== false) { g.shadowColor = 'rgba(8,20,14,.6)'; g.shadowBlur = 10; g.shadowOffsetY = 3; }
+  g.fillStyle = o.color || P.white; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillText(text, -tw * ax, 0); g.restore();
+}
+function fit(text, max, size, font = '900', fam = 'Fraunces') { ctx.save(); ctx.font = `${font} ${size}px ${fam}`; const w = ctx.measureText(text).width; ctx.restore(); return w > max ? size * max / w : size; }
+// editorial headline: each line rises out of a mask
+function headline(g, t, t0, lines, x, y, o = {}) {
+  const q = o.out ? eio(seg(t, o.out, o.out + .3)) : 0; if (q >= 1) return; let yy = y;
+  lines.forEach((ln, i) => {
+    const size = ln.size || o.size || 120; if (i) yy += size * (o.lh || 1.0);
+    const p = seg(t, t0 + i * (o.stagger ?? .11), t0 + i * (o.stagger ?? .11) + .62); if (p <= 0) return; const e = eo(p);
+    g.save(); g.globalAlpha *= 1 - q; g.font = `${ln.italic ? 'italic ' : ''}${ln.w || 900} ${size}px Fraunces`; g.textAlign = o.align || 'left'; g.textBaseline = 'alphabetic';
+    g.beginPath(); g.rect(-50, yy - size * 1.02, W + 100, size * 1.36); g.clip();
+    if (o.shadow !== false) { g.shadowColor = 'rgba(8,22,15,.55)'; g.shadowBlur = 26; g.shadowOffsetY = 6; }
+    g.fillStyle = ln.color || o.color || P.white; g.fillText(ln.s, x, yy + (1 - e) * size * 1.12 - q * 30); g.restore();
+  });
+}
+function caps(g, t, t0, text, x, y, o = {}) {
+  const p = seg(t, t0, t0 + .5); if (p <= 0) return; const q = o.out ? seg(t, o.out, o.out + .3) : 0; if (q >= 1) return;
+  g.save(); g.globalAlpha *= eo(p) * (1 - q); g.font = `800 ${o.size || 28}px Inter`; g.letterSpacing = o.ls || '8px'; g.textAlign = o.align || 'left'; g.fillStyle = o.color || P.white;
+  if (o.shadow !== false) { g.shadowColor = 'rgba(8,22,15,.6)'; g.shadowBlur = 14; g.shadowOffsetY = 3; }
+  g.fillText(text, x + (1 - eo(p)) * -24, y); g.letterSpacing = '0px'; g.restore();
+}
+function scrim(g, top = .7, bottom = .45, th = 720) {
+  let gr = g.createLinearGradient(0, 0, 0, th); gr.addColorStop(0, `rgba(14,32,24,${top})`); gr.addColorStop(.55, `rgba(14,32,24,${top * .5})`); gr.addColorStop(1, 'rgba(14,32,24,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, th);
+  gr = g.createLinearGradient(0, 1150, 0, H); gr.addColorStop(0, 'rgba(14,32,24,0)'); gr.addColorStop(1, `rgba(14,32,24,${bottom})`); g.fillStyle = gr; g.fillRect(0, 1150, W, H - 1150);
+}
+function lightSweep(g, t) {
+  const x = ((t * 55) % (W * 2.4)) - W * .7; g.save(); g.globalCompositeOperation = 'soft-light';
+  const gr = g.createLinearGradient(x, 0, x + 520, 300); gr.addColorStop(0, 'rgba(255,236,200,0)'); gr.addColorStop(.5, 'rgba(255,236,200,.22)'); gr.addColorStop(1, 'rgba(255,236,200,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H); g.restore();
+}
+// CO2 as small dark paper confetti drifting up
+function confetti(g, t, o) {
+  const life = o.life || 3.4, n = Math.floor((o.t1 - o.t0) * o.rate);
+  for (let i = 0; i < n; i++) {
+    const age = t - (o.t0 + i / o.rate); if (age <= 0 || age >= life) continue; const k = age / life;
+    const x = o.x + (hash(i, 1) - .5) * o.spread + Math.sin(age * 1.4 + hash(i, 2) * 6.28) * 46 * k + (hash(i, 6) - .5) * 160 * k, y = o.y - age * (o.speed || 150) * (.65 + hash(i, 3) * .7), s = 9 + hash(i, 4) * 13;
+    g.save(); g.globalAlpha *= Math.min(1, k * 6) * (1 - seg(k, .6, 1)) * .92; g.translate(x, y); g.rotate(age * (hash(i, 5) - .5) * 5 + hash(i, 7) * 6);
+    g.shadowColor = 'rgba(0,0,0,.35)'; g.shadowBlur = 6; g.shadowOffsetY = 3; g.fillStyle = hash(i, 8) > .3 ? '#2A2F2C' : '#4A4038'; g.scale(1, .55 + .45 * Math.abs(Math.cos(age * 3 + i)));
+    g.beginPath(); g.moveTo(-s / 2, -s / 2.4); g.lineTo(s / 2, -s / 2); g.lineTo(s / 2.3, s / 2); g.lineTo(-s / 2, s / 2.6); g.closePath(); g.fill(); g.restore();
+  }
+}
+function chapter(g, t, t0, num, title, code, color, fg) {
+  caps(g, t, t0, 'CHAPTER ' + num, 88, 262);
+  inkLine(g, wave(88, 430, 288, 2), eo(seg(t, t0 + .15, t0 + .7)), { w: 4, seed: 3 });
+  headline(g, t, t0 + .12, [{ s: title, size: fit(title, 840, 172) }], 82, 452, {});
+  tag(g, t, t0 + .8, 88, 536, code, { bg: color, fg: fg || P.white, rot: -.018, size: 27, ls: '3px' });
+}
+
+// ───────────── scenes ─────────────
+function sOpen(g, t) {
+  plate(g, 'book', cam(t, 0, { z0: 1.24, z1: 1.10, f0: 1.0, f1: .55, dur: 8 })); scrim(g, .74, .4, 900); lightSweep(g, t);
+  caps(g, t, .45, 'A CARBON STORY IN FOUR CHAPTERS', 88, 250, { size: 26, ls: '7px' });
+  headline(g, t, .7, [{ s: 'The Life' }, { s: 'of a', italic: true, w: 500, size: 124, color: P.sand }, { s: 'Building' }], 82, 440, { size: 184, lh: .98 });
+  const c = at('its carbon');
+  confetti(g, t, { x: 540, y: 1240, spread: 460, t0: c, t1: T.c1 + .4, rate: 10 });
+  note(g, t, at('written into'), 'carbon, in every chapter', 96, 905, 76, { rot: -.03 });
+  inkLine(g, wave(96, 650, 930, 6), eo(seg(t, at('every chapter'), at('every chapter') + .6)), { w: 6, seed: 7, color: P.ochre });
+}
+function sMaterials(g, t) {
+  plate(g, 'quarry', cam(t, T.c1, { ph: 1, f1: .5 })); scrim(g); lightSweep(g, t);
+  confetti(g, t, { x: 520, y: 760, spread: 120, t0: T.c1 + .6, t1: T.c2 + .4, rate: 5, speed: 120 });
+  chapter(g, t, T.k1, 'ONE', 'Materials', 'A1–A3 · PRODUCT STAGE', P.ochre, P.ink);
+  const o = at('Cement and steel') - .25, w = [at('quarried'), at('crushed'), at('baked')];
+  note(g, t, w[0], 'quarried', 92, 700, 72, { out: o }); note(g, t, w[1], 'crushed', 150, 790, 72, { out: o }); note(g, t, w[2], 'baked at ~1,450 °C', 92, 880, 72, { out: o });
+  const q = eio(seg(t, o, o + .3)); g.save(); g.globalAlpha = 1 - q;
+  arrow(g, [330, 690], [420, 660], [470, 740], seg(t, w[0] + .2, w[0] + .7), { w: 5, seed: 11 }); g.restore();
+  // 15 % paper dial
+  const s0 = at('Cement and steel'), k = eio(seg(t, at('around fifteen') - .1, at('around fifteen') + 1.1));
+  placed(g, t, s0, 330, 860, -.03, sh => {
+    const disc = new Path2D(); disc.arc(0, 0, 215, 0, 7); paperShape(g, disc, P.white, sh);
+    const wd = new Path2D(); wd.moveTo(0, 0); wd.arc(0, 0, 196, -Math.PI / 2, -Math.PI / 2 + 6.283 * .15 * k + .001); wd.closePath(); if (k > 0) paperShape(g, wd, P.terra, 4);
+    const hub = new Path2D(); hub.arc(0, 0, 138, 0, 7); paperShape(g, hub, P.paper, 5);
+    g.fillStyle = P.ink; g.textAlign = 'center'; g.font = '900 104px Fraunces'; g.fillText('~' + Math.round(15 * k) + '%', 0, 22); g.font = '700 23px Inter'; g.fillStyle = 'rgba(31,42,36,.75)'; g.fillText('of the world’s CO₂', 0, 66);
+  });
+  tag(g, t, at('produce'), 600, 770, 'cement ≈ 7%', { bg: P.paper, rot: .03, size: 30, chip: P.clay }); tag(g, t, at('produce') + .35, 600, 860, 'steel ≈ 8%', { bg: P.paper, rot: -.025, size: 30, chip: P.ink });
+  note(g, t, at('of the world') + .2, 'source: IEA', 610, 950, 44, { rot: -.02 });
+}
+function sConstruction(g, t) {
+  plate(g, 'site', cam(t, T.c2, { ph: 2.2, f1: .45 })); scrim(g); lightSweep(g, t);
+  chapter(g, t, T.k2, 'TWO', 'Construction', 'A4–A5 · CONSTRUCTION STAGE', P.terra);
+  const o = at('By opening day') - .2;
+  tag(g, t, at('Trucks'), 92, 690, 'transport · A4', { rot: -.03, size: 34, out: o, font: 'italic 700 38px Fraunces' });
+  tag(g, t, at('cranes'), 150, 790, 'site energy · A5', { rot: .025, size: 34, out: o + .06, font: 'italic 700 38px Fraunces' });
+  tag(g, t, at('and waste'), 92, 890, 'waste · A5', { rot: -.02, size: 34, out: o + .12, font: 'italic 700 38px Fraunces' });
+  // opening-day ribbon
+  placed(g, t, at('By opening day') + .05, 500, 720, -.04, sh => {
+    const p = new Path2D(), w = 760, h = 120; p.moveTo(-w / 2, -h / 2); p.lineTo(w / 2, -h / 2); p.lineTo(w / 2 - 44, 0); p.lineTo(w / 2, h / 2); p.lineTo(-w / 2, h / 2); p.lineTo(-w / 2 + 44, 0); p.closePath();
+    paperShape(g, p, P.terra, sh); g.fillStyle = P.white; g.font = '900 68px Fraunces'; g.letterSpacing = '5px'; g.textAlign = 'center'; g.fillText('OPENING DAY', 3, 25); g.letterSpacing = '0px';
+  });
+  const a = at('already in the air');
+  confetti(g, t, { x: 520, y: 1250, spread: 760, t0: at('all of that'), t1: T.c3, rate: 22, speed: 190 });
+  note(g, t, a, 'already emitted', 500, 905, 96, { align: 'center', rot: -.035 });
+  inkLine(g, ell(500, 880, 330, 78), eo(seg(t, a + .45, a + 1.1)), { w: 6, seed: 4, color: P.sand });
+  tag(g, t, a + .9, 500, 1040, 'UPFRONT CARBON', { bg: P.white, rot: .015, size: 36, ls: '4px', ax: .5 });
+}
+function sLife(g, t) {
+  // days and nights roll past: the tint cycles and a paper sun and moon cross the sky
+  const cyc = (t - T.c3 - .6) / 2.9, ph = cyc - Math.floor(cyc), night = cyc > 0 ? Math.floor(cyc) % 2 : 0, f = Math.sin(Math.PI * clamp(ph));
+  const edge = Math.min(seg(ph, 0, .14), 1 - seg(ph, .86, 1)), nk = night ? edge : 0;
+  const tint = [lerp(1, .50, nk), lerp(1, .62, nk), lerp(1, .92, nk)], dusk = night ? 0 : 1 - edge;
+  tint[0] *= lerp(1, 1.05, dusk); tint[1] *= lerp(1, .86, dusk); tint[2] *= lerp(1, .74, dusk);
+  plate(g, 'life', cam(t, T.c3, { ph: .4, f1: .5, tint, sat: lerp(1.05, .8, nk), orb: [lerp(-.1, 1.1, ph), .30 - .13 * f, .058, cyc > 0 ? 1 : 0], orbCol: night ? [.93, .93, .86] : [.98, .78, .36], sky: .16 }));
+  scrim(g); lightSweep(g, t);
+  chapter(g, t, T.k3, 'THREE', 'Life', 'B1–B7 · USE STAGE', P.moss, P.ink);
+  // year counter
+  const yr = Math.max(1, Math.round(lerp(1, 60, seg(t, at('Decades'), T.c4 - .8))));
+  placed(g, t, at('Decades') - .1, 770, 330, .04, sh => {
+    paperShape(g, rectPath(-105, -110, 210, 220, 14), P.white, sh); g.save(); g.clip(rectPath(-105, -110, 210, 220, 14)); g.fillStyle = P.terra; g.fillRect(-105, -110, 210, 62); g.restore();
+    g.fillStyle = P.white; g.font = '800 26px Inter'; g.letterSpacing = '6px'; g.textAlign = 'center'; g.fillText('YEAR', 3, -70); g.letterSpacing = '0px';
+    g.fillStyle = P.ink; g.font = '900 112px Fraunces'; g.fillText(String(yr).padStart(2, '0'), 0, 78);
+  });
+  const o = at('Plus every') - .2, f2 = 'italic 700 40px Fraunces';
+  tag(g, t, at('cooling'), 92, 690, 'cooling', { rot: -.03, out: o, font: f2, size: 36 }); tag(g, t, at('heating'), 300, 700, 'heating', { rot: .03, out: o + .05, font: f2, size: 36 });
+  tag(g, t, at('lighting'), 92, 790, 'lighting', { rot: .02, out: o + .1, font: f2, size: 36 }); tag(g, t, at('lighting') + .45, 300, 800, 'B6 · OPERATIONAL ENERGY', { bg: P.ochre, rot: -.015, size: 24, ls: '2px', out: o + .15 });
+  const r = at('repair'), r2 = at('replacement');
+  tag(g, t, r, 92, 700, 'repair · B3', { rot: -.025, font: f2, size: 36 }); tag(g, t, r2, 140, 800, 'replacement · B4', { rot: .02, font: f2, size: 36 });
+  note(g, t, at('along the way'), '…again and again', 96, 905, 66, { rot: -.03 });
+  confetti(g, t, { x: 560, y: 1150, spread: 500, t0: T.c3 + 1.5, t1: T.c4, rate: 4, speed: 110 });
+}
+function sEnd(g, t) {
+  plate(g, 'end', cam(t, T.c4, { ph: 3.1, f1: .5, sat: .92 })); scrim(g); lightSweep(g, t);
+  chapter(g, t, T.k4, 'FOUR', 'The End', 'C1–C4 · END OF LIFE', P.clay);
+  const f2 = 'italic 700 40px Fraunces';
+  tag(g, t, at('Demolition'), 92, 700, 'demolition · C1', { rot: -.03, font: f2, size: 36 }); tag(g, t, at('and landfill'), 140, 800, 'landfill · C4', { rot: .025, font: f2, size: 36 });
+  confetti(g, t, { x: 540, y: 1180, spread: 600, t0: at('Demolition'), t1: T.reuse + .3, rate: 9, speed: 130 });
+}
+function sReuse(g, t) {
+  plate(g, 'reuse', cam(t, T.reuse, { ph: 4, f1: .5, sat: 1.1 })); scrim(g); lightSweep(g, t);
+  caps(g, t, T.reuse + .2, 'OR…', 88, 262);
+  headline(g, t, T.reuse + .3, [{ s: 'A second', italic: true }, { s: 'life.', italic: true, color: P.sand }], 82, 420, { size: 160, lh: .98 });
+  tag(g, t, at('through reuse'), 88, 690, 'D · REUSE, RECOVERY, RECYCLING', { bg: P.forest, fg: P.white, rot: -.018, size: 27, ls: '3px' });
+  inkLine(g, ell(540, 1010, 250, 90, 1.1, -2.6), eo(seg(t, at('through reuse') + .3, at('through reuse') + 1)), { w: 6, seed: 9, color: P.sand });
+}
+const TH = [['quarry', 'Materials', 'A1–A3', 70, 400, P.ochre], ['site', 'Construction', 'A4–A5', 520, 400, P.terra], ['life', 'Life', 'B1–B7', 520, 920, P.moss], ['end', 'The End', 'C1–C4', 70, 920, P.clay]];
+function archPath(x, y, w, h, pad = 0) { const p = new Path2D(), r = w / 2 + pad; p.moveTo(x - pad, y + h + pad); p.lineTo(x - pad, y + w / 2); p.arc(x + w / 2, y + w / 2, r, Math.PI, 0); p.lineTo(x + w + pad, y + h + pad); p.closePath(); return p; }
+function sBook(g, t) {
+  g.drawImage(PAGE_CREAM, 0, 0);
+  const only = at('read only'), lca = at('A life cycle'), whole = at('the whole book');
+  caps(g, t, T.book + .35, 'FOUR CHAPTERS, ONE STORY', 95, 250, { color: P.forest, shadow: false, size: 26, ls: '7px', out: lca - .2 });
+  tag(g, t, lca, 95, 242, 'LIFE CYCLE ASSESSMENT', { bg: P.forest, fg: P.white, size: 30, ls: '5px', rot: -.012 });
+  TH.forEach(([n, title, code, x, y, col], i) => {
+    const w = 390, h = 330, im = IMG[n], colorK = i === 2 ? 1 : eo(seg(t, lca + .25 + (i > 2 ? 2 : i) * .28, lca + .7 + (i > 2 ? 2 : i) * .28));
+    placed(g, t, T.book + .45 + i * .13, x + w / 2, y + h / 2, (hash(i, 40) - .5) * .05, sh => {
+      g.translate(-x - w / 2, -y - h / 2); paperShape(g, archPath(x, y, w, h, 13), P.white, sh);
+      g.save(); g.clip(archPath(x, y, w, h)); const sw = im.width * .86, shh = sw * h / w, sx = (im.width - sw) / 2, sy = im.height * .30 + Math.sin(t * .4 + i) * 14;
+      g.filter = 'grayscale(1) contrast(.75) brightness(1.12)'; g.drawImage(im, sx, sy, sw, shh, x, y, w, h); g.filter = 'none';
+      if (colorK > 0) { g.globalAlpha *= colorK; g.drawImage(im, sx, sy, sw, shh, x, y, w, h); } g.restore();
+      g.fillStyle = col; g.font = '900 34px Fraunces'; g.textAlign = 'left'; g.fillText('0' + (i + 1), x, y + h + 62);
+      g.fillStyle = P.ink; g.font = '700 38px Fraunces'; g.fillText(title, x + 56, y + h + 62); g.font = '700 21px Inter'; g.letterSpacing = '2px'; g.fillStyle = 'rgba(31,42,36,.6)'; g.fillText(code, x + 57, y + h + 94); g.letterSpacing = '0px';
+    });
+  });
+  const q = 1 - eio(seg(t, lca - .1, lca + .25)); g.save(); g.globalAlpha = q;
+  inkLine(g, ell(715, 1100, 228, 250, 1.1, -1.2), eo(seg(t, only, only + .7)), { w: 7, seed: 2, color: P.terra, shadow: false });
+  note(g, t, only + .5, 'only this one?', 560, 892, 62, { color: P.terra, shadow: false, rot: -.05 }); g.restore();
+  // the loop: 1 -> 2 -> 3 -> 4 -> back to 1
+  const A = [[[466, 560], [490, 532], [514, 560]], [[930, 780], [956, 840], [930, 900]], [[514, 1085], [490, 1113], [466, 1085]], [[52, 900], [26, 840], [52, 780]]];
+  A.forEach((a, i) => arrow(g, a[0], a[1], a[2], seg(t, whole - .5 + i * .3, whole + i * .3), { w: 6, seed: 20 + i, color: i === 3 ? P.forest : P.ink, shadow: false, head: 20 }));
+  note(g, t, whole + .9, 'reuse', 78, 890, 54, { color: P.forest, shadow: false, rot: -.06 });
+  headline(g, t, whole - .1, [{ s: 'Read the whole book.', italic: true, w: 700, size: 74, color: P.forest }], 95, 345, { shadow: false });
+}
+function sHalf(g, t) {
+  g.drawImage(PAGE_FOREST, 0, 0);
+  headline(g, t, T.half + .35, [{ s: 'And it matters.', italic: true, w: 700 }], 96, 330, { size: 108, shadow: false, color: P.sand });
+  const b = at('Between now'), hf = at('about half'), bf = at('before anyone'), k = eio(seg(t, hf, hf + 1.1));
+  inkLine(g, wave(110, 930, 480, 3, 50), eo(seg(t, b, b + .9)), { w: 6, seed: 6, shadow: false });
+  for (const [x, lab, d] of [[110, 'now', 0], [930, '2050', .6]]) { inkLine(g, [[x, 462], [x, 500]], seg(t, b + d, b + d + .2), { w: 6, shadow: false }); note(g, t, b + d + .1, lab, x, 440, 56, { align: x > 500 ? 'right' : 'left', shadow: false, rot: -.02 }); }
+  if (t > hf - .05) { g.save(); g.globalAlpha = seg(t, hf - .05, hf + .2); g.fillStyle = P.ochre; g.font = '900 262px Fraunces'; g.textAlign = 'center'; g.fillText('~' + Math.round(50 * k) + '%', 490, 830); g.restore(); }
+  caps(g, t, hf + .7, 'OF THE CARBON FROM NEW CONSTRUCTION', 490, 925, { align: 'center', size: 24, ls: '4px', shadow: false, color: 'rgba(251,247,238,.8)' });
+  const half = (x, col, lab, t0, fg) => placed(g, t, t0, x + 205, 1058, 0, sh => { paperShape(g, rectPath(-205, -48, 410, 96, 8), col, sh); g.fillStyle = fg; g.font = '800 24px Inter'; g.letterSpacing = '3px'; g.textAlign = 'center'; g.fillText(lab, 2, 9); g.letterSpacing = '0px'; });
+  half(520, P.moss, 'DECADES OF USE', hf + .5, P.ink); half(110, P.terra, 'BEFORE MOVE-IN', hf + .25, P.white);
+  inkLine(g, [[520, 985], [520, 1135]], seg(t, bf, bf + .3), { w: 5, shadow: false, color: P.sand });
+  note(g, t, bf + .1, 'opening day', 535, 990, 50, { shadow: false, color: P.sand, rot: -.03 });
+  inkLine(g, [[112, 1140], [112, 1168], [518, 1168], [518, 1140]], eo(seg(t, bf + .5, bf + 1.1)), { w: 5, shadow: false });
+  tag(g, t, bf + .9, 315, 1232, 'UPFRONT CARBON · A1–A5', { ax: .5, size: 27, ls: '3px', rot: -.012 });
+  caps(g, t, bf + 1.4, 'SOURCE: WORLDGBC, BRINGING EMBODIED CARBON UPFRONT (2019)', 110, 1318, { size: 17, ls: '2px', shadow: false, color: 'rgba(251,247,238,.6)' });
+}
+function sFinal(g, t) {
+  plate(g, 'city', cam(t, T.fin, { ph: 5, f1: .5, sat: 1.1, dur: 10 })); scrim(g, .74, .45, 980); lightSweep(g, t);
+  const gb = at('green building'), w = at('Which chapters');
+  caps(g, t, T.fin + .4, 'WHEN YOU HEAR…', 88, 262, { out: w - .3 });
+  headline(g, t, gb - .15, [{ s: '“green', italic: true }, { s: 'building”', italic: true, color: P.sand }], 82, 420, { size: 164, lh: .98, out: w - .3 });
+  inkLine(g, wave(88, 760, 615, 7), eo(seg(t, at('ask one thing'), at('ask one thing') + .6)) * (1 - seg(t, w - .3, w - .1)), { w: 7, seed: 8, color: P.ochre });
+  caps(g, t, w, 'ASK ONE THING', 88, 262);
+  headline(g, t, w, [{ s: 'Which' }, { s: 'chapters', italic: true, color: P.sand }, { s: 'did they' }, { s: 'count?' }], 82, 410, { size: 150, lh: .96, stagger: .16 });
+}
+function sEndCard(g, t) {
+  g.drawImage(PAGE_CREAM, 0, 0); const t0 = T.end + .35;
+  caps(g, t, t0, 'THE LIFE OF A BUILDING', 96, 300, { color: P.forest, shadow: false, size: 26, ls: '7px' });
+  headline(g, t, t0 + .1, [{ s: 'Count' }, { s: 'every', italic: true, color: P.terra }, { s: 'chapter.' }], 90, 500, { size: 176, lh: .96, shadow: false, color: P.forest });
+  [['A1–A3', 'Materials', P.ochre], ['A4–A5', 'Construction', P.terra], ['B1–B7', 'Life in use', P.moss], ['C1–C4', 'End of life', P.clay], ['D', 'Reuse and recycling', P.forest]].forEach(([c, n, col], i) => {
+    placed(g, t, t0 + .9 + i * .14, 96, 990 + i * 92, (hash(i, 50) - .5) * .02, sh => {
+      paperShape(g, rectPath(0, -36, 176, 72, 8), col, sh); g.fillStyle = i === 0 || i === 2 ? P.ink : P.white; g.font = '800 28px Inter'; g.letterSpacing = '2px'; g.textAlign = 'center'; g.fillText(c, 89, 10); g.letterSpacing = '0px';
+      g.fillStyle = P.ink; g.font = '700 44px Fraunces'; g.textAlign = 'left'; g.fillText(n, 206, 15);
+    });
+  });
+  note(g, t, t0 + 1.9, 'whole-life carbon · EN 15978', 96, 1500, 58, { color: P.forest, shadow: false, rot: -.02 });
+}
+
+// ───────────── global layers ─────────────
+const TABS = [['A1–3', P.ochre, 1], ['A4–5', P.terra, 0], ['B', P.moss, 1], ['C', P.clay, 0], ['D', P.forest, 0]];
+let TABON = [];
+function tabs(g, t) {
+  if (t < T.c1 || t > T.end + .5) return;
+  TABS.forEach(([lab, col, dark], i) => {
+    const p = eo(seg(t, T.c1 + .5 + i * .08, T.c1 + 1 + i * .08)) * (1 - eio(seg(t, T.end - .2 + i * .04, T.end + .2 + i * .04))); if (p <= 0) return;
+    let a = 0; for (const [s, e] of TABON[i]) a = Math.max(a, eo(seg(t, s, s + .35)) * (1 - eio(seg(t, e, e + .35))));
+    const vis = 74 + 44 * a, x = W - FB - vis + (1 - p) * 170, y = 640 + i * 108;
+    paperShape(g, rectPath(x, y, 220, 90, 14), P.white, 6);
+    if (a > 0) { g.save(); g.globalAlpha = a; g.fillStyle = col; g.fill(rectPath(x, y, 220, 90, 14)); g.restore(); }
+    g.fillStyle = a > .5 && !dark ? P.white : P.ink; g.font = `800 ${lab.length > 2 ? 23 : 32}px Inter`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(lab, x + vis / 2 + 3, y + 47); g.textBaseline = 'alphabetic';
+  });
+}
+function buildCaps() {
+  CAPS = [];
+  for (const s of D.sentences) {
+    const words = s.text.split(' '), total = s.text.length + 1; let t0 = s.t0, cur = [], groups = [];
+    const ws = words.map(w => { const dt = (s.t1 - s.t0) * (w.length + 1) / total, o = { w, t0, t1: t0 + dt }; t0 += dt; return o; });
+    for (const w of ws) { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if ((len >= 16 && /[,.:;!?]$/.test(w.w)) || len >= 26) { groups.push(cur); cur = []; } }
+    if (cur.length) { if (groups.length && cur.map(x => x.w).join(' ').length < 10) groups[groups.length - 1].push(...cur); else groups.push(cur); }
+    for (const gp of groups) CAPS.push({ words: gp, t0: gp[0].t0, t1: gp[gp.length - 1].t1 });
+  }
+}
+function captions(g, t) {
+  let c = null; for (const k of CAPS) if (k.t0 - .06 <= t) c = k; if (!c || t > c.t1 + .4) return;
+  const p = seg(t, c.t0 - .06, c.t0 + .1), q = seg(t, c.t1 + .2, c.t1 + .4);
+  g.save(); g.font = '700 46px Inter'; const sp = g.measureText(' ').width, ws = c.words.map(w => g.measureText(w.w).width), tw = ws.reduce((a, b) => a + b, 0) + sp * (ws.length - 1), w = tw + 84;
+  g.globalAlpha = eo(p) * (1 - q); g.translate(W / 2, 1436); g.rotate(-.01); g.scale(1, .7 + .3 * eo(p));
+  paperShape(g, rectPath(-w / 2, -50, w, 100, 10), P.white, 9);
+  let x = -tw / 2; g.textAlign = 'left'; g.textBaseline = 'middle';
+  c.words.forEach((wd, i) => { g.fillStyle = t >= wd.t1 ? P.ink : t >= wd.t0 - .03 ? '#B4481F' : 'rgba(31,42,36,.34)'; g.fillText(wd.w, x, 3); x += ws[i] + sp; });
+  g.restore();
+}
+function tear(g, B, p, dir, seed) {
+  const e = eio(p), path = new Path2D(), jag = v => (hash(Math.round(v / 13), seed) - .5) * 22 + (snoise(v / 85, seed + 3) - .5) * 70;
+  if (dir === 'up') { const y0 = lerp(H + 170, -170, e); path.moveTo(-60, H + 300); for (let x = -60; x <= W + 60; x += 13) path.lineTo(x, y0 + (x - W / 2) * .05 + jag(x)); path.lineTo(W + 60, H + 300); }
+  else { const x0 = lerp(W + 170, -170, e); path.moveTo(W + 300, -60); for (let y = -60; y <= H + 60; y += 13) path.lineTo(x0 + (y - H / 2) * .06 + jag(y), y); path.lineTo(W + 300, H + 60); }
+  path.closePath();
+  g.save(); g.shadowColor = 'rgba(6,16,10,.6)'; g.shadowBlur = 50; g.shadowOffsetX = dir === 'up' ? 0 : -18; g.shadowOffsetY = dir === 'up' ? -18 : 0; g.fillStyle = '#FFFDF6'; g.translate(dir === 'up' ? 0 : -10, dir === 'up' ? -10 : 0); g.fill(path); g.restore();
+  g.save(); g.clip(path); g.drawImage(B, 0, 0); g.restore();
+}
+
+// ───────────── timeline ─────────────
+const TR0 = .38, TR1 = .5;  // a tear starts this long before a scene's start time and ends this long after
+function build() {
+  T.k1 = at('Chapter one'); T.k2 = at('Chapter two'); T.k3 = at('Chapter three: life'); T.k4 = at('Chapter four');
+  T.c1 = T.k1 - .3; T.c2 = T.k2 - .3; T.c3 = T.k3 - .3; T.c4 = T.k4 - .3; T.reuse = at('Or, a second life') - .25; T.book = at('Many green claims') - .35; T.half = at('And it matters') - .35;
+  T.fin = at('So when you hear') - .35; T.end = at('Which chapters did they count') + 3.1;
+  S = [{ t0: -9, draw: sOpen }, { t0: T.c1, draw: sMaterials }, { t0: T.c2, draw: sConstruction }, { t0: T.c3, draw: sLife }, { t0: T.c4, draw: sEnd }, { t0: T.reuse, draw: sReuse },
+    { t0: T.book, draw: sBook }, { t0: T.half, draw: sHalf }, { t0: T.fin, draw: sFinal }, { t0: T.end, draw: sEndCard, dir: 'up' }];
+  const whole = at('the whole book'), bf = at('before anyone'), w = at('Which chapters');
+  TABON = [[[T.c1 + .6, T.c2], [whole, T.half], [bf, T.fin], [w + .5, 99]], [[T.c2 + .3, T.c3], [whole + .15, T.half], [bf + .15, T.fin], [w + .7, 99]], [[T.c3 + .3, T.c4], [at('read only'), T.half], [w + .9, 99]],
+    [[T.c4 + .3, T.reuse], [whole + .45, T.half], [w + 1.1, 99]], [[T.reuse + .3, T.book], [whole + .6, T.half], [w + 1.3, 99]]];
+  buildCaps();
+  const E = (t, kind, dur) => EV.push(dur ? { t, kind, dur } : { t, kind });
+  S.slice(1).forEach(s => E(s.t0 - TR0 + .05, 'paper'));
+  for (const k of [T.k1, T.k2, T.k3, T.k4]) { E(k + .12, 'thump'); E(k + .8, 'tock'); }
+  E(.7, 'thump'); E(at('written into'), 'scratch', .6);
+  for (const p of ['quarried', 'crushed', 'baked']) E(at(p), 'scratch', .45);
+  E(at('Cement and steel'), 'tock'); E(at('around fifteen') + 1.0, 'chime'); E(at('produce'), 'tock'); E(at('produce') + .35, 'tock');
+  for (const p of ['Trucks', 'cranes', 'and waste', 'cooling', 'heating', 'lighting', 'repair', 'replacement', 'Demolition', 'and landfill', 'through reuse', 'A life cycle']) E(at(p), 'tock');
+  E(at('By opening day') + .05, 'thump'); E(at('already in the air'), 'scratch', .7); E(at('already in the air') + .9, 'tock');
+  E(at('read only'), 'scratch', .7); for (let i = 0; i < 4; i++) E(whole - .5 + i * .3, 'scratch', .3); E(whole + .5, 'chime');
+  E(at('Between now'), 'scratch', .8); E(at('about half') + 1.0, 'chime'); E(at('about half') + .25, 'tock'); E(at('about half') + .5, 'tock'); E(bf + .9, 'tock');
+  E(at('ask one thing'), 'scratch', .5); E(w, 'thump'); for (let i = 0; i < 5; i++) E(w + .5 + i * .2, 'tock'); E(T.end + .5, 'thump'); for (let i = 0; i < 5; i++) E(T.end + 1.25 + i * .14, 'tock');
+  EV.sort((a, b) => a.t - b.t);
+}
+window.setData = d => { D = d; };
+window.loadAssets = async () => {
+  await Promise.all(['900 40px Fraunces', '700 40px Fraunces', '600 40px Fraunces', '500 40px Fraunces', 'italic 900 40px Fraunces', 'italic 700 40px Fraunces', 'italic 500 40px Fraunces', '700 40px Caveat', '500 40px Caveat'].map(f => document.fonts.load(f)));
+  const load = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => { console.warn('missing ' + src); res(null); }; im.src = src; });
+  glInit();
+  const flat = document.createElement('canvas'); flat.width = flat.height = 2; flat.getContext('2d').fillStyle = '#808080'; flat.getContext('2d').fillRect(0, 0, 2, 2);
+  for (const n of NAMES) { IMG[n] = await load(`gen/${n}.jpg`); const d = await load(`gen/${n}_d.png`); TEX[n] = { c: tex(IMG[n], true), d: tex(d || flat, false) }; }
+  PAGE_CREAM = makePage(P.paper, '120,95,60', '150,110,60'); PAGE_FOREST = makePage('#1C4234', '230,240,220', '255,255,255'); GRAIN = makeGrain();
+  const tile = document.createElement('canvas'); tile.width = tile.height = 256; tile.getContext('2d').drawImage(PAGE_CREAM, 300, 300, 256, 256, 0, 0, 256, 256); PAT = ctx.createPattern(tile, 'repeat');
+  FRAME = makeFrame(); OFF = document.createElement('canvas'); OFF.width = W; OFF.height = H; OG = OFF.getContext('2d');
+  build();
+};
+window.events = () => EV;
+window.render = t => {
+  NOW = t; let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].t0 - TR0) i = k;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  const p = i > 0 ? seg(t, S[i].t0 - TR0, S[i].t0 + TR1) : 1;
+  if (p < 1) { S[i - 1].draw(ctx, t); OG.setTransform(1, 0, 0, 1, 0, 0); OG.globalAlpha = 1; S[i].draw(OG, t); tear(ctx, OFF, p, S[i].dir, i * 7.3); } else S[i].draw(ctx, t);
+  tabs(ctx, t); ctx.drawImage(FRAME, 0, 0); captions(ctx, t);
+  ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .10; const j = Math.floor(t * 12); ctx.drawImage(GRAIN, -hash(j, 1) * 40, -hash(j, 2) * 40, W + 40, H + 40); ctx.restore();
+  const vg = ctx.createRadialGradient(W / 2, H * .46, H * .32, W / 2, H * .5, H * .78); vg.addColorStop(0, 'rgba(20,14,6,0)'); vg.addColorStop(1, 'rgba(20,14,6,.26)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+};
+</script></body></html>

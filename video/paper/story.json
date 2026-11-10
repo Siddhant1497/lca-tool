@@ -1,0 +1,22 @@
+{
+  "html": "film.html",
+  "out": "life-of-a-building",
+  "fps": 60,
+  "size": [
+    1080,
+    1920
+  ],
+  "voice": "bm_george",
+  "speed": 1.06,
+  "outro": 4.4,
+  "narration": [
+    "Every building has a life story. And its carbon is written into every chapter.",
+    "Chapter one: materials. Rock is quarried, crushed and baked. Cement and steel alone produce around fifteen percent of the world's CO2.",
+    "Chapter two: construction. Trucks, cranes and waste. By opening day, all of that carbon is already in the air.",
+    "Chapter three: life. Decades of cooling, heating and lighting. Plus every repair and replacement along the way.",
+    "Chapter four: the end. Demolition and landfill. Or, a second life through reuse.",
+    "Many green claims read only chapter three. A life cycle assessment reads the whole book.",
+    "And it matters. Between now and 2050, about half the carbon from new construction is expected to be released before anyone moves in.",
+    "So when you hear the words green building, ask one thing. Which chapters did they count?"
+  ]
+}

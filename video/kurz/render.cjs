@@ -9,7 +9,7 @@ const path = require("path");
   const stillAt = process.argv.indexOf("--still");
   const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
   const fps = parseInt(fpsArg || "30", 10);
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ args: ["--allow-file-access-from-files"] });  // lets WebGL use local images
   const [vw, vh] = data.size || [1920, 1080];
   const page = await browser.newPage({ viewport: { width: vw, height: vh } });
   page.on("console", m => { if (m.type() === "warning" || m.type() === "error") console.log("[page]", m.text()); });
