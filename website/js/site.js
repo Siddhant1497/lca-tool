@@ -33,8 +33,8 @@
     if (!form.name.value.trim() || !form.email.value.trim()) { msg.textContent = "Please add your name and email so we can reply."; return; }
     var body = "Name: " + form.name.value + "\nEmail: " + form.email.value + "\nCompany: " + form.company.value +
       "\nService: " + form.service.value + "\nLocation and size: " + form.size.value + "\n\n" + form.message.value;
-    msg.textContent = "Your email app should open with the request filled in. If it doesn't, write to info@verdeaxis.com.";
-    window.location.href = "mailto:info@verdeaxis.com?subject=" + encodeURIComponent("Feasibility review request") + "&body=" + encodeURIComponent(body);
+    msg.textContent = "Your email app should open with the request filled in. If it doesn't, write to sidjain1497@gmail.com.";
+    window.location.href = "mailto:sidjain1497@gmail.com?subject=" + encodeURIComponent("Feasibility review request") + "&body=" + encodeURIComponent(body);
   });
 })();
 

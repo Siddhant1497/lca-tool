@@ -287,7 +287,7 @@
     L.beam = clamp(s.alt / 9, 0, 1); L.day = clamp((s.alt + 4.5) / 5.5, 0, 1); L.warm = clamp(1 - s.alt / 28, 0, 1);
     var w = clamp(1 - s.alt / 14, 0, 1); w = w * w * (3 - 2 * w);
     var nf = clamp((-1 - s.alt) / 3.5, 0, 1);
-    var top = mix(mix(PAPER, [241, 229, 214], w), [18, 21, 33], nf), bot = mix(mix(PAPER, [244, 205, 166], w), [46, 44, 70], nf);
+    var top = mix(mix(PAPER, [240, 237, 230], w), [18, 21, 33], nf), bot = mix(mix(PAPER, [236, 230, 220], w), [46, 44, 70], nf);
     L.night = nf > 0.5; L.hi = L.night ? "243,238,230" : "22,21,20";
     if (hero) { hero.style.setProperty("--sky-top", css(top)); hero.style.setProperty("--sky-bot", css(bot)); }
     document.body.classList.toggle("sun-night", L.night);
