@@ -1,5 +1,5 @@
 @page { size: 1920px 1080px; margin: 0; }
-:root { --paper:#F0EFEB; --ink:#161514; --muted:#5B5954; --line:#D6D3CB; --accent:#B4532A; --accent-ink:#8E3D1C; --sun:#E9A23B; --dark:#141312;
+:root { --paper:#F3F4F5; --ink:#161514; --muted:#55585C; --line:#D9DBDD; --accent:#B4532A; --accent-ink:#8E3D1C; --sun:#E9A23B; --dark:#141312;
   --display:"Bricolage Grotesque",sans-serif; --body:"Figtree",sans-serif; --mono:"Geist Mono",monospace; }
 * { box-sizing:border-box; margin:0; padding:0; }
 html, body { background:#888; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -46,3 +46,4 @@ ul.t { list-style:none; } ul.t li { padding:13px 0 13px 34px; border-top:1px sol
 .tall .card { min-height:600px; }
 .roomy .grid.g4.mt + .grid.g4.mt { margin-top:96px; }
 img[src*="hawa-mahal"] { filter: saturate(.38) sepia(.28) contrast(1.06) !important; }
+.dark .louv i { background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0)); }
