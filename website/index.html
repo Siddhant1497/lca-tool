@@ -17,81 +17,262 @@
 <meta name="theme-color" content="#151413">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Figtree:wght@300..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"VERDEAXIS","description":"Sustainability consulting: green building certification, energy and daylight modelling, LCA, carbon accounting and ESG reporting.","url":"https://www.verdeaxis.com/","logo":"https://www.verdeaxis.com/assets/icon-512.png","image":"https://www.verdeaxis.com/assets/og-image.jpg","email":"info@verdeaxis.com","telephone":"+91 97255 23213","areaServed":["India","Malaysia","Vietnam","Cambodia","Thailand","France"],"founder":{"@type":"Person","name":"Siddhant Jain","jobTitle":"Founder and Principal Consultant"},"knowsAbout":["LEED","EDGE","IGBC","GRIHA","WELL","Fitwel","Energy modelling","Daylight simulation","Life cycle assessment","GHG accounting","BRSR","CBAM"]}</script>
 </head>
-<body>
+<body class="home">
+<a class="skip" href="#main">Skip to content</a>
+<header class="header"><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/mark.svg" alt="">VERDEAXIS</a>
+  <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+  <ul class="nav" id="nav"><li><a href="services.html">Services</a></li><li><a href="sustainhub.html">SustainHub</a></li><li><a href="insights.html">Insights</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul>
+  <a class="btn btn-accent" href="contact.html">Free feasibility review</a>
+</div></header>
 
-<header class="header">
+<main id="main">
+<section class="sunhero" id="sunhero">
+  <div class="wrap sunhero-grid">
+    <div class="sunhero-copy">
+      <p class="eyebrow">Sustainability consulting · India and Asia</p>
+      <h1>Built to <span class="nb">perform.</span> <em>Proven with data.</em></h1>
+      <p class="lede">Green building certification, energy and daylight modelling, life cycle assessment, carbon accounting and ESG reporting, led by a founder who has worked on more than 200 certified projects.</p>
+      <div class="ctas">
+        <a class="btn btn-accent" href="contact.html">Book a free feasibility review <span class="arrow">→</span></a>
+        <a class="btn btn-line" href="services.html">Explore our services</a>
+      </div>
+    </div>
+    <div class="sunrig">
+      <div class="sunstage" id="sunstage">
+        <canvas id="sun-canvas" role="img" aria-label="Interactive sun study: a model of an office campus in Ahmedabad with shadows cast for the selected time and date"></canvas>
+        <p class="sun-tag"><i></i>Live sun study · Ahmedabad, 23.0°N</p>
+        <p class="sun-hint" id="sun-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 12h10M7 12l3-3M7 12l3 3M17 12l-3-3M17 12l-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Drag the sun</p>
+      </div>
+      <div class="sun-panel">
+        <dl class="sun-read">
+          <div><dt>Time, IST</dt><dd id="sun-time">16:30</dd></div>
+          <div><dt>Sun altitude</dt><dd id="sun-alt">–</dd></div>
+          <div><dt>Azimuth</dt><dd id="sun-az">–</dd></div>
+          <div><dt>Shadow of a 10 m wall</dt><dd id="sun-shadow">–</dd></div>
+        </dl>
+        <div class="sun-fac">
+          <span class="t">Direct sun on each façade</span>
+          <div class="f"><b>N</b><i><u id="sf-n"></u></i></div>
+          <div class="f"><b>E</b><i><u id="sf-e"></u></i></div>
+          <div class="f"><b>S</b><i><u id="sf-s"></u></i></div>
+          <div class="f"><b>W</b><i><u id="sf-w"></u></i></div>
+        </div>
+        <div class="sun-ctrl">
+          <div class="sun-days" role="group" aria-label="Day of the year">
+            <button type="button" data-day="today" aria-pressed="true">Today</button><button type="button" data-day="172" aria-pressed="false">21 Jun</button><button type="button" data-day="355" aria-pressed="false">21 Dec</button>
+          </div>
+          <label class="sr" for="sun-range">Time of day</label>
+          <input type="range" id="sun-range" min="5" max="20" step="0.083333" value="16.5">
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/mark.svg" alt="">VERDEAXIS</a>
-    <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
-    <ul class="nav" id="nav">
-      <li><a href="services.html">Services</a></li>
-      <li><a href="sustainhub.html">SustainHub</a></li>
-      <li><a href="insights.html">Insights</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
+    <p class="sun-why">Every project we take on starts here: where the sun is, which façade it hits, and what that costs to cool. Then we put numbers on it.</p>
+    <ul class="factstrip">
+      <li><b class="num">200+</b><span>certified projects worked on</span></li>
+      <li><b class="num">6</b><span>rating systems: LEED, EDGE, IGBC, GRIHA, WELL, Fitwel</span></li>
+      <li><b class="num">6</b><span>countries across Asia and Europe</span></li>
+      <li><b class="cred">IGBC AP</b><span>EDGE Expert &amp; Auditor</span></li>
     </ul>
-    <a class="btn btn-accent" href="contact.html">Free feasibility review</a>
   </div>
-</header>
+</section>
 
-<main>
-<section class="hero">
-  <img class="slide base" src="img/india-mumbai.webp" alt="Marine Drive, Mumbai, with towers along the sea front">
-  <img class="slide top s2" src="img/hero-towers.webp" alt="" aria-hidden="true">
-  <img class="slide top s3" src="img/certify-building.webp" alt="" aria-hidden="true">
-  <div class="wrap">
-    <p class="eyebrow" style="color:#F0B48E">Sustainability consulting · India and Asia</p>
-    <h1 style="margin-top:18px">Buildings and businesses that perform, proven with data.</h1>
-    <p class="lede">Green building certification, energy and daylight modelling, life cycle assessment, carbon accounting and ESG reporting, led by a founder who has worked on more than 200 certified projects.</p>
-    <div class="ctas">
-      <a class="btn btn-accent" href="contact.html">Book a free feasibility review <span class="arrow">→</span></a>
-      <a class="btn btn-line" href="services.html">Explore our services</a>
+<section class="manifesto">
+  <div class="wrap mani-grid">
+    <div>
+      <p class="eyebrow">Our approach</p>
+      <p class="mani-text" id="mani-text">We close the gap between what the rules ask for and what the building actually does.</p>
+      <div class="mani-cols">
+        <p>Most projects treat sustainability as paperwork at the end. By then the façade, the HVAC system and the structure are fixed, and the only thing left to optimise is the documentation.</p>
+        <p>We work the other way round. We model the building early, test the options with real numbers, and then take it through certification. For companies, we do the same with carbon: measure it properly, set a credible plan, and report it in the format your regulator or investor expects.</p>
+      </div>
+      <p style="margin-top:32px"><a class="link" href="about.html">About the firm <span class="arrow">→</span></a></p>
     </div>
-    <div class="facts">
-      <div><b class="num">200+</b><span>certified projects worked on</span></div>
-      <div><b class="num">6</b><span>rating systems: LEED, EDGE, IGBC, GRIHA, WELL, Fitwel</span></div>
-      <div><b class="num">6</b><span>countries across Asia and Europe</span></div>
-      <div><b>IGBC AP</b><span>EDGE Expert &amp; Auditor</span></div>
+    <div class="mani-pics" aria-hidden="true">
+      <div class="pic a" data-par="0.06"><img src="img/facade-fins.webp" alt="" loading="lazy"></div>
+      <div class="pic b" data-par="-0.05"><img src="img/design-drawings.webp" alt="" loading="lazy"></div>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="wrap split">
-    <div class="reveal">
+<section class="story" id="work">
+  <div class="wrap">
+    <div class="story-head reveal">
       <p class="eyebrow">What we do</p>
-      <h2 style="margin-top:16px">We close the gap between what the rules ask for and what the building actually does.</h2>
+      <h2>The numbers behind every decision.</h2>
+      <p class="lede">Each service ends in something you can check. The figures here are sample outputs, shown to explain the method.</p>
     </div>
-    <div class="reveal">
-      <p class="lede">Most projects treat sustainability as paperwork at the end. By then the façade, the HVAC system and the structure are fixed, and the only thing left to optimise is the documentation.</p>
-      <p class="muted">We work the other way round. We model the building early, test the options with real numbers, and then take it through certification. For companies, we do the same with carbon: measure it properly, set a credible plan, and report it in the format your regulator or investor expects.</p>
-      <p style="margin-top:28px"><a class="link" href="about.html">How we work <span class="arrow">→</span></a></p>
+    <div class="story-grid">
+      <ol class="steps6" id="steps6">
+        <li class="step" data-fig="0">
+          <span class="step-no">01</span>
+          <h3>Energy modelling</h3>
+          <p>We build the whole building in DesignBuilder and EnergyPlus, compare it with the code baseline, and show which measures save the most energy for the least money.</p>
+          <ul class="tags"><li>ASHRAE 90.1 Appendix G</li><li>ECSBC</li><li>LEED, IGBC, GRIHA</li><li>BEE</li></ul>
+          <a class="link" href="services.html#energy">Energy modelling <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-energy">
+            <figcaption><span class="fig-no">Fig. 01</span><span class="fig-title">Annual energy by end use</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−28%</b><span>energy use against the code baseline.<br>166 → 119 kWh/m²·yr</span></div>
+              <div class="bars2" role="img" aria-label="Baseline versus proposed energy use by end use, in kilowatt hours per square metre per year">
+                <div class="b2"><span class="lbl">Cooling</span><div class="pair"><i class="base" style="--v:68"></i><i class="prop" style="--v:44"></i></div><span class="val num">68 → 44</span></div>
+                <div class="b2"><span class="lbl">Equipment</span><div class="pair"><i class="base" style="--v:34"></i><i class="prop" style="--v:34"></i></div><span class="val num">34 → 34</span></div>
+                <div class="b2"><span class="lbl">Lighting</span><div class="pair"><i class="base" style="--v:30"></i><i class="prop" style="--v:17"></i></div><span class="val num">30 → 17</span></div>
+                <div class="b2"><span class="lbl">Fans</span><div class="pair"><i class="base" style="--v:22"></i><i class="prop" style="--v:15"></i></div><span class="val num">22 → 15</span></div>
+                <div class="b2"><span class="lbl">Pumps, misc.</span><div class="pair"><i class="base" style="--v:12"></i><i class="prop" style="--v:9"></i></div><span class="val num">12 → 9</span></div>
+              </div>
+              <ul class="legend"><li><i class="sw" style="background:#A9A39A"></i>Code baseline</li><li><i class="sw" style="background:#B4532A"></i>Proposed design</li></ul>
+              <p class="plate-note">kWh/m²·yr. Illustrative office model in Ahmedabad's climate.</p>
+            </div>
+          </figure>
+        </li>
+        <li class="step" data-fig="1">
+          <span class="step-no">02</span>
+          <h3>Daylight and glare</h3>
+          <p>Climate-based daylight modelling shows which desks get useful light and which get glare, hour by hour through the year. We test glazing, shading and floor depth before they are fixed.</p>
+          <ul class="tags"><li>sDA and ASE</li><li>Daylight factor</li><li>Glare (DGP)</li><li>LEED, WELL, IGBC</li></ul>
+          <a class="link" href="services.html#daylight">Daylight and glare <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-daylight">
+            <figcaption><span class="fig-no">Fig. 02</span><span class="fig-title">Illuminance on a typical floor</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num" id="dl-kpi">63%</b><span>of the occupied floor reaches 300 lux.<br>The dashed line marks where it drops below.</span></div>
+              <canvas id="cv-daylight" width="960" height="600" role="img" aria-label="False-colour plan of a 48 by 30 metre office floor: bright near the façades, dim around the central core"></canvas>
+              <div class="ramp"><span>100 lux</span><i class="ramp-day"></i><span>2,000+</span></div>
+              <p class="plate-note">48 × 30 m floor plate, north at the top. Simplified model for illustration.</p>
+            </div>
+          </figure>
+        </li>
+        <li class="step" data-fig="2">
+          <span class="step-no">03</span>
+          <h3>Microclimate and CFD</h3>
+          <p>Wind and outdoor comfort studies show where a campus will be pleasant to walk and where air will stagnate or gust. We use them to place buildings, trees and openings.</p>
+          <ul class="tags"><li>Pedestrian wind</li><li>Outdoor thermal comfort</li><li>Natural ventilation</li></ul>
+          <a class="link" href="services.html#microclimate">Microclimate and CFD <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-wind">
+            <figcaption><span class="fig-no">Fig. 03</span><span class="fig-title">Wind around a campus, plan view</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num" id="wind-kpi">×1.6</b><span>peak wind speed-up, in the gaps between blocks.<br>Calm zones sit behind each building.</span></div>
+              <canvas id="cv-wind" width="960" height="560" role="img" aria-label="Plan view of wind flowing left to right around four buildings, faster in the gaps and slower behind each block"></canvas>
+              <div class="ramp"><span>Calm</span><i class="ramp-wind"></i><span>Fast</span></div>
+              <p class="plate-note">Simplified 2D flow for illustration. Project studies use full 3D CFD.</p>
+            </div>
+          </figure>
+        </li>
+        <li class="step" data-fig="3">
+          <span class="step-no">04</span>
+          <h3>Life cycle assessment</h3>
+          <p>We count the carbon in the structure and materials, then find the swaps that cut it most: cement blends, recycled steel, lighter masonry. For manufacturers, we prepare product LCAs and support EPDs.</p>
+          <ul class="tags"><li>EN 15978</li><li>ISO 14040 and 14044</li><li>One Click LCA</li><li>EPD support</li></ul>
+          <a class="link" href="services.html#lca">Life cycle assessment <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-lca">
+            <figcaption><span class="fig-no">Fig. 04</span><span class="fig-title">Embodied carbon by material, A1–A3</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−21%</b><span>embodied carbon after material swaps.<br>450 → 354 kgCO₂e/m²</span></div>
+              <div class="stack" role="img" aria-label="Embodied carbon as designed, 450, and optimised, 354 kilograms of CO2 equivalent per square metre, split by material">
+                <div class="srow"><span class="lbl">As designed</span><div class="sbar" style="--w:100"><i style="flex:182;background:#B4532A" title="Concrete 182"></i><i style="flex:124;background:#1F7FA6" title="Rebar steel 124"></i><i style="flex:46;background:#D9962B" title="Masonry 46"></i><i style="flex:58;background:#3E9463" title="Glass and aluminium 58"></i><i style="flex:40;background:#7B5FC4" title="Finishes 40"></i></div><span class="val num">450</span></div>
+                <div class="srow"><span class="lbl">Optimised</span><div class="sbar" style="--w:78.7"><i style="flex:131;background:#B4532A" title="Concrete 131"></i><i style="flex:105;background:#1F7FA6" title="Rebar steel 105"></i><i style="flex:30;background:#D9962B" title="Masonry 30"></i><i style="flex:52;background:#3E9463" title="Glass and aluminium 52"></i><i style="flex:36;background:#7B5FC4" title="Finishes 36"></i></div><span class="val num">354</span></div>
+              </div>
+              <ul class="legend cols">
+                <li><i class="sw" style="background:#B4532A"></i>Concrete <b class="num">182 → 131</b></li>
+                <li><i class="sw" style="background:#1F7FA6"></i>Rebar steel <b class="num">124 → 105</b></li>
+                <li><i class="sw" style="background:#D9962B"></i>Masonry <b class="num">46 → 30</b></li>
+                <li><i class="sw" style="background:#3E9463"></i>Glass and aluminium <b class="num">58 → 52</b></li>
+                <li><i class="sw" style="background:#7B5FC4"></i>Finishes <b class="num">40 → 36</b></li>
+              </ul>
+              <p class="plate-note">kgCO₂e per m² of floor area, product stage. Illustrative figures.</p>
+            </div>
+          </figure>
+        </li>
+        <li class="step" data-fig="4">
+          <span class="step-no">05</span>
+          <h3>Carbon and decarbonisation</h3>
+          <p>For companies, we build the Scope 1, 2 and 3 inventory, set a target that stands up to scrutiny, and rank the measures by cost per tonne. The same data feeds BRSR, CBAM and CCTS reporting.</p>
+          <ul class="tags"><li>GHG Protocol</li><li>SBTi-aligned targets</li><li>CBAM and CCTS</li><li>BRSR, GRI, IFRS S2</li></ul>
+          <a class="link" href="services.html#carbon">Carbon and reporting <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-carbon">
+            <figcaption><span class="fig-no">Fig. 05</span><span class="fig-title">Scope 1 and 2 pathway to 2030</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−42%</b><span>Scope 1 and 2 emissions by 2030.<br>12.4 → 7.2 ktCO₂e a year</span></div>
+              <div id="sv-carbon" class="svgbox" role="img" aria-label="Emissions fall from 12.4 to 7.2 kilotonnes between 2024 and 2030 through efficiency, rooftop solar, green power and fuel switching"></div>
+              <p class="plate-note">ktCO₂e a year. Illustrative manufacturer.</p>
+            </div>
+          </figure>
+        </li>
+        <li class="step" data-fig="5">
+          <span class="step-no">06</span>
+          <h3>Certification</h3>
+          <p>We run the rating from feasibility to award, track every credit, and tell you early which points are worth chasing and which are not.</p>
+          <ul class="tags"><li>LEED</li><li>EDGE</li><li>IGBC</li><li>GRIHA</li><li>WELL</li><li>Fitwel</li></ul>
+          <a class="link" href="services.html#certification">Certification <span class="arrow">→</span></a>
+          <figure class="plate" id="fig-cert">
+            <figcaption><span class="fig-no">Fig. 06</span><span class="fig-title">LEED v4 BD+C scorecard</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">69</b><span>points of 110 targeted. Gold starts at 60.</span></div>
+              <div class="score" role="img" aria-label="Sample LEED scorecard: 69 of 110 points across nine credit categories">
+                <div class="total"><div class="track"><i style="width:62.7%"></i><u style="left:36.4%"><span>Certified 40</span></u><u style="left:45.5%"><span>Silver 50</span></u><u style="left:54.5%"><span>Gold 60</span></u><u style="left:72.7%"><span>Platinum 80</span></u></div></div>
+                <div class="cats">
+                  <div class="c"><span class="lbl">Integrative process</span><em><i style="width:100%"></i></em><span class="val num">1 / 1</span></div>
+                  <div class="c"><span class="lbl">Location and transport</span><em><i style="width:68.75%"></i></em><span class="val num">11 / 16</span></div>
+                  <div class="c"><span class="lbl">Sustainable sites</span><em><i style="width:60%"></i></em><span class="val num">6 / 10</span></div>
+                  <div class="c"><span class="lbl">Water efficiency</span><em><i style="width:72.7%"></i></em><span class="val num">8 / 11</span></div>
+                  <div class="c"><span class="lbl">Energy and atmosphere</span><em><i style="width:60.6%"></i></em><span class="val num">20 / 33</span></div>
+                  <div class="c"><span class="lbl">Materials and resources</span><em><i style="width:46.2%"></i></em><span class="val num">6 / 13</span></div>
+                  <div class="c"><span class="lbl">Indoor environment</span><em><i style="width:56.25%"></i></em><span class="val num">9 / 16</span></div>
+                  <div class="c"><span class="lbl">Innovation</span><em><i style="width:83.3%"></i></em><span class="val num">5 / 6</span></div>
+                  <div class="c"><span class="lbl">Regional priority</span><em><i style="width:75%"></i></em><span class="val num">3 / 4</span></div>
+                </div>
+              </div>
+              <p class="plate-note">Illustrative scorecard, not a specific project.</p>
+            </div>
+          </figure>
+        </li>
+      </ol>
+      <div class="story-pane" id="story-pane"></div>
     </div>
   </div>
 </section>
 
-<section style="padding-top:0">
+<section class="band">
+  <img src="img/hawa-mahal.webp" alt="The Hawa Mahal's façade of small latticed windows, Jaipur" loading="lazy" data-par="0.08">
+  <div class="over"><div class="wrap">
+    <p class="eyebrow" style="color:#F0B48E">Why now</p>
+    <h2 style="margin-top:16px">India once built for heat by instinct. Now the rules demand proof.</h2>
+    <p class="lede">A carbon market for heavy industry, assured ESG data for listed companies, tougher building codes and an EU border tax. Each one lands on someone's desk as a deadline.</p>
+  </div></div>
+  <p class="credit">Hawa Mahal, Jaipur, 1799 · Photo: Adityaoberai, CC BY 4.0</p>
+</section>
+
+<section class="policy">
   <div class="wrap">
-    <div class="head-row reveal">
-      <div><p class="eyebrow">Services</p><h2 style="margin-top:16px">From the first model to the final report.</h2></div>
-      <a class="btn btn-line" href="services.html">All services</a>
+    <div class="head-row reveal"><div><p class="eyebrow">The deadlines</p><h2 style="margin-top:16px;max-width:16ch">Five rules that change the brief.</h2></div></div>
+    <div class="rows">
+      <div class="row reveal"><span class="yr">2025</span><h3>Carbon Credit Trading Scheme</h3><p>Emission-intensity targets for 490 plants in eight sectors, including cement, aluminium, refining and textiles. Shortfalls are covered by buying carbon credits.</p><span class="st">In force</span></div>
+      <div class="row reveal"><span class="yr">2026</span><h3>EU CBAM</h3><p>Exporters of steel, aluminium and cement must back their products with verified emissions data, or be charged on default values that usually cost more.</p><span class="st">Definitive phase</span></div>
+      <div class="row reveal"><span class="yr">2026</span><h3>BEE star rating for large buildings</h3><p>Proposed: new buildings of 20,000 m² or more need at least a 3-star rating or an approved equivalent.</p><span class="st">Draft, July 2026</span></div>
+      <div class="row reveal"><span class="yr">2027</span><h3>BRSR Core</h3><p>India's top 1,000 listed companies report assured ESG data, with value-chain disclosures phasing in for their suppliers.</p><span class="st">Phasing in</span></div>
+      <div class="row reveal"><span class="yr">2035</span><h3>India's NDC</h3><p>47% lower emissions intensity than 2005 and 60% non-fossil power capacity, on the way to net zero in 2070.</p><span class="st">Submitted April 2026</span></div>
     </div>
-    <div class="cards">
-      <a class="card reveal" href="services.html#energy"><div class="ph"><img src="img/energy-office.webp" alt="Glazed open-plan office" loading="lazy"></div><h3>Energy modelling <span class="arrow">→</span></h3><p>Whole-building simulation to ASHRAE 90.1 Appendix G and ECSBC, for LEED, IGBC, GRIHA and BEE.</p></a>
-      <a class="card reveal" href="services.html#daylight"><div class="ph"><img src="img/daylight-interior.webp" alt="Bright daylit interior" loading="lazy"></div><h3>Daylight and glare <span class="arrow">→</span></h3><p>Climate-based daylight modelling: sDA, ASE, daylight factor and glare, with façade options tested.</p></a>
-      <a class="card reveal" href="services.html#microclimate"><div class="ph"><img src="img/microclimate-city.webp" alt="Tall buildings forming an urban canyon" loading="lazy"></div><h3>Microclimate and CFD <span class="arrow">→</span></h3><p>Outdoor thermal comfort, pedestrian wind and natural ventilation for campuses and masterplans.</p></a>
-      <a class="card reveal" href="services.html#lca"><div class="ph"><img src="img/lca-site.webp" alt="Workers on a construction site with steel reinforcement" loading="lazy"></div><h3>Life cycle assessment <span class="arrow">→</span></h3><p>Whole-building and product LCA to EN 15978 and ISO 14044, embodied carbon and EPD support.</p></a>
-      <a class="card reveal" href="services.html#carbon"><div class="ph"><img src="img/carbon-solar.webp" alt="Rows of solar panels under a blue sky" loading="lazy"></div><h3>Carbon and decarbonisation <span class="arrow">→</span></h3><p>Scope 1, 2 and 3 inventories, SBTi-aligned targets, abatement plans, CBAM and CCTS data.</p></a>
-      <a class="card reveal" href="services.html#certification"><div class="ph"><img src="img/certify-building.webp" alt="Contemporary building with an angular glass façade" loading="lazy"></div><h3>Certification <span class="arrow">→</span></h3><p>LEED, EDGE, IGBC, GRIHA, WELL and Fitwel, from feasibility and registration to award.</p></a>
-    </div>
+    <p class="note">Status as of October 2026. Sources: MoEFCC/PIB, EU Regulation 2023/956, Ministry of Power, SEBI, UNFCCC.</p>
   </div>
 </section>
 
-
+<section class="pays">
+  <div class="wrap">
+    <div class="reveal"><p class="eyebrow">Why it pays</p><h2 style="margin-top:16px;max-width:18ch">What a green building gives back to its owner.</h2></div>
+    <div class="stats" style="margin-top:56px">
+      <div class="reveal"><b class="num" data-count="24" data-suffix="%">24%</b><h3>higher rents for green-certified offices in Mumbai.</h3><small>Colliers–CREDAI, 2025</small></div>
+      <div class="reveal"><b class="num" data-count="74" data-suffix="%">74%</b><h3>of India's office leasing in H1 2025 went to green-certified buildings.</h3><small>ANAROCK, 2025</small></div>
+      <div class="reveal"><b class="num" data-count="26" data-suffix="%">26%</b><h3>higher cognitive scores for people in green-certified offices.</h3><small>Harvard COGfx study</small></div>
+      <div class="reveal"><b class="num">&lt;2%</b><h3>typical extra build cost to get there.</h3><small>IFC estimate for EDGE</small></div>
+    </div>
+  </div>
+</section>
 <section id="finder" style="background:var(--surface)">
   <div class="wrap">
     <div class="head-row reveal"><div><p class="eyebrow">Which rating fits?</p><h2 style="margin-top:16px;max-width:20ch">Find your starting point in three clicks.</h2></div></div>
@@ -116,42 +297,7 @@
   </div>
 </section>
 
-<section class="band">
-  <img src="img/hawa-mahal.webp" alt="The Hawa Mahal's façade of small latticed windows, Jaipur" loading="lazy">
-  <div class="over"><div class="wrap">
-    <p class="eyebrow" style="color:#F0B48E">Why now</p>
-    <h2 style="margin-top:16px">India once built for heat by instinct. Now the rules demand proof.</h2>
-    <p class="lede">A carbon market for heavy industry, assured ESG data for listed companies, tougher building codes and an EU border tax. Each one lands on someone's desk as a deadline.</p>
-  </div></div>
-  <p class="credit">Hawa Mahal, Jaipur, 1799 · Photo: Adityaoberai, CC BY 4.0</p>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="rows">
-      <div class="row reveal"><span class="yr">2025</span><h3>Carbon Credit Trading Scheme</h3><p>Emission-intensity targets for 490 plants in eight sectors, including cement, aluminium, refining and textiles. Shortfalls are covered by buying carbon credits.</p><span class="st">In force</span></div>
-      <div class="row reveal"><span class="yr">2026</span><h3>EU CBAM</h3><p>Exporters of steel, aluminium and cement must back their products with verified emissions data, or be charged on default values that usually cost more.</p><span class="st">Definitive phase</span></div>
-      <div class="row reveal"><span class="yr">2026</span><h3>BEE star rating for large buildings</h3><p>Proposed: new buildings of 20,000 m² or more need at least a 3-star rating or an approved equivalent.</p><span class="st">Draft, July 2026</span></div>
-      <div class="row reveal"><span class="yr">2027</span><h3>BRSR Core</h3><p>India's top 1,000 listed companies report assured ESG data, with value-chain disclosures phasing in for their suppliers.</p><span class="st">Phasing in</span></div>
-      <div class="row reveal"><span class="yr">2035</span><h3>India's NDC</h3><p>47% lower emissions intensity than 2005 and 60% non-fossil power capacity, on the way to net zero in 2070.</p><span class="st">Submitted April 2026</span></div>
-    </div>
-    <p class="note">Status as of October 2026. Sources: MoEFCC/PIB, EU Regulation 2023/956, Ministry of Power, SEBI, UNFCCC.</p>
-  </div>
-</section>
-
-<section style="background:var(--surface)">
-  <div class="wrap">
-    <div class="reveal"><p class="eyebrow">Why it pays</p><h2 style="margin-top:16px;max-width:18ch">What a green building gives back to its owner.</h2></div>
-    <div class="stats" style="margin-top:56px">
-      <div class="reveal"><b class="num">24%</b><h3>higher rents for green-certified offices in Mumbai.</h3><small>Colliers–CREDAI, 2025</small></div>
-      <div class="reveal"><b class="num">74%</b><h3>of India's office leasing in H1 2025 went to green-certified buildings.</h3><small>ANAROCK, 2025</small></div>
-      <div class="reveal"><b class="num">26%</b><h3>higher cognitive scores for people in green-certified offices.</h3><small>Harvard COGfx study</small></div>
-      <div class="reveal"><b class="num">&lt;2%</b><h3>typical extra build cost to get there.</h3><small>IFC estimate for EDGE</small></div>
-    </div>
-  </div>
-</section>
-
-<section class="dark">
+<section class="dark hub">
   <div class="wrap product">
     <div class="reveal">
       <p class="eyebrow">Our platform</p>
@@ -165,23 +311,32 @@
       </ul>
       <p style="margin-top:32px"><a class="btn btn-white" href="sustainhub.html">See SustainHub <span class="arrow">→</span></a></p>
     </div>
-    <div class="shot reveal"><img src="img/hub-command-center-light.webp" alt="SustainHub Command Center showing emissions KPIs, a decarbonisation pathway and certification pipeline, sample data" loading="lazy"></div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="reveal"><p class="eyebrow">Who we work with</p><h2 style="margin-top:16px">Four kinds of client, four different deadlines.</h2></div>
-    <div class="sectors">
-      <a class="sector reveal" href="services.html#certification"><img src="img/sector-office.webp" alt="Modern office interior" loading="lazy"><div><h3>Developers and owners</h3><p>Certification and energy modelling for offices, retail and campuses.</p></div></a>
-      <a class="sector reveal" href="services.html#carbon"><img src="img/sector-logistics.webp" alt="Warehouse aisles stacked with goods" loading="lazy"><div><h3>Industry and logistics</h3><p>Green factories, warehouses, CBAM and CCTS data for exporters.</p></div></a>
-      <a class="sector reveal" href="services.html#reporting"><img src="img/esg-wind.webp" alt="Wind turbines on green hills" loading="lazy"><div><h3>Listed companies and funds</h3><p>BRSR Core, GRESB and investor-grade carbon reporting.</p></div></a>
-      <a class="sector reveal" href="services.html#energy"><img src="img/design-drawings.webp" alt="Architect drawing plans by hand" loading="lazy"><div><h3>Architects and MEP teams</h3><p>Simulation that fits your design programme, not ours.</p></div></a>
+    <div class="hubshow reveal">
+      <div class="hubtabs" role="group" aria-label="SustainHub screens">
+        <button type="button" aria-pressed="true" data-src="img/hub-command-center-light.webp" data-alt="SustainHub Command Center showing emissions KPIs, a decarbonisation pathway and certification pipeline, sample data" data-cap="Emissions, targets and the certification pipeline on one screen.">Command Center</button>
+        <button type="button" aria-pressed="false" data-src="img/hub-carbon-calculator.webp" data-alt="SustainHub carbon calculator with Scope 1, 2 and 3 entries, sample data" data-cap="Activity data in, Scope 1, 2 and 3 out, with the emission factor shown for every line.">Carbon calculator</button>
+        <button type="button" aria-pressed="false" data-src="img/hub-strategy-measures.webp" data-alt="SustainHub strategy screen listing decarbonisation measures with cost and savings, sample data" data-cap="Each measure with its saving, cost and payback, ranked.">Strategy</button>
+        <button type="button" aria-pressed="false" data-src="img/hub-disclosures.webp" data-alt="SustainHub disclosures screen with report-ready tables, sample data" data-cap="Tables laid out the way GHG Protocol, GRI 305, BRSR and IFRS S2 ask for them.">Disclosures</button>
+      </div>
+      <div class="shot"><img id="hub-img" src="img/hub-command-center-light.webp" alt="SustainHub Command Center showing emissions KPIs, a decarbonisation pathway and certification pipeline, sample data" loading="lazy"></div>
+      <p class="hub-cap"><span id="hub-cap">Emissions, targets and the certification pipeline on one screen.</span> Screens show sample data.</p>
     </div>
   </div>
 </section>
 
-<section style="background:var(--surface)">
+<section class="who">
+  <div class="wrap">
+    <div class="reveal"><p class="eyebrow">Who we work with</p><h2 style="margin-top:16px">Four kinds of client, four different deadlines.</h2></div>
+    <div class="acc reveal">
+      <a class="acc-item on" href="services.html#certification"><img src="img/facade-fins.webp" alt="Building façade with vertical shading fins at sunset" loading="lazy"><div><span class="n">01</span><h3>Developers and owners</h3><p>Certification and energy modelling for offices, retail and campuses.</p></div></a>
+      <a class="acc-item" href="services.html#carbon"><img src="img/industry-plant.webp" alt="Stainless steel process pipework inside a plant" loading="lazy"><div><span class="n">02</span><h3>Industry and logistics</h3><p>Green factories, warehouses, CBAM and CCTS data for exporters.</p></div></a>
+      <a class="acc-item" href="services.html#reporting"><img src="img/city-dusk.webp" alt="City skyline at dusk" loading="lazy"><div><span class="n">03</span><h3>Listed companies and funds</h3><p>BRSR Core, GRESB and investor-grade carbon reporting.</p></div></a>
+      <a class="acc-item" href="services.html#energy"><img src="img/design-drawings.webp" alt="Architect drawing plans by hand" loading="lazy"><div><span class="n">04</span><h3>Architects and MEP teams</h3><p>Simulation that fits your design programme, not ours.</p></div></a>
+    </div>
+  </div>
+</section>
+
+<section class="fq">
   <div class="wrap founder">
     <img class="reveal" src="img/siddhant-jain.webp" alt="Portrait of Siddhant Jain, founder of VERDEAXIS" loading="lazy">
     <div class="reveal">
@@ -194,39 +349,25 @@
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <div class="reveal"><p class="eyebrow">How a project runs</p><h2 style="margin-top:16px">First call to certificate, in five steps.</h2></div>
-    <ol class="steps">
-      <li class="reveal"><h3>Scope</h3><p>Brief, goals, target rating and the right system. Free.</p></li>
-      <li class="reveal"><h3>Analyse</h3><p>Site visit, data audit, energy and daylight models, carbon baseline.</p></li>
-      <li class="reveal"><h3>Document</h3><p>Credit documents, compliance drawings and model files.</p></li>
-      <li class="reveal"><h3>Submit</h3><p>Upload, reviewer queries and appeals, handled by us.</p></li>
-      <li class="reveal"><h3>Certify and use it</h3><p>Award, handover, then marketing, leasing and finance support.</p></li>
-    </ol>
-  </div>
-</section>
-
-
-<section>
+<section class="ins">
   <div class="wrap">
     <div class="head-row reveal"><div><p class="eyebrow">Insights</p><h2 style="margin-top:16px">Briefings for people with a deadline.</h2></div><a class="btn btn-line" href="insights.html">All insights</a></div>
-    <div class="posts">
-      <a class="post reveal" href="insights.html#cbam"><p class="meta">Carbon · 5 min read</p><h3>CBAM for Indian exporters: what changed in January 2026</h3><p>The EU's carbon border tax is now charged for real. What steel, aluminium and cement exporters need to send their buyers.</p><span class="link">Read <span class="arrow">→</span></span></a>
-      <a class="post reveal" href="insights.html#brsr"><p class="meta">Reporting · 4 min read</p><h3>BRSR Core is coming for your suppliers too</h3><p>Assured ESG data reaches India's top 1,000 listed companies by FY 2026-27, and they will ask their value chain for numbers.</p><span class="link">Read <span class="arrow">→</span></span></a>
-      <a class="post reveal" href="insights.html#west"><p class="meta">Design · 3 min read</p><h3>Why west façades need more than horizontal fins</h3><p>At 5 pm in May, 300 mm fins shade only about 40% of west-facing glass in Ahmedabad. The geometry, and what works better.</p><span class="link">Read <span class="arrow">→</span></span></a>
+    <div class="posts pics">
+      <a class="post reveal" href="insights.html#cbam"><div class="ph"><img src="img/industry-stacks.webp" alt="Industrial chimneys and ships at golden hour" loading="lazy"></div><p class="meta">Carbon · 5 min read</p><h3>CBAM for Indian exporters: what changed in January 2026</h3><p>The EU's carbon border tax is now charged for real. What steel, aluminium and cement exporters need to send their buyers.</p><span class="link">Read <span class="arrow">→</span></span></a>
+      <a class="post reveal" href="insights.html#brsr"><div class="ph"><img src="img/city-dusk.webp" alt="City skyline at dusk" loading="lazy"></div><p class="meta">Reporting · 4 min read</p><h3>BRSR Core is coming for your suppliers too</h3><p>Assured ESG data reaches India's top 1,000 listed companies by FY 2026-27, and they will ask their value chain for numbers.</p><span class="link">Read <span class="arrow">→</span></span></a>
+      <a class="post reveal" href="insights.html#west"><div class="ph"><img src="img/iim-ahmedabad.webp" alt="Brick buildings with deep-set openings at IIM Ahmedabad" loading="lazy"></div><p class="meta">Design · 3 min read</p><h3>Why west façades need more than horizontal fins</h3><p>At 5 pm in May, 300 mm fins shade only about 40% of west-facing glass in Ahmedabad. The geometry, and what works better.</p><span class="link">Read <span class="arrow">→</span></span></a>
     </div>
   </div>
 </section>
 
-<section class="cta">
+<section class="cta cta5">
+  <div class="louvres" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="wrap">
     <div><h2>Start with a free feasibility review.</h2><p>Send us your drawings. We'll tell you which rating fits, where the gaps are, and what it will take.</p></div>
     <a class="btn btn-white" href="contact.html">Request a review <span class="arrow">→</span></a>
   </div>
 </section>
 </main>
-
 <footer class="footer">
   <div class="wrap">
     <div class="top">
@@ -240,5 +381,7 @@
 </footer>
 <a class="wa" href="https://wa.me/919725523213" target="_blank" rel="noopener" aria-label="Message VERDEAXIS on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg><span>WhatsApp us</span></a>
 <script src="js/site.js"></script>
+<script src="js/sun.js"></script>
+<script src="js/story.js"></script>
 </body>
 </html>
