@@ -274,7 +274,7 @@
     });
   }
 
-  var PAPER = [240, 239, 235], out = {
+  var PAPER = [242, 243, 243], out = {
     time: document.getElementById("sun-time"), alt: document.getElementById("sun-alt"), az: document.getElementById("sun-az"), sh: document.getElementById("sun-shadow"),
     f: [document.getElementById("sf-n"), document.getElementById("sf-e"), document.getElementById("sf-s"), document.getElementById("sf-w")]
   };

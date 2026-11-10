@@ -51,6 +51,14 @@
     } else plates.forEach(function (p) { p.classList.add("seen"); });
   }
 
+  // figures outside the story (services page) animate in when they scroll into view
+  (function () {
+    var loose = [].filter.call(document.querySelectorAll(".plate"), function (p) { return !p.closest(".story"); }); if (!loose.length) return;
+    if (!("IntersectionObserver" in window)) return loose.forEach(function (p) { p.classList.add("seen"); });
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("seen"); io.unobserve(e.target); } }); }, { threshold: 0.25 });
+    loose.forEach(function (p) { io.observe(p); });
+  })();
+
   /* ---------- Fig. 02: daylight on a floor plate ---------- */
   (function () {
     var cv = document.getElementById("cv-daylight"); if (!cv) return;

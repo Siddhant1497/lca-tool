@@ -318,7 +318,7 @@ fieldset.q { border: 0; border-top: 1px solid var(--line); padding: 22px 0; marg
 
 /* ================= v5: art direction ================= */
 :root {
-  --surface: #F0EFEB; --paper: #F0EFEB; --line: #DDDBD4; --muted: #5B5954; --ink: #161514;
+  --surface: #F2F3F3; --paper: #F2F3F3; --line: #DCDEDF; --muted: #55585C; --ink: #161514;
   --sun: #E9A23B;
   --display: "Bricolage Grotesque", "Figtree", "Helvetica Neue", Arial, sans-serif;
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -351,7 +351,7 @@ h3 { font-weight: 600; }
 .home .header:not(.solid) .brand img { filter: none; }
 .sun-night .header:not(.solid) { color: #fff; }
 .sun-night .header:not(.solid) .brand img { filter: brightness(0) invert(1); }
-.sunhero { --hi: var(--ink); padding: 0 0 clamp(36px, 4.5vw, 60px); background: linear-gradient(180deg, var(--sky-top, #F0EFEB), var(--sky-bot, #F0EFEB)); color: var(--hi); position: relative; overflow: hidden; }
+.sunhero { --hi: var(--ink); padding: 0 0 clamp(36px, 4.5vw, 60px); background: linear-gradient(180deg, var(--sky-top, #F2F3F3), var(--sky-bot, #F2F3F3)); color: var(--hi); position: relative; overflow: hidden; }
 .sun-night .sunhero { --hi: #F3EEE6; }
 .sunhero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 3vw, 44px); align-items: center; padding-top: 100px; }
 .sunhero h1 { font-size: clamp(48px, min(7.2vw, 12.4vh), 108px); margin-top: 22px; line-height: .9; }
@@ -382,7 +382,7 @@ h3 { font-weight: 600; }
 .sun-ctrl { padding: 14px 0 0; display: grid; gap: 10px; align-content: start; }
 .sun-days { display: flex; gap: 6px; }
 .sun-days button { font: 600 12.5px var(--font); padding: 6px 11px; border-radius: var(--r); border: 1px solid color-mix(in srgb, var(--hi) 28%, transparent); background: transparent; color: inherit; cursor: pointer; }
-.sun-days button[aria-pressed="true"] { background: var(--hi); color: var(--sky-bot, #F0EFEB); border-color: var(--hi); }
+.sun-days button[aria-pressed="true"] { background: var(--hi); color: var(--sky-bot, #F2F3F3); border-color: var(--hi); }
 #sun-range { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer; }
 #sun-range::-webkit-slider-runnable-track { height: 2px; background: color-mix(in srgb, var(--hi) 35%, transparent); }
 #sun-range::-moz-range-track { height: 2px; background: color-mix(in srgb, var(--hi) 35%, transparent); }
@@ -619,3 +619,13 @@ h3 { font-weight: 600; }
 img[src*="hawa-mahal"] { filter: saturate(.38) sepia(.28) contrast(1.06) !important; }
 @media (min-width: 961px) { .sunhero .ctas { flex-wrap: nowrap; } .sunhero .btn { padding-left: 20px; padding-right: 20px; white-space: nowrap; font-size: 15.5px; } }
 .progress { position: fixed; left: 0; top: 0; height: 3px; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); z-index: 120; pointer-events: none; }
+
+/* services: a sample figure with each service */
+.svc .media.withfig { position: sticky; top: 150px; display: grid; gap: 16px; }
+.svc .media.withfig > img { aspect-ratio: 16 / 7; }
+.svc .media.withfig .plate { margin: 0; }
+.svc .plate canvas { max-height: 300px; object-fit: contain; object-position: left center; }
+.svc .plate .svgbox { aspect-ratio: 16 / 9; }
+.svc .plate .kpi b { font-size: clamp(40px, 3.6vw, 56px); }
+@media (max-width: 900px) { .svc .media.withfig { position: static; } }
+.track { background: #E9EAEB; } .cats em { background: #E9EAEB; }

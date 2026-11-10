@@ -56,7 +56,23 @@
 <div class="wrap">
 
 <article class="svc" id="energy">
-  <figure class="media reveal"><img src="img/energy-office.webp" alt="Glazed open-plan office with exposed services" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/energy-office.webp" alt="Glazed open-plan office with exposed services" loading="lazy">
+<figure class="plate" id="fig-energy">
+            <figcaption><span class="fig-no">Fig. 01</span><span class="fig-title">Annual energy by end use</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−28%</b><span>energy use against the code baseline.<br>166 → 119 kWh/m²·yr</span></div>
+              <div class="bars2" role="img" aria-label="Baseline versus proposed energy use by end use, in kilowatt hours per square metre per year">
+                <div class="b2"><span class="lbl">Cooling</span><div class="pair"><i class="base" style="--v:68"></i><i class="prop" style="--v:44"></i></div><span class="val num">68 → 44</span></div>
+                <div class="b2"><span class="lbl">Equipment</span><div class="pair"><i class="base" style="--v:34"></i><i class="prop" style="--v:34"></i></div><span class="val num">34 → 34</span></div>
+                <div class="b2"><span class="lbl">Lighting</span><div class="pair"><i class="base" style="--v:30"></i><i class="prop" style="--v:17"></i></div><span class="val num">30 → 17</span></div>
+                <div class="b2"><span class="lbl">Fans</span><div class="pair"><i class="base" style="--v:22"></i><i class="prop" style="--v:15"></i></div><span class="val num">22 → 15</span></div>
+                <div class="b2"><span class="lbl">Pumps, misc.</span><div class="pair"><i class="base" style="--v:12"></i><i class="prop" style="--v:9"></i></div><span class="val num">12 → 9</span></div>
+              </div>
+              <ul class="legend"><li><i class="sw" style="background:#A9A39A"></i>Code baseline</li><li><i class="sw" style="background:#B4532A"></i>Proposed design</li></ul>
+              <p class="plate-note">kWh/m²·yr. Illustrative office model in Ahmedabad's climate.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">01 · Energy modelling</p>
     <h2>Know the energy bill before the building exists.</h2>
@@ -77,7 +93,17 @@
 </article>
 
 <article class="svc" id="daylight">
-  <figure class="media reveal"><img src="img/daylight-interior.webp" alt="Bright interior lit by large windows" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/daylight-interior.webp" alt="Bright interior lit by large windows" loading="lazy">
+<figure class="plate" id="fig-daylight">
+            <figcaption><span class="fig-no">Fig. 02</span><span class="fig-title">Illuminance on a typical floor</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num" id="dl-kpi">63%</b><span>of the occupied floor reaches 300 lux.<br>The dashed line marks where it drops below.</span></div>
+              <canvas id="cv-daylight" width="960" height="600" role="img" aria-label="False-colour plan of a 48 by 30 metre office floor: bright near the façades, dim around the central core"></canvas>
+              <div class="ramp"><span>100 lux</span><i class="ramp-day"></i><span>2,000+</span></div>
+              <p class="plate-note">48 × 30 m floor plate, north at the top. Simplified model for illustration.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">02 · Daylight and glare</p>
     <h2>Bright rooms, without glare or extra heat.</h2>
@@ -117,7 +143,17 @@
 </section>
 
 <article class="svc" id="microclimate">
-  <figure class="media reveal"><img src="img/microclimate-city.webp" alt="Looking up between tall towers" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/microclimate-city.webp" alt="Looking up between tall towers" loading="lazy">
+<figure class="plate" id="fig-wind">
+            <figcaption><span class="fig-no">Fig. 03</span><span class="fig-title">Wind around a campus, plan view</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num" id="wind-kpi">×1.6</b><span>peak wind speed-up, in the gaps between blocks.<br>Calm zones sit behind each building.</span></div>
+              <canvas id="cv-wind" width="960" height="560" role="img" aria-label="Plan view of wind flowing left to right around four buildings, faster in the gaps and slower behind each block"></canvas>
+              <div class="ramp"><span>Calm</span><i class="ramp-wind"></i><span>Fast</span></div>
+              <p class="plate-note">Simplified 2D flow for illustration. Project studies use full 3D CFD.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">03 · Microclimate and CFD</p>
     <h2>Outdoor spaces people can actually use in May.</h2>
@@ -136,7 +172,26 @@
 </article>
 
 <article class="svc" id="lca">
-  <figure class="media reveal"><img src="img/lca-site.webp" alt="Construction workers among steel reinforcement on a building site" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/lca-site.webp" alt="Construction workers among steel reinforcement on a building site" loading="lazy">
+<figure class="plate" id="fig-lca">
+            <figcaption><span class="fig-no">Fig. 04</span><span class="fig-title">Embodied carbon by material, A1–A3</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−21%</b><span>embodied carbon after material swaps.<br>450 → 354 kgCO₂e/m²</span></div>
+              <div class="stack" role="img" aria-label="Embodied carbon as designed, 450, and optimised, 354 kilograms of CO2 equivalent per square metre, split by material">
+                <div class="srow"><span class="lbl">As designed</span><div class="sbar" style="--w:100"><i style="flex:182;background:#B4532A" title="Concrete 182"></i><i style="flex:124;background:#1F7FA6" title="Rebar steel 124"></i><i style="flex:46;background:#D9962B" title="Masonry 46"></i><i style="flex:58;background:#3E9463" title="Glass and aluminium 58"></i><i style="flex:40;background:#7B5FC4" title="Finishes 40"></i></div><span class="val num">450</span></div>
+                <div class="srow"><span class="lbl">Optimised</span><div class="sbar" style="--w:78.7"><i style="flex:131;background:#B4532A" title="Concrete 131"></i><i style="flex:105;background:#1F7FA6" title="Rebar steel 105"></i><i style="flex:30;background:#D9962B" title="Masonry 30"></i><i style="flex:52;background:#3E9463" title="Glass and aluminium 52"></i><i style="flex:36;background:#7B5FC4" title="Finishes 36"></i></div><span class="val num">354</span></div>
+              </div>
+              <ul class="legend cols">
+                <li><i class="sw" style="background:#B4532A"></i>Concrete <b class="num">182 → 131</b></li>
+                <li><i class="sw" style="background:#1F7FA6"></i>Rebar steel <b class="num">124 → 105</b></li>
+                <li><i class="sw" style="background:#D9962B"></i>Masonry <b class="num">46 → 30</b></li>
+                <li><i class="sw" style="background:#3E9463"></i>Glass and aluminium <b class="num">58 → 52</b></li>
+                <li><i class="sw" style="background:#7B5FC4"></i>Finishes <b class="num">40 → 36</b></li>
+              </ul>
+              <p class="plate-note">kgCO₂e per m² of floor area, product stage. Illustrative figures.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">04 · Life cycle assessment</p>
     <h2>Know the carbon in your materials.</h2>
@@ -157,7 +212,16 @@
 </article>
 
 <article class="svc" id="carbon">
-  <figure class="media reveal"><img src="img/carbon-solar.webp" alt="Solar farm under a wide blue sky" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/carbon-solar.webp" alt="Solar farm under a wide blue sky" loading="lazy">
+<figure class="plate" id="fig-carbon">
+            <figcaption><span class="fig-no">Fig. 05</span><span class="fig-title">Scope 1 and 2 pathway to 2030</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">−42%</b><span>Scope 1 and 2 emissions by 2030.<br>12.4 → 7.2 ktCO₂e a year</span></div>
+              <div id="sv-carbon" class="svgbox" role="img" aria-label="Emissions fall from 12.4 to 7.2 kilotonnes between 2024 and 2030 through efficiency, rooftop solar, green power and fuel switching"></div>
+              <p class="plate-note">ktCO₂e a year. Illustrative manufacturer.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">05 · Carbon and decarbonisation</p>
     <h2>A carbon number you can defend, and a plan to bring it down.</h2>
@@ -176,7 +240,7 @@
 </article>
 
 <article class="svc" id="reporting">
-  <figure class="media reveal"><img src="img/esg-wind.webp" alt="Wind turbines across rolling green hills" loading="lazy"></figure>
+  <figure class="media reveal"><img src="img/india-mumbai.webp" alt="Seafront promenade and towers in Mumbai" loading="lazy"></figure>
   <div class="reveal">
     <p class="eyebrow">06 · ESG reporting</p>
     <h2>Disclosures your auditor and your investor will both accept.</h2>
@@ -195,7 +259,29 @@
 </article>
 
 <article class="svc" id="certification">
-  <figure class="media reveal"><img src="img/certify-building.webp" alt="Contemporary building with a folded glass façade" loading="lazy"></figure>
+  <div class="media reveal withfig"><img src="img/certify-building.webp" alt="Contemporary building with a folded glass façade" loading="lazy">
+<figure class="plate" id="fig-cert">
+            <figcaption><span class="fig-no">Fig. 06</span><span class="fig-title">LEED v4 BD+C scorecard</span><span class="fig-tag">Sample output</span></figcaption>
+            <div class="plate-body">
+              <div class="kpi"><b class="num">69</b><span>points of 110 targeted. Gold starts at 60.</span></div>
+              <div class="score" role="img" aria-label="Sample LEED scorecard: 69 of 110 points across nine credit categories">
+                <div class="total"><div class="track"><i style="width:62.7%"></i><u style="left:36.4%"><span>Certified 40</span></u><u style="left:45.5%"><span>Silver 50</span></u><u style="left:54.5%"><span>Gold 60</span></u><u style="left:72.7%"><span>Platinum 80</span></u></div></div>
+                <div class="cats">
+                  <div class="c"><span class="lbl">Integrative process</span><em><i style="width:100%"></i></em><span class="val num">1 / 1</span></div>
+                  <div class="c"><span class="lbl">Location and transport</span><em><i style="width:68.75%"></i></em><span class="val num">11 / 16</span></div>
+                  <div class="c"><span class="lbl">Sustainable sites</span><em><i style="width:60%"></i></em><span class="val num">6 / 10</span></div>
+                  <div class="c"><span class="lbl">Water efficiency</span><em><i style="width:72.7%"></i></em><span class="val num">8 / 11</span></div>
+                  <div class="c"><span class="lbl">Energy and atmosphere</span><em><i style="width:60.6%"></i></em><span class="val num">20 / 33</span></div>
+                  <div class="c"><span class="lbl">Materials and resources</span><em><i style="width:46.2%"></i></em><span class="val num">6 / 13</span></div>
+                  <div class="c"><span class="lbl">Indoor environment</span><em><i style="width:56.25%"></i></em><span class="val num">9 / 16</span></div>
+                  <div class="c"><span class="lbl">Innovation</span><em><i style="width:83.3%"></i></em><span class="val num">5 / 6</span></div>
+                  <div class="c"><span class="lbl">Regional priority</span><em><i style="width:75%"></i></em><span class="val num">3 / 4</span></div>
+                </div>
+              </div>
+              <p class="plate-note">Illustrative scorecard, not a specific project.</p>
+            </div>
+          </figure>
+  </div>
   <div class="reveal">
     <p class="eyebrow">07 · Green building certification</p>
     <h2>The right rating, achieved without surprises.</h2>
@@ -255,5 +341,6 @@
 </footer>
 <a class="wa" href="https://wa.me/919725523213" target="_blank" rel="noopener" aria-label="Message VERDEAXIS on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg><span>WhatsApp us</span></a>
 <script src="js/site.js"></script>
+<script src="js/story.js"></script>
 </body>
 </html>
