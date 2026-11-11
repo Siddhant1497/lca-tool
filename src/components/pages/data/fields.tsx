@@ -5,7 +5,7 @@ export type Draft<T> = { [K in keyof T]: T[K] extends number ? string : T[K] ext
 export const n = (s: string) => (s.trim() === '' ? NaN : Number(s));
 export const okNum = (s: string, min = 0) => Number.isFinite(n(s)) && n(s) >= min;
 
-interface FProps { label: string; error?: string | false; hint?: string; className?: string; children: React.ReactNode }
+interface FProps { label: React.ReactNode; error?: string | false; hint?: string; className?: string; children: React.ReactNode }
 export const Field: React.FC<FProps> = ({ label, error, hint, className = '', children }) => (
   <div className={`field ${className}`}>
     <label>{label}</label>

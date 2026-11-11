@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useLCA } from '../../context/LCAContext';
 import { MATERIALS, getMaterialById } from '../../data/materials';
-import type { MaterialEntry, LifeCycleStage, MaterialCategory } from '../../types/lca';
-import { STAGE_META, MATERIAL_CATEGORY_LABELS } from '../../types/lca';
+import type { MaterialEntry, LifeCycleStage, MaterialCategory, Material } from '../../types/lca';
+import { MATERIAL_CATEGORY_LABELS } from '../../types/lca';
 import { ask } from '../../utils/platform';
 
 const COMPONENTS = [
@@ -14,7 +14,8 @@ const COMPONENTS = [
   'MEP – Mechanical','MEP – Electrical','MEP – Plumbing','Internal Finishes','Site Works','Other',
 ];
 
-const STAGE_OPTS = ['A1-A3','A4','A5','B4','C1','C2','C3','C4','D'] as LifeCycleStage[];
+/** EN 15978 modules the material's EPD declares (A1–A3 always; A4, A5, C1–C4, D when present). */
+const modulesOf = (m: Material) => ['A1-A3', m.epd.A4 && 'A4', m.epd.A5 && 'A5', m.epd.C1_C4 && 'C1-C4', m.epd.D && 'D'].filter(Boolean).join(' · ');
 
 interface F { materialId: string; qty: string; component: string; stage: LifeCycleStage; rep: boolean; notes: string; name: string; }
 const DEF: F = { materialId: '', qty: '', component: 'External Walls', stage: 'A1-A3', rep: true, notes: '', name: '' };
@@ -71,7 +72,7 @@ const MaterialInventory: React.FC = () => {
 
   const selMat = form.materialId ? getMaterialById(form.materialId) : null;
   const reps = selMat && state.project && form.rep && selMat.serviceLife < state.project.lifespan
-    ? Math.floor(state.project.lifespan / selMat.serviceLife) - 1 : 0;
+    ? Math.ceil(state.project.lifespan / selMat.serviceLife) - 1 : 0;
 
   return (
     <div>
@@ -108,7 +109,7 @@ const MaterialInventory: React.FC = () => {
         <div className="card" style={{ padding: 0 }}>
           <div className="tbl-wrap">
             <table>
-              <thead><tr><th>Material</th><th>Component</th><th>Stage</th><th>Quantity</th><th>B4 Replacement</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Material</th><th>Component</th><th>EPD modules</th><th>Quantity</th><th>B4 Replacement</th><th>Actions</th></tr></thead>
               <tbody>
                 {entries.map((e) => {
                   const mat = getMaterialById(e.materialId);
@@ -119,7 +120,7 @@ const MaterialInventory: React.FC = () => {
                         <div style={{ fontSize: '.76rem', color: 'var(--muted)' }}>{mat ? MATERIAL_CATEGORY_LABELS[mat.category] : ''}</div>
                       </td>
                       <td>{e.component}</td>
-                      <td><span className="badge b-info">{e.stage}</span></td>
+                      <td><span className="badge b-info">{(() => { const m = getMaterialById(e.materialId); return m ? modulesOf(m) : '—'; })()}</span></td>
                       <td className="mono">{e.quantity.toLocaleString()} {e.unit}</td>
                       <td>{e.includeReplacement ? <span className="badge b-pass">Yes</span> : <span className="badge b-na">No</span>}</td>
                       <td>
@@ -185,10 +186,8 @@ const MaterialInventory: React.FC = () => {
                     {COMPONENTS.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
-                <div className="field"><label>Life Cycle Stage *</label>
-                  <select value={form.stage} onChange={(e) => setForm((f) => ({...f, stage: e.target.value as LifeCycleStage}))}>
-                    {STAGE_OPTS.map((s) => <option key={s} value={s}>{s} – {STAGE_META[s].label}</option>)}
-                  </select>
+                <div className="field"><label>Modules counted</label>
+                  <div className="hint" style={{ marginTop: 6 }}>{selMat ? modulesOf(selMat) : 'Select a material'} · from the EPD; module D is reported separately</div>
                 </div>
                 <div className="field" style={{ gridColumn: '1/-1' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer' }}>

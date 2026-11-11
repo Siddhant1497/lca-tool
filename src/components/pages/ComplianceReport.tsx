@@ -101,7 +101,7 @@ const ComplianceReport: React.FC = () => {
         {[
           { lbl: 'Standards Met', val: `${pass}/${complianceResults.length}`, sub: 'fully compliant', col: pass>0?'var(--acc)':'var(--err)' },
           { lbl: 'LEED v4 MRc1', val: `${leedV4?.creditPoints??0}/3 pts`, sub: leedV4?.summary??'—', col: leedV4?.compliant?'var(--acc)':'var(--err)' },
-          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/5 pts`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'var(--acc)':'var(--err)' },
+          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/4 pts`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'var(--acc)':'var(--err)' },
           { lbl: 'BREEAM Mat 01', val: `${breeam?.creditPoints??0}/6 pts`, sub: breeam?.summary??'—', col: breeam?.compliant?'var(--purple)':'var(--err)' },
           { lbl: 'EN 15978', val: en?.compliant?'Compliant':'Action Req.', sub: en?.summary??'—', col: en?.compliant?'var(--acc)':'var(--err)' },
         ].map((k) => (

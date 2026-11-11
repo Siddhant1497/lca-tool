@@ -6,6 +6,7 @@ export const NAV: NavItem[] = [
   { page: 'hub',        icon: 'grid',      label: 'Command Center', sect: 'Carbon & portfolio' },
   { page: 'calculator', icon: 'calc',      label: 'Carbon Calculator' },
   { page: 'strategy',   icon: 'target',    label: 'Decarbonisation Strategy' },
+  { page: 'cba',        icon: 'trendDown', label: 'Cost–Benefit' },
   { page: 'docs',       icon: 'file',      label: 'Documentation',  module: 'certs' },
   { page: 'reports',    icon: 'clipboard', label: 'Disclosures' },
   { page: 'share',      icon: 'link',      label: 'Client sharing' },

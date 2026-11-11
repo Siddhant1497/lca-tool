@@ -3,6 +3,7 @@ import { useHub } from '../../context/HubContext';
 import type { DocSet } from '../../types/hub';
 import { segments, parts, creditCounts, isTargeted, creditDoc, readIgbcWorkbook, DOC_STATUSES, DOC_DONE, type NData, type NCredit, type NSource, type DocStatus } from '../../utils/narrative';
 import { loadNarratives, summarise } from '../../utils/docsProgress';
+import { OFFICIAL } from '../../data/narratives/official';
 import { uid } from '../../utils/hub';
 import { ask } from '../../utils/platform';
 import Icon from '../ui/Icon';
@@ -54,6 +55,8 @@ const Documentation: React.FC = () => {
   const [create, setCreate] = useState<{ name: string; rating: string; projectId: string } | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [filter, setFilter] = useState<DocStatus | 'all'>('all');
+  const [factsOpen, setFactsOpen] = useState(false);
+  const [facts, setFacts] = useState<Record<string, string>>({});
   const file = useRef<HTMLInputElement>(null);
   useEffect(() => { loadNarratives().then(setDATA).catch(() => toast('Could not load the narrative templates', 'err')); }, [toast]);
 
@@ -83,15 +86,18 @@ const Documentation: React.FC = () => {
           const id = uid(); const smp = DATA[create.rating].sample;
           dispatch({ type: 'UPSERT_DOC', item: { id, name: create.name.trim(), rating: create.rating, projectId: create.projectId || undefined, updatedAt: new Date().toISOString(),
             src: { ...smp, rating: create.rating, sample: true }, edits: {}, meta: {} } });
-          setActiveId(id); setCreate(null); toast('Created. Showing the worked example until you open the filled workbook.');
+          setActiveId(id); setCreate(null); toast(DATA[create.rating]?.facts ? 'Created with an example project. Open Project facts to enter yours.' : 'Created. Showing the worked example until you open the filled workbook.');
         }}><Icon name="plus" size={15} />Create</button></>}>
       <div className="form-grid" style={{ gridTemplateColumns: '1fr' }}>
         <div className="field"><label>Name</label><input value={create.name} onChange={(e) => setCreate({ ...create, name: e.target.value })} placeholder="e.g. Tower A – precertification" /></div>
         <div className="field"><label>Rating system template</label>
-          <select value={create.rating} onChange={(e) => setCreate({ ...create, rating: e.target.value })}>{Object.entries(DATA).map(([k, v]) => <option key={k} value={k}>{v.title} · {v.sections.reduce((a, s) => a + s.credits.length, 0)} credits</option>)}</select></div>
+          <select value={create.rating} onChange={(e) => setCreate({ ...create, rating: e.target.value })}>
+            {[...new Set(Object.values(DATA).map((v) => v.family ?? 'Other'))].map((fam) => (
+              <optgroup key={fam} label={fam}>{Object.entries(DATA).filter(([, v]) => (v.family ?? 'Other') === fam).map(([k, v]) => <option key={k} value={k}>{v.title} · {v.sections.reduce((a, s) => a + s.credits.length, 0)} credits{v.facts ? '' : ' · from calculation workbook'}</option>)}</optgroup>))}
+          </select></div>
         {hub.settings.modules.certs && <div className="field"><label>Link to certification project (optional)</label>
           <select value={create.projectId} onChange={(e) => setCreate({ ...create, projectId: e.target.value })}><option value="">None</option>{hub.projects.map((p) => <option key={p.id} value={p.id}>{p.system} · {p.name}</option>)}</select></div>}
-        <div className="hint">The set starts with the rating's worked example. Open the project's filled calculation workbook (.xlsx/.xlsm) to fill every figure.</div>
+        <div className="hint">{DATA[create.rating]?.facts ? 'The set starts with an example project. Replace the Project facts with your own; every narrative updates.' : "The set starts with the rating's worked example. Open the project's filled calculation workbook (.xlsx/.xlsm) to fill every figure."}</div>
       </div>
     </Modal>
   );
@@ -102,7 +108,7 @@ const Documentation: React.FC = () => {
         <div className="ph"><div><div className="ph-eyebrow">Certifications</div><div className="ph-title">Documentation</div>
           <div className="ph-sub">Credit narratives from your templates, filled from the calculation workbook, with a review workflow per credit.</div></div></div>
         <div className="card"><EmptyState icon={<Icon name="file" size={30} />} title={`No documentation sets for ${client.name} yet`}
-          body={`Start a set from one of ${Object.keys(DATA).length} IGBC rating templates (${Object.values(DATA).reduce((a, r) => a + r.sections.reduce((b, s) => b + s.credits.length, 0), 0)} credit narratives). Green figures come from the workbook, yellow facts are typed by the team and confirmed, red marks workbook cells still blank.`}>
+          body={`Start a set from one of ${Object.keys(DATA).length} rating templates (IGBC, LEED, GRIHA) (${Object.values(DATA).reduce((a, r) => a + r.sections.reduce((b, s) => b + s.credits.length, 0), 0)} credit narratives). Green figures come from the workbook, yellow facts are typed by the team and confirmed, red marks workbook cells still blank.`}>
           <button className="btn btn-pri btn-lg" onClick={newSet}><Icon name="plus" size={16} />New documentation set</button>
         </EmptyState></div>
         {createModal}
@@ -122,7 +128,7 @@ const Documentation: React.FC = () => {
           <div className="ph-eyebrow">Certifications · {R.title}</div>
           <div className="ph-title">{doc.name}</div>
           <div className="ph-sub">
-            {S.sample ? <span className="badge b-warn">Worked example – open the filled workbook</span> : <span className="badge b-pri">From {S.file ?? 'workbook'}</span>}
+            {S.sample ? <span className="badge b-warn">{R.facts ? 'Example project – enter your Project facts' : 'Worked example – open the filled workbook'}</span> : <span className="badge b-pri">{R.facts ? 'Project facts entered' : `From ${S.file ?? 'workbook'}`}</span>}
             <span>{S.project}</span>{summary && <span>· {summary.pctReady}% of targeted credits ready · {summary.pctFacts}% of facts typed</span>}
           </div>
         </div>
@@ -130,14 +136,17 @@ const Documentation: React.FC = () => {
           {hub.docs.length > 1 && <label className="mini">Set <select value={doc.id} onChange={(e) => setActiveId(e.target.value)}>{hub.docs.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>}
           <button className="btn btn-ghost" onClick={newSet}><Icon name="plus" size={16} />New set</button>
           <input ref={file} type="file" accept=".xlsx,.xlsm" hidden onChange={(e) => openWorkbook(e.target.files?.[0])} />
-          <button className="btn btn-out" onClick={() => file.current?.click()}><Icon name="upload" size={16} />Open filled workbook</button>
+          {R.facts
+            ? <button className="btn btn-out" onClick={() => setFactsOpen(true)}><Icon name="edit" size={16} />Project facts</button>
+            : <button className="btn btn-out" onClick={() => file.current?.click()}><Icon name="upload" size={16} />Open filled workbook</button>}
           <button className="btn btn-pri" onClick={async () => { const m = await copyRich(visible.map((c) => creditDoc(c, S, doc.edits))); toast(m || 'Copy was blocked; select the text on a card instead', m ? 'ok' : 'err'); }}><Icon name="copy" size={16} />Copy all for Word</button>
         </div>
       </div>
 
       {S.uncached && <div className="notice err-n"><Icon name="alert" size={16} /><span>This workbook has no calculated values stored. Open it in Excel, let it calculate, save, then open it here again.</span></div>}
-      {!S.sample && S.blank > 0 && <div className="notice"><Icon name="info" size={16} /><span className="grow">{S.total - S.blank} of {S.total} workbook figures are filled. Red items are still blank in the workbook.</span></div>}
-      <div className="notice info"><Icon name="check" size={16} /><span className="grow">Every figure, name and document reference must be checked by the project lead before submission. <b>Green</b> = read from the workbook (hover for its cell) · <b>yellow</b> = project fact to type and confirm · <b>red</b> = figure not yet filled in the workbook.</span></div>
+      {!S.sample && S.blank > 0 && <div className="notice"><Icon name="info" size={16} /><span className="grow">{S.total - S.blank} of {S.total} {R.facts ? 'project facts are entered. Red items are still blank: open Project facts.' : 'workbook figures are filled. Red items are still blank in the workbook.'}</span></div>}
+      {OFFICIAL[doc.rating] && <div className="notice"><Icon name="info" size={16} /><span className="grow">Credit names and maximum points match the official {OFFICIAL[doc.rating].publisher} source: <a href={OFFICIAL[doc.rating].url} target="_blank" rel="noreferrer">{OFFICIAL[doc.rating].document}</a>. Levels: {OFFICIAL[doc.rating].levels}.{doc.rating === 'griha2019' ? ' GRIHA Version 6 is now the current version; v2019 projects can apply to convert. Start a GRIHA Version 6 set to compare.' : ''}</span></div>}
+      <div className="notice info"><Icon name="check" size={16} /><span className="grow">Every figure, name and document reference must be checked by the project lead before submission. <b>Green</b> = {R.facts ? 'from Project facts' : 'read from the workbook (hover for its cell)'} · <b>yellow</b> = project fact to type and confirm · <b>red</b> = {R.facts ? 'project fact not yet entered' : 'figure not yet filled in the workbook'}.</span></div>
 
       <div className="docs-wrap">
         <aside className="docs-side">
@@ -178,7 +187,7 @@ const Documentation: React.FC = () => {
                       <span className="row" style={{ marginLeft: 'auto', gap: 6 }}>
                         {tg && <span className="badge b-na">Target: {tg}</span>}
                         <span className={`badge ${n.fills === n.done ? 'b-pass' : 'b-warn'}`}>{n.done}/{n.fills} facts</span>
-                        {n.miss > 0 && <span className="badge b-fail">{n.miss} blank in workbook</span>}
+                        {n.miss > 0 && <span className="badge b-fail">{n.miss} {R.facts ? 'project facts missing' : 'blank in workbook'}</span>}
                       </span>
                     </div>
                     {c.id !== 'Project' && (
@@ -211,6 +220,27 @@ const Documentation: React.FC = () => {
         </section>
       </div>
       {createModal}
+      {factsOpen && (
+        <Modal title="Project facts" onClose={() => setFactsOpen(false)}
+          footer={<><button className="btn btn-out" onClick={() => setFactsOpen(false)}>Cancel</button>
+            <button className="btn btn-pri" onClick={() => {
+              const values = { ...S.values };
+              // Example values never carry over: a fact left blank stays blank (red) until the team types it.
+              for (const [n, f] of R.tokens) values[`${n}|${f}`] = (facts[n] ?? (S.sample ? '' : values[`${n}|${f}`]) ?? '').trim();
+              const v = (n: string) => R.tokens.find(([t]) => t === n) ? values[`${n}|${R.tokens.find(([t]) => t === n)![1]}`] || undefined : undefined;
+              const blank = R.tokens.filter(([n, f]) => !values[`${n}|${f}`]).length;
+              dispatch({ type: 'UPDATE_DOC_SRC', id: doc.id, src: { ...S, values, sample: false, blank, total: R.tokens.length, project: v('Proj_Name') ?? S.project,
+                totals: { pts: v('Total_Points'), level: v('Cert_Level'), stage: v('Proj_Stage'), mand: undefined } } });
+              setFactsOpen(false); toast('Project facts saved; every narrative updated.');
+            }}><Icon name="save" size={15} />Save facts</button></>}>
+          <div className="hint" style={{ marginBottom: 12 }}>Entered once, used in every credit narrative. Type figures as they should appear in the report (e.g. 38,500).</div>
+          <div className="form-grid">
+            {R.tokens.map(([n, f]) => (
+              <div className="field" key={n}><label>{S.labels[n] ?? n}</label>
+                <input defaultValue={S.sample ? '' : S.values[`${n}|${f}`] ?? ''} placeholder={R.sample.values[`${n}|${f}`] ?? ''} onChange={(e) => setFacts((x) => ({ ...x, [n]: e.target.value }))} /></div>))}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

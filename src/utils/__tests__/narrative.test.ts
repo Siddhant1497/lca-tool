@@ -136,3 +136,48 @@ describe('live portal update', async () => {
     expect(u.trajectory).toBeUndefined(); expect(u.certs).toBeUndefined(); expect(u.docs).toBeUndefined(); expect(u.roadmap).toBeUndefined();
   });
 });
+
+describe('LEED and GRIHA templates against the official scorecards', async () => {
+  const { loadNarratives } = await import('../docsProgress');
+  const { OFFICIAL } = await import('../../data/narratives/official');
+  const ALL = await loadNarratives();
+  const FACTS = ['leed5bdc', 'leed41bdc', 'leed4bdc', 'griha6', 'griha2019'];
+  const items = (key: string) => ALL[key].sections.flatMap((s) => s.credits).filter((c) => c.id !== 'Project');
+  const norm = (pts: string): number | 'Required' | 'Mandatory' => (pts === 'Required' || pts === 'Mandatory' ? pts : parseInt(pts));
+
+  it('are registered alongside the six IGBC sets', () => {
+    expect(Object.keys(ALL).sort()).toEqual(['fac', 'griha2019', 'griha6', 'homes', 'leed41bdc', 'leed4bdc', 'leed5bdc', 'nb', 'nb3', 'svc', 'wh']);
+    for (const k of FACTS) expect(ALL[k].facts).toBe(true);
+    expect(ALL.nb.family).toBe('IGBC');
+  });
+  it.each(FACTS)('%s: every credit name and maximum point value matches the official list, with nothing missing or extra', (key) => {
+    const got = items(key).map((c) => `${c.name} = ${norm(c.pts)}`).sort();
+    const want = OFFICIAL[key].items.map(([n, p]) => `${n} = ${p}`).sort();
+    expect(got).toEqual(want);
+  });
+  it.each(FACTS)('%s: points add up to the official total', (key) => {
+    const sum = items(key).filter((c) => !(key.startsWith('griha') && c.id === 'Cr 30')).map((c) => parseInt(c.pts)).filter((n) => !Number.isNaN(n)).reduce((a, b) => a + b, 0);
+    expect(sum - (key === 'leed41bdc' || key === 'leed4bdc' ? 16 : 0)).toBe(OFFICIAL[key].total);   // v4/v4.1 LT c1 (ND location, 16) replaces the other LT credits
+  });
+  it('prerequisite and mandatory counts', () => {
+    const count = (k: string, t: string) => items(k).filter((c) => c.pts === t).length;
+    expect(count('leed4bdc', 'Required')).toBe(12);
+    expect(count('leed41bdc', 'Required')).toBe(11);   // v4.1 dropped the C&D waste planning prerequisite
+    expect(count('leed5bdc', 'Required')).toBe(16);
+    expect(count('griha2019', 'Mandatory')).toBe(2);   // Cr 27 and Cr 29
+    expect(count('griha6', 'Mandatory')).toBe(2);      // Cr 9 and Cr 29
+    for (const k of ['griha6', 'griha2019']) expect(items(k).filter((c) => c.id.startsWith('Cr '))).toHaveLength(30);
+  });
+  it('every template token has a project fact and every credit renders', () => {
+    for (const key of FACTS) {
+      const R = ALL[key]; const names = new Set(R.tokens.map(([n]) => n));
+      for (const c of R.sections.flatMap((s) => s.credits)) for (const t of [c.intent, c.result, ...c.approach, ...c.evidence])
+        for (const m of t.matchAll(/\{\{([A-Za-z0-9_]+)\|/g)) expect(names.has(m[1]), `${key} ${c.id}: ${m[1]}`).toBe(true);
+      const src = { ...R.sample, rating: key } as never;
+      const sum = summarise({ id: 'x', name: 'x', rating: key, updatedAt: '', src, edits: {}, meta: {} }, ALL)!;
+      expect(sum.credits.length).toBeGreaterThan(25);
+      expect(sum.credits.every((c) => c.miss === 0)).toBe(true);   // sample facts fill every figure
+      expect(new Set(R.sections.flatMap((s) => s.credits).map((c) => c.id)).size).toBe(R.sections.flatMap((s) => s.credits).length);   // ids unique
+    }
+  });
+});

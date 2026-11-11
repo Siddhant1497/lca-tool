@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLCA } from '../../context/LCAContext';
-import { IMPACT_META, STAGE_META, LIFECYCLE_STAGES, PHASE_COLORS } from '../../types/lca';
+import { IMPACT_META, STAGE_META, LIFECYCLE_STAGES, PHASE_COLORS, PHASE_LABEL } from '../../types/lca';
 import type { ImpactValues } from '../../types/lca';
 import { formatGWP, formatImpact, percentDiff } from '../../utils/lcaCalculator';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend } from 'recharts';
@@ -99,7 +99,7 @@ const LCAResults: React.FC = () => {
             <div className="chart">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={Object.entries(results.byPhase).map(([ph,v]) => ({
-                  name: ph[0].toUpperCase()+ph.slice(1), value: v[activeK], fill: PHASE_COLORS[ph]??'#94A3B8',
+                  name: PHASE_LABEL[ph] ?? ph, value: v[activeK], fill: PHASE_COLORS[ph]??'#94A3B8',
                 }))} margin={{ top:5, right:5, left:0, bottom:0 }}>
                   <XAxis dataKey="name" tick={{ fontSize:11 }} />
                   <YAxis tick={{ fontSize:10 }} width={65} />
@@ -138,7 +138,7 @@ const LCAResults: React.FC = () => {
               <table>
                 <thead><tr><th>Stage</th><th>Description</th><th>GWP (kg CO₂ eq)</th><th>AP (kg SO₂ eq)</th><th>ADP Fossil (MJ)</th></tr></thead>
                 <tbody>
-                  {LIFECYCLE_STAGES.filter((s) => results.byStage[s]).map((s) => {
+                  {LIFECYCLE_STAGES.filter((s) => s !== 'D' && results.byStage[s]).map((s) => {
                     const v = results.byStage[s]!;
                     return (
                       <tr key={s}>
@@ -151,11 +151,20 @@ const LCAResults: React.FC = () => {
                     );
                   })}
                   <tr style={{ fontWeight:700, background:'var(--bg)' }}>
-                    <td colSpan={2}>TOTAL</td>
+                    <td colSpan={2}>TOTAL (A–C)</td>
                     <td className="mono">{results.total.GWP.toFixed(2)}</td>
                     <td className="mono">{results.total.AP.toFixed(4)}</td>
                     <td className="mono">{results.total.ADP_fossil.toFixed(2)}</td>
                   </tr>
+                  {results.byStage.D && (
+                    <tr className="muted">
+                      <td><span className="badge b-na">D</span></td>
+                      <td>Beyond system boundary (reported separately, not in the total)</td>
+                      <td className="mono">{results.moduleD.GWP.toFixed(2)}</td>
+                      <td className="mono">{results.moduleD.AP.toFixed(4)}</td>
+                      <td className="mono">{results.moduleD.ADP_fossil.toFixed(2)}</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

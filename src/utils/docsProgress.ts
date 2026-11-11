@@ -30,4 +30,12 @@ export function summarise(d: DocSet, DATA: NData): DocSummary | null {
   };
 }
 
-export const loadNarratives = async (): Promise<NData> => (await import('../data/narratives/igbc.json')).default as unknown as NData;
+/** All narrative template sets: IGBC (from the IGBC Narrative Builder, workbook-filled) plus LEED v5 / v4.1 / v4 BD+C
+ *  and GRIHA Version 6 / v2019 (project facts). LEED and GRIHA lists are checked against the official scorecards in official.ts. */
+export const loadNarratives = async (): Promise<NData> => {
+  const [igbc, leed, leed5, griha, griha6] = await Promise.all([import('../data/narratives/igbc.json'), import('../data/narratives/leed'), import('../data/narratives/leed5'),
+    import('../data/narratives/griha'), import('../data/narratives/griha6')]);
+  const I = igbc.default as unknown as NData;
+  for (const k of Object.keys(I)) I[k].family ??= 'IGBC';
+  return { ...I, leed5bdc: leed5.LEED_V5_BDC, leed41bdc: leed.LEED_V41_BDC, leed4bdc: leed.LEED_V4_BDC, griha6: griha6.GRIHA_V6, griha2019: griha.GRIHA_V2019 };
+};

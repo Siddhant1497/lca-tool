@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { saveFile } from '../../utils/platform';
 import { useLCA } from '../../context/LCAContext';
-import { IMPACT_META, LIFECYCLE_STAGES, STAGE_META } from '../../types/lca';
+import { IMPACT_META, LIFECYCLE_STAGES, STAGE_META, BUILDING_TYPE_LABELS } from '../../types/lca';
 import type { ImpactValues } from '../../types/lca';
 import { formatGWP } from '../../utils/lcaCalculator';
 
@@ -19,20 +19,21 @@ const ExportReport: React.FC = () => {
 
   const exportFull = () => {
     if (!results) return;
-    let csv = `LCA Tool – Full Assessment Report\nProject,"${project?.name}"\nBuilding Type,${project?.buildingType}\nGFA,${project?.grossFloorArea} m2\nRSP,${project?.lifespan} yr\nDate,${now}\n\n`;
+    let csv = `LCA Tool – Full Assessment Report\nProject,"${project?.name}"\nBuilding Type,"${project ? BUILDING_TYPE_LABELS[project.buildingType] : ''}"\nGFA,${project?.grossFloorArea} m2\nRSP,${project?.lifespan} yr\nDate,${now}\n\n`;
     csv += '=== IMPACT SUMMARY ===\nCategory,Total,Per m2,Per m2/yr,Unit\n';
     for (const k of Object.keys(IMPACT_META) as (keyof ImpactValues)[]) {
       csv += `"${IMPACT_META[k].label}",${results.total[k]},${results.perM2[k]},${results.perM2PerYear[k]},${IMPACT_META[k].unit}\n`;
     }
-    csv += '\n=== MATERIAL INVENTORY ===\nMaterial,Component,Stage,Qty,Unit,GWP (kg CO2eq),AP (kg SO2eq),ADP_fossil (MJ)\n';
+    csv += '\n=== MATERIAL INVENTORY (modules A–C) ===\nMaterial,Component,Modules,Qty,Unit,GWP (kg CO2eq),AP (kg SO2eq),ADP_fossil (MJ)\n';
     for (const b of results.byMaterial) {
-      csv += `"${b.name}","${b.component}",${b.stage},${b.quantity},${b.unit},${b.impacts.GWP.toFixed(4)},${b.impacts.AP.toFixed(6)},${b.impacts.ADP_fossil.toFixed(4)}\n`;
+      csv += `"${b.name}","${b.component}",A–C,${b.quantity},${b.unit},${b.impacts.GWP.toFixed(4)},${b.impacts.AP.toFixed(6)},${b.impacts.ADP_fossil.toFixed(4)}\n`;
     }
     csv += '\n=== STAGE BREAKDOWN ===\nStage,Description,GWP,ODP,AP,EP,POCP,ADP_fossil\n';
     for (const s of LIFECYCLE_STAGES) {
       const v = results.byStage[s]; if (!v) continue;
-      csv += `${s},"${STAGE_META[s].label}",${v.GWP.toFixed(4)},${v.ODP.toExponential(4)},${v.AP.toFixed(6)},${v.EP.toFixed(6)},${v.POCP.toFixed(6)},${v.ADP_fossil.toFixed(4)}\n`;
+      csv += `${s},"${STAGE_META[s].label}${s === 'D' ? ' (reported separately, not in total)' : ''}",${v.GWP.toFixed(4)},${v.ODP.toExponential(4)},${v.AP.toFixed(6)},${v.EP.toFixed(6)},${v.POCP.toFixed(6)},${v.ADP_fossil.toFixed(4)}\n`;
     }
+    csv += `Total A–C,,${results.total.GWP.toFixed(4)},${results.total.ODP.toExponential(4)},${results.total.AP.toFixed(6)},${results.total.EP.toFixed(6)},${results.total.POCP.toFixed(6)},${results.total.ADP_fossil.toFixed(4)}\n`;
     if (baselineResults) {
       csv += '\n=== BASELINE COMPARISON ===\nCategory,Baseline,Proposed,Change (%)\n';
       for (const k of Object.keys(IMPACT_META) as (keyof ImpactValues)[]) {
@@ -48,9 +49,9 @@ const ExportReport: React.FC = () => {
 
   const exportMaterials = () => {
     if (!results) return;
-    let csv = `Material,Component,Stage,Qty,Unit,GWP (kg CO2eq),ODP (kg CFC11),AP (kg SO2eq),EP (kg PO4eq),POCP (kg C2H4eq),ADP_fossil (MJ)\n`;
+    let csv = `Material,Component,Modules,Qty,Unit,GWP (kg CO2eq),ODP (kg CFC11),AP (kg SO2eq),EP (kg PO4eq),POCP (kg C2H4eq),ADP_fossil (MJ)\n`;
     for (const b of results.byMaterial) {
-      csv += `"${b.name}","${b.component}",${b.stage},${b.quantity},${b.unit},${b.impacts.GWP.toFixed(4)},${b.impacts.ODP.toExponential(4)},${b.impacts.AP.toFixed(6)},${b.impacts.EP.toFixed(6)},${b.impacts.POCP.toFixed(6)},${b.impacts.ADP_fossil.toFixed(4)}\n`;
+      csv += `"${b.name}","${b.component}",A–C,${b.quantity},${b.unit},${b.impacts.GWP.toFixed(4)},${b.impacts.ODP.toExponential(4)},${b.impacts.AP.toFixed(6)},${b.impacts.EP.toFixed(6)},${b.impacts.POCP.toFixed(6)},${b.impacts.ADP_fossil.toFixed(4)}\n`;
     }
     csv += `\nTOTAL,,,,${results.total.GWP.toFixed(4)},${results.total.ODP.toExponential(4)},${results.total.AP.toFixed(6)},${results.total.EP.toFixed(6)},${results.total.POCP.toFixed(6)},${results.total.ADP_fossil.toFixed(4)}\n`;
     csv += `Per m2,,,,,${results.perM2.GWP.toFixed(4)}\nPer m2/yr,,,,,${results.perM2PerYear.GWP.toFixed(6)}\n`;
@@ -105,7 +106,7 @@ const ExportReport: React.FC = () => {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:'12px' }}>
             {[
               ['Project Name', project.name],
-              ['Building Type', project.buildingType.replace(/_/g,' ')],
+              ['Building Type', BUILDING_TYPE_LABELS[project.buildingType]],
               ['GFA', `${project.grossFloorArea?.toLocaleString()} m²`],
               ['Stories', String(project.stories)],
               ['RSP', `${project.lifespan} years`],
@@ -122,7 +123,7 @@ const ExportReport: React.FC = () => {
         </div>
       )}
 
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:'14px', marginBottom:'20px' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(min(100%,260px),1fr))', gap:'14px', marginBottom:'20px' }}>
         {[
           { key:'full', title:'📊 Full LCA Report', desc:'Impact summary, material inventory, stage breakdown, baseline comparison, and compliance overview.', fn: exportFull, disabled: !results },
           { key:'mat',  title:'🧱 Material Inventory', desc:'All materials with quantities, per-entry impacts across all 6 categories.', fn: exportMaterials, disabled: !results },

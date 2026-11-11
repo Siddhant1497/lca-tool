@@ -9,11 +9,12 @@ One workspace for a sustainability consultant's core numbers: **GHG inventory, d
 | Area | What it does |
 |---|---|
 | **Clients** | Separate workspace per client (switcher in the header). **Client sharing** builds a read-only, single-file dashboard per client with only the sections, disclosure frameworks and certification projects you tick; activity data and factor libraries never leave your workspace. See [docs/HOSTING.md](docs/HOSTING.md). |
-| **Documentation** | Your IGBC narrative templates (from the IGBC Narrative Builder): 6 rating systems, 271 credits. Open the filled calculation workbook to fill every figure from its named ranges; type project facts in place; per-credit status, owner and due date; Copy for Word. |
+| **Documentation** | Credit narrative templates: **IGBC** (from the IGBC Narrative Builder: 6 rating systems, 271 credits, filled from the calculation workbook's named ranges), **LEED BD+C New Construction v5, v4.1 and v4**, and **GRIHA Version 6 and v2019**, filled from a Project facts form. LEED and GRIHA credit names and maximum points are unit-tested against the official USGBC scorecards and GRIHA Council manuals (`src/data/narratives/official.ts` lists each source). Type project facts in place; per-credit status, owner and due date; Copy for Word. Sample IGBC workbooks for every rating are in `docs/samples/` (`python3 scripts/make_sample_workbooks.py` rebuilds them). |
 | **Live client portal** | A private claude.ai page per client that updates in real time when you import an update from Client sharing, with a two-way "documents we need from you" board. See [docs/HOSTING.md](docs/HOSTING.md). |
 | **Workspace** | First-run choice: carbon only, or add certifications and/or building LCA. Switch modules on or off any time; hidden modules disappear from the navigation, the dashboard and the Excel export. |
 | **Carbon Calculator** | Standalone Scope 1, 2 and 3 calculator: activity data by site with data-quality tags × emission factors from **bundled official packs**: CEA CO₂ Baseline Database v22.0 (India grid FY 2013-14 to 2025-26), UK DESNZ 2025 and 2026 (all kg CO₂e rows), GHG Protocol GWPs (AR5/AR6), plus import of any other official file (US EPA, IPCC…). Every factor keeps dataset, edition and row reference; editing a value removes its "official" tag. Totals go to the inventory with one click. |
 | **Decarbonisation Strategy** | SBTi-style near-term and net-zero targets (editable), trajectory to net zero, gap by scope, hotspot analysis with a 27-measure library (each linked to the relevant LEED credit), a Now / Next / Later roadmap, residual-emission planning and an auto-written strategy summary. |
+| **Cost–Benefit** | Capex, year-1 saving, simple and discounted payback, NPV, IRR, SIR and ₹/tCO₂e for 21 green building measures (energy modelling, commissioning, BMS, chiller/VRF/split AC upgrades, VFDs, heat recovery, LED and controls, cool roof, roof insulation, DGU glazing, rooftop PV, solar water heating, low-flow fixtures, STP reuse, rainwater, AAC, blended cement, EAF steel) plus custom measures. Indian defaults with a source on every number: MERC FY 2026-27 tariffs, BEE/GIZ 2025 cooling efficiencies and full-load hours, CEA grid factor, ECBC LPD, market price ranges (low/typical/high). Enter DesignBuilder kWh savings to override formulas; the package counts cooling interactions so savings are not double-counted. Excel export and one-click add to the strategy MACC. |
 | **Command Center** | KPIs with sparklines, Scope 1+2 against a linear 1.5 °C-aligned pathway with a "with dated levers" projection, scope split, inventory trend, Scope 3 hotspots by GHG Protocol category, MACC, intensity trends (per m², per FTE, per turnover), LEED category scorecard, certification pipeline with a "needs attention" list, and the full portfolio table. Location/market Scope 2 toggle. |
 | **Data Manager** | Validated editors for inventory years (Scope 2 dual reporting, 15 Scope 3 categories, intensity denominators), certification projects (LEED, IGBC, GRIHA, EDGE, WELL, Fitwel; category scorecards with a LEED v4/v4.1 BD+C template), levers (delivery year, cost per tonne), reporting settings and workspace modules. |
 | **Disclosures** | Report-ready tables for **GHG Protocol, GRI 305, BRSR Principle 6 and IFRS S2**, with previous-year comparatives and an Available / Partial / Missing status on every line. Copy any table straight into Excel or Word. |
@@ -31,7 +32,7 @@ Merge PR #1 into the default branch (`claude/lca-analysis-tool-CQfCB`), then set
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 48 unit tests: pathway, strategy, factor packs, sharing, narratives, workbook reader, portal
+npm test           # 88 unit tests: pathway, strategy, factor packs, sharing, narratives vs official scorecards, workbook reader, sample workbooks, portal
 npm run build      # production build in dist/
 ```
 
@@ -48,6 +49,7 @@ npm run build      # production build in dist/
 ## Honest limits
 
 - The sample portfolio is fictional, and its certification thresholds are placeholders.
+- LEED and GRIHA templates match the official credit lists and maximum points. Option thresholds inside each credit are left as fill-ins, so check them in the reference guide or manual for your project type.
 - Disclosure references map your data to each framework; check them against the version you report under. This is not an assurance review.
 - Data is stored in browser `localStorage`, so use **Export & backup → Download backup** regularly.
 
