@@ -7,6 +7,7 @@ Effects: paper swish, pencil scratch, wooden tock, kalimba chime, soft thump.
 import numpy as np
 
 A4 = 440.0
+BEAT = 60 / 76  # the picture is cut to this grid too
 NOTE = {n: i for i, n in enumerate(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])}
 
 
@@ -53,7 +54,7 @@ def add(buf, i, s):
 def score(total, narration, sr):
     n = int(total * sr)
     m, p = np.zeros(n), np.zeros(n)
-    beat = 60 / 76
+    beat = BEAT
     bar = beat * 4
     chords = [  # bass, pad tones, arpeggio notes
         ("D2", ["D3", "A3", "F#4"], ["D4", "A4", "E5", "F#5", "A4", "E5", "D5", "A4"]),

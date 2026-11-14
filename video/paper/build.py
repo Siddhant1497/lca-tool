@@ -8,6 +8,7 @@
 """
 import argparse
 import json
+import math
 import os
 import subprocess
 import sys
@@ -40,20 +41,21 @@ def main():
 
     t, sents, chunks = 0.7, [], []
     for pi, para in enumerate(proj["narration"]):
+        t = math.ceil(t / sound.BEAT - 1e-6) * sound.BEAT  # every paragraph starts on a beat of the score
         for s in engine.sentences(para):
             a = engine.tts(s, voice, speed)
             d = len(a) / engine.SR
             sents.append({"text": s, "t0": round(t, 3), "t1": round(t + d, 3), "para": pi})
             chunks.append((t, a))
             t += d + 0.26
-        t += 0.55
+        t += 0.3
     total = round(t + proj.get("outro", 4), 2)
     if args.timing:
         for s in sents:
             print(f"{s['t0']:6.2f} {s['t1']:6.2f}  {s['text']}")
         print("total", total)
         return
-    data = {"total": total, "sentences": sents, "size": proj["size"]}
+    data = {"total": total, "sentences": sents, "size": proj["size"], "beat": sound.BEAT}
     dpath = os.path.join(out, "data.json")
     json.dump(data, open(dpath, "w"))
 

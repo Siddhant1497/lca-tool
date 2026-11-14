@@ -26,6 +26,8 @@ const seg = (t, a, b) => clamp((t - a) / (b - a));
 const eo = x => 1 - Math.pow(1 - x, 3);
 const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 const lerp = (a, b, k) => a + (b - a) * k;
+const sp = s => s <= 0 ? 0 : 1 - Math.exp(-8.5 * s) * Math.cos(13 * s);  // closed-form spring: overshoots a hair, then settles
+const snap = (t, div = 1) => Math.round(t / (D.beat / div)) * (D.beat / div);  // nearest beat (or fraction) of the score
 const hash = (a, b = 0) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); };
 const snoise = (x, s) => { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return lerp(hash(i, s), hash(i + 1, s), u); };
 function at(phrase, off = 0) {
@@ -125,9 +127,9 @@ function paperShape(g, path, fill, sh = 8) {
 function rectPath(x, y, w, h, r) { const p = new Path2D(); p.roundRect(x, y, w, h, r); return p; }
 // paper is "set down": it arrives larger with a long shadow, then lands
 function placed(g, t, t0, x, y, rot, fn, out) {
-  const p = seg(t, t0, t0 + .48); if (p <= 0) return false;
-  const e = eo(p), q = out ? eio(seg(t, out, out + .3)) : 0; if (q >= 1) return false;
-  g.save(); g.globalAlpha *= clamp(p * 5) * (1 - q); g.translate(x, y - (1 - e) * 50 - q * 36); g.rotate(rot + (1 - e) * .1); const s = 1 + (1 - e) * .24; g.scale(s, s); fn(7 + (1 - e) * 34); g.restore(); return true;
+  const p = seg(t, t0, t0 + .12); if (p <= 0) return false;
+  const e = sp(t - t0), q = out ? eio(seg(t, out, out + .3)) : 0; if (q >= 1) return false;
+  g.save(); g.globalAlpha *= p * (1 - q); g.translate(x, y - (1 - e) * 50 - q * 36); g.rotate(rot + (1 - e) * .1); const s = 1 + (1 - e) * .24; g.scale(s, s); fn(7 + (1 - e) * 34); g.restore(); return true;
 }
 function tag(g, t, t0, x, y, text, o = {}) {
   const size = o.size || 30, font = o.font || `800 ${size}px Inter`;
@@ -211,19 +213,23 @@ function confetti(g, t, o) {
 function chapter(g, t, t0, num, title, code, color, fg) {
   caps(g, t, t0, 'CHAPTER ' + num, 88, 262);
   inkLine(g, wave(88, 430, 288, 2), eo(seg(t, t0 + .15, t0 + .7)), { w: 4, seed: 3 });
-  headline(g, t, t0 + .12, [{ s: title, size: fit(title, 840, 172) }], 82, 452, {});
-  tag(g, t, t0 + .8, 88, 536, code, { bg: color, fg: fg || P.white, rot: -.018, size: 27, ls: '3px' });
+  headline(g, t, t0 - .1, [{ s: title, size: fit(title, 840, 172) }], 82, 452, {});
+  tag(g, t, t0 + .8, 88, 536, code, { bg: color, fg: fg || P.white, rot: -.018, size: 31, ls: '3px' });
 }
 
 // ───────────── scenes ─────────────
 function sOpen(g, t) {
   plate(g, 'book', cam(t, 0, { z0: 1.24, z1: 1.10, f0: 1.0, f1: .55, dur: 8 })); scrim(g, .74, .4, 900); lightSweep(g, t);
-  caps(g, t, .45, 'A CARBON STORY IN FOUR CHAPTERS', 88, 250, { size: 26, ls: '7px' });
-  headline(g, t, .7, [{ s: 'The Life' }, { s: 'of a', italic: true, w: 500, size: 124, color: P.sand }, { s: 'Building' }], 82, 440, { size: 184, lh: .98 });
-  const c = at('its carbon');
+  const h0 = D.sentences[0].t0, four = at('There are four'), c = at('And carbon');
+  caps(g, t, .25, 'THE LIFE OF A BUILDING', 88, 250, { size: 26, ls: '7px' });
+  headline(g, t, h0 - .35, [{ s: 'Judged on' }, { s: 'one', italic: true, color: P.sand }, { s: 'chapter.' }], 82, 430, { size: 164, lh: .96, out: four - .2 });
+  const o1 = at('one chapter'), q1 = 1 - seg(t, four - .25, four - .05);
+  inkLine(g, ell(230, 545, 190, 96, 1.12, -2.4), eo(seg(t, o1, o1 + .6)) * (q1 > 0 ? 1 : 0), { w: 7, seed: 12, color: P.ochre });
+  note(g, t, at('of its life'), 'just one?', 470, 590, 84, { rot: -.05, color: P.ochre, out: four - .25 });
+  headline(g, t, four, [{ s: 'There' }, { s: 'are four.', italic: true, color: P.sand }], 82, 440, { size: 184, lh: .96 });
   confetti(g, t, { x: 540, y: 1240, spread: 460, t0: c, t1: T.c1 + .4, rate: 10 });
-  note(g, t, at('written into'), 'carbon, in every chapter', 96, 905, 76, { rot: -.03 });
-  inkLine(g, wave(96, 650, 930, 6), eo(seg(t, at('every chapter'), at('every chapter') + .6)), { w: 6, seed: 7, color: P.ochre });
+  note(g, t, at('written into'), 'carbon, in every one', 96, 800, 76, { rot: -.03 });
+  inkLine(g, wave(96, 600, 826, 6), eo(seg(t, at('every one'), at('every one') + .6)), { w: 6, seed: 7, color: P.ochre });
 }
 function sMaterials(g, t) {
   plate(g, 'quarry', cam(t, T.c1, { ph: 1, f1: .5 })); scrim(g); lightSweep(g, t);
@@ -234,12 +240,12 @@ function sMaterials(g, t) {
   const q = eio(seg(t, o, o + .3)); g.save(); g.globalAlpha = 1 - q;
   arrow(g, [330, 690], [420, 660], [470, 740], seg(t, w[0] + .2, w[0] + .7), { w: 5, seed: 11 }); g.restore();
   // 15 % paper dial
-  const s0 = at('Cement and steel'), k = eio(seg(t, at('around fifteen') - .1, at('around fifteen') + 1.1));
+  const s0 = at('Cement and steel'), k = eio(seg(t, T.s15 - 1.1, T.s15));
   placed(g, t, s0, 330, 860, -.03, sh => {
     const disc = new Path2D(); disc.arc(0, 0, 215, 0, 7); paperShape(g, disc, P.white, sh);
     const wd = new Path2D(); wd.moveTo(0, 0); wd.arc(0, 0, 196, -Math.PI / 2, -Math.PI / 2 + 6.283 * .15 * k + .001); wd.closePath(); if (k > 0) paperShape(g, wd, P.terra, 4);
     const hub = new Path2D(); hub.arc(0, 0, 138, 0, 7); paperShape(g, hub, P.paper, 5);
-    g.fillStyle = P.ink; g.textAlign = 'center'; g.font = '900 104px Fraunces'; g.fillText('~' + Math.round(15 * k) + '%', 0, 22); g.font = '700 23px Inter'; g.fillStyle = 'rgba(31,42,36,.75)'; g.fillText('of the world’s CO₂', 0, 66);
+    g.fillStyle = P.ink; g.textAlign = 'center'; g.font = '900 104px Fraunces'; g.fillText('~' + Math.round(15 * k) + '%', 0, 22); g.font = '700 25px Inter'; g.fillStyle = 'rgba(31,42,36,.8)'; g.fillText('of the world’s CO₂', 0, 66);
   });
   tag(g, t, at('produce'), 600, 770, 'cement ≈ 7%', { bg: P.paper, rot: .03, size: 30, chip: P.clay }); tag(g, t, at('produce') + .35, 600, 860, 'steel ≈ 8%', { bg: P.paper, rot: -.025, size: 30, chip: P.ink });
   note(g, t, at('of the world') + .2, 'source: IEA', 610, 950, 44, { rot: -.02 });
@@ -280,7 +286,7 @@ function sLife(g, t) {
   });
   const o = at('Plus every') - .2, f2 = 'italic 700 40px Fraunces';
   tag(g, t, at('cooling'), 92, 690, 'cooling', { rot: -.03, out: o, font: f2, size: 36 }); tag(g, t, at('heating'), 300, 700, 'heating', { rot: .03, out: o + .05, font: f2, size: 36 });
-  tag(g, t, at('lighting'), 92, 790, 'lighting', { rot: .02, out: o + .1, font: f2, size: 36 }); tag(g, t, at('lighting') + .45, 300, 800, 'B6 · OPERATIONAL ENERGY', { bg: P.ochre, rot: -.015, size: 24, ls: '2px', out: o + .15 });
+  tag(g, t, at('lighting'), 92, 790, 'lighting', { rot: .02, out: o + .1, font: f2, size: 36 }); tag(g, t, at('lighting') + .45, 92, 890, 'B6 · OPERATIONAL ENERGY', { bg: P.ochre, rot: -.015, size: 28, ls: '2px', out: o + .15 });
   const r = at('repair'), r2 = at('replacement');
   tag(g, t, r, 92, 700, 'repair · B3', { rot: -.025, font: f2, size: 36 }); tag(g, t, r2, 140, 800, 'replacement · B4', { rot: .02, font: f2, size: 36 });
   note(g, t, at('along the way'), '…again and again', 96, 905, 66, { rot: -.03 });
@@ -315,7 +321,7 @@ function sBook(g, t) {
       g.filter = 'grayscale(1) contrast(.75) brightness(1.12)'; g.drawImage(im, sx, sy, sw, shh, x, y, w, h); g.filter = 'none';
       if (colorK > 0) { g.globalAlpha *= colorK; g.drawImage(im, sx, sy, sw, shh, x, y, w, h); } g.restore();
       g.fillStyle = col; g.font = '900 34px Fraunces'; g.textAlign = 'left'; g.fillText('0' + (i + 1), x, y + h + 62);
-      g.fillStyle = P.ink; g.font = '700 38px Fraunces'; g.fillText(title, x + 56, y + h + 62); g.font = '700 21px Inter'; g.letterSpacing = '2px'; g.fillStyle = 'rgba(31,42,36,.6)'; g.fillText(code, x + 57, y + h + 94); g.letterSpacing = '0px';
+      g.fillStyle = P.ink; g.font = '700 38px Fraunces'; g.fillText(title, x + 56, y + h + 62); g.font = '700 25px Inter'; g.letterSpacing = '2px'; g.fillStyle = 'rgba(31,42,36,.6)'; g.fillText(code, x + 57, y + h + 98); g.letterSpacing = '0px';
     });
   });
   const q = 1 - eio(seg(t, lca - .1, lca + .25)); g.save(); g.globalAlpha = q;
@@ -330,18 +336,18 @@ function sBook(g, t) {
 function sHalf(g, t) {
   g.drawImage(PAGE_FOREST, 0, 0);
   headline(g, t, T.half + .35, [{ s: 'And it matters.', italic: true, w: 700 }], 96, 330, { size: 108, shadow: false, color: P.sand });
-  const b = at('Between now'), hf = at('about half'), bf = at('before anyone'), k = eio(seg(t, hf, hf + 1.1));
+  const b = at('Between now'), hf = at('about half'), bf = at('before anyone'), k = eio(seg(t, T.s50 - 1.1, T.s50));
   inkLine(g, wave(110, 930, 480, 3, 50), eo(seg(t, b, b + .9)), { w: 6, seed: 6, shadow: false });
   for (const [x, lab, d] of [[110, 'now', 0], [930, '2050', .6]]) { inkLine(g, [[x, 462], [x, 500]], seg(t, b + d, b + d + .2), { w: 6, shadow: false }); note(g, t, b + d + .1, lab, x, 440, 56, { align: x > 500 ? 'right' : 'left', shadow: false, rot: -.02 }); }
   if (t > hf - .05) { g.save(); g.globalAlpha = seg(t, hf - .05, hf + .2); g.fillStyle = P.ochre; g.font = '900 262px Fraunces'; g.textAlign = 'center'; g.fillText('~' + Math.round(50 * k) + '%', 490, 830); g.restore(); }
-  caps(g, t, hf + .7, 'OF THE CARBON FROM NEW CONSTRUCTION', 490, 925, { align: 'center', size: 24, ls: '4px', shadow: false, color: 'rgba(251,247,238,.8)' });
+  caps(g, t, hf + .7, 'OF THE CARBON FROM NEW CONSTRUCTION', 490, 925, { align: 'center', size: 28, ls: '3px', shadow: false, color: 'rgba(251,247,238,.8)' });
   const half = (x, col, lab, t0, fg) => placed(g, t, t0, x + 205, 1058, 0, sh => { paperShape(g, rectPath(-205, -48, 410, 96, 8), col, sh); g.fillStyle = fg; g.font = '800 24px Inter'; g.letterSpacing = '3px'; g.textAlign = 'center'; g.fillText(lab, 2, 9); g.letterSpacing = '0px'; });
   half(520, P.moss, 'DECADES OF USE', hf + .5, P.ink); half(110, P.terra, 'BEFORE MOVE-IN', hf + .25, P.white);
   inkLine(g, [[520, 985], [520, 1135]], seg(t, bf, bf + .3), { w: 5, shadow: false, color: P.sand });
   note(g, t, bf + .1, 'opening day', 535, 990, 50, { shadow: false, color: P.sand, rot: -.03 });
   inkLine(g, [[112, 1140], [112, 1168], [518, 1168], [518, 1140]], eo(seg(t, bf + .5, bf + 1.1)), { w: 5, shadow: false });
   tag(g, t, bf + .9, 315, 1232, 'UPFRONT CARBON · A1–A5', { ax: .5, size: 27, ls: '3px', rot: -.012 });
-  caps(g, t, bf + 1.4, 'SOURCE: WORLDGBC, BRINGING EMBODIED CARBON UPFRONT (2019)', 110, 1318, { size: 17, ls: '2px', shadow: false, color: 'rgba(251,247,238,.6)' });
+  caps(g, t, bf + 1.4, 'SOURCE: WORLDGBC, 2019 · BRINGING EMBODIED CARBON UPFRONT', 110, 1322, { size: 22, ls: '1px', shadow: false, color: 'rgba(251,247,238,.6)' });
 }
 function sFinal(g, t) {
   plate(g, 'city', cam(t, T.fin, { ph: 5, f1: .5, sat: 1.1, dur: 10 })); scrim(g, .74, .45, 980); lightSweep(g, t);
@@ -369,10 +375,10 @@ function sEndCard(g, t) {
 const TABS = [['A1–3', P.ochre, 1], ['A4–5', P.terra, 0], ['B', P.moss, 1], ['C', P.clay, 0], ['D', P.forest, 0]];
 let TABON = [];
 function tabs(g, t) {
-  if (t < T.c1 || t > T.end + .5) return;
+  if (t < T.tabs || t > T.end + .5) return;
   TABS.forEach(([lab, col, dark], i) => {
-    const p = eo(seg(t, T.c1 + .5 + i * .08, T.c1 + 1 + i * .08)) * (1 - eio(seg(t, T.end - .2 + i * .04, T.end + .2 + i * .04))); if (p <= 0) return;
-    let a = 0; for (const [s, e] of TABON[i]) a = Math.max(a, eo(seg(t, s, s + .35)) * (1 - eio(seg(t, e, e + .35))));
+    const p = Math.min(1.06, sp(t - T.tabs - i * D.beat / 4)) * (1 - eio(seg(t, T.end - .2 + i * .04, T.end + .2 + i * .04))); if (p <= 0) return;
+    let a = 0; for (const [s, e] of TABON[i]) a = Math.max(a, sp(t - s) * (1 - eio(seg(t, e, e + .35))));
     const vis = 74 + 44 * a, x = W - FB - vis + (1 - p) * 170, y = 640 + i * 108;
     paperShape(g, rectPath(x, y, 220, 90, 14), P.white, 6);
     if (a > 0) { g.save(); g.globalAlpha = a; g.fillStyle = col; g.fill(rectPath(x, y, 220, 90, 14)); g.restore(); }
@@ -413,7 +419,7 @@ const TR0 = .38, TR1 = .5;  // a tear starts this long before a scene's start ti
 function build() {
   T.k1 = at('Chapter one'); T.k2 = at('Chapter two'); T.k3 = at('Chapter three: life'); T.k4 = at('Chapter four');
   T.c1 = T.k1 - .3; T.c2 = T.k2 - .3; T.c3 = T.k3 - .3; T.c4 = T.k4 - .3; T.reuse = at('Or, a second life') - .25; T.book = at('Many green claims') - .35; T.half = at('And it matters') - .35;
-  T.fin = at('So when you hear') - .35; T.end = at('Which chapters did they count') + 3.1;
+  T.fin = at('So when you hear') - .35; T.tabs = at('There are four'); T.s15 = snap(at('around fifteen') + 1.0, 2); T.s50 = snap(at('about half') + 1.0, 2); T.end = at('Which chapters did they count') + 3.1;
   S = [{ t0: -9, draw: sOpen }, { t0: T.c1, draw: sMaterials }, { t0: T.c2, draw: sConstruction }, { t0: T.c3, draw: sLife }, { t0: T.c4, draw: sEnd }, { t0: T.reuse, draw: sReuse },
     { t0: T.book, draw: sBook }, { t0: T.half, draw: sHalf }, { t0: T.fin, draw: sFinal }, { t0: T.end, draw: sEndCard, dir: 'up' }];
   const whole = at('the whole book'), bf = at('before anyone'), w = at('Which chapters');
@@ -422,14 +428,14 @@ function build() {
   buildCaps();
   const E = (t, kind, dur) => EV.push(dur ? { t, kind, dur } : { t, kind });
   S.slice(1).forEach(s => E(s.t0 - TR0 + .05, 'paper'));
-  for (const k of [T.k1, T.k2, T.k3, T.k4]) { E(k + .12, 'thump'); E(k + .8, 'tock'); }
-  E(.7, 'thump'); E(at('written into'), 'scratch', .6);
+  for (const k of [T.k1, T.k2, T.k3, T.k4]) { E(k, 'thump'); E(k + .8, 'tock'); }
+  E(D.sentences[0].t0, 'thump'); E(T.tabs, 'thump'); for (let i = 0; i < 5; i++) E(T.tabs + i * D.beat / 4, 'tock'); E(at('written into'), 'scratch', .6); E(at('one chapter'), 'scratch', .6); E(at('of its life'), 'scratch', .4);
   for (const p of ['quarried', 'crushed', 'baked']) E(at(p), 'scratch', .45);
-  E(at('Cement and steel'), 'tock'); E(at('around fifteen') + 1.0, 'chime'); E(at('produce'), 'tock'); E(at('produce') + .35, 'tock');
+  E(at('Cement and steel'), 'tock'); E(T.s15, 'chime'); E(at('produce'), 'tock'); E(at('produce') + .35, 'tock');
   for (const p of ['Trucks', 'cranes', 'and waste', 'cooling', 'heating', 'lighting', 'repair', 'replacement', 'Demolition', 'and landfill', 'through reuse', 'A life cycle']) E(at(p), 'tock');
   E(at('By opening day') + .05, 'thump'); E(at('already in the air'), 'scratch', .7); E(at('already in the air') + .9, 'tock');
   E(at('read only'), 'scratch', .7); for (let i = 0; i < 4; i++) E(whole - .5 + i * .3, 'scratch', .3); E(whole + .5, 'chime');
-  E(at('Between now'), 'scratch', .8); E(at('about half') + 1.0, 'chime'); E(at('about half') + .25, 'tock'); E(at('about half') + .5, 'tock'); E(bf + .9, 'tock');
+  E(at('Between now'), 'scratch', .8); E(T.s50, 'chime'); E(at('about half') + .25, 'tock'); E(at('about half') + .5, 'tock'); E(bf + .9, 'tock');
   E(at('ask one thing'), 'scratch', .5); E(w, 'thump'); for (let i = 0; i < 5; i++) E(w + .5 + i * .2, 'tock'); E(T.end + .5, 'thump'); for (let i = 0; i < 5; i++) E(T.end + 1.25 + i * .14, 'tock');
   EV.sort((a, b) => a.t - b.t);
 }
