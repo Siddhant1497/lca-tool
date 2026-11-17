@@ -132,7 +132,8 @@
       "align": "left",
       "y": 960,
       "size": 200,
-      "at": "two thousand times"
+      "at": "two thousand times",
+      "color": "white"
      },
      {
       "type": "tag",
@@ -229,7 +230,8 @@
       "align": "left",
       "y": 930,
       "size": 200,
-      "at": "three to four"
+      "at": "three to four",
+      "color": "white"
      },
      {
       "type": "tag",

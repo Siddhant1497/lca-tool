@@ -87,7 +87,10 @@
       "title": "OPERATIONAL",
       "body": "energy used\nevery day\n(B6)",
       "color": "ochre",
-      "at": "Operational"
+      "at": [
+       "Net zero what",
+       0.8
+      ]
      },
      {
       "type": "card",
@@ -98,7 +101,10 @@
       "title": "EMBODIED",
       "body": "materials and\nconstruction\n(A1–A5)",
       "color": "terra",
-      "at": "or embodied"
+      "at": [
+       "Operational",
+       0.35
+      ]
      }
     ]
    },

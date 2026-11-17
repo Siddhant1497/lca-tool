@@ -217,6 +217,25 @@
       "size": 150
      },
      {
+      "type": "tag",
+      "text": "the carbon of building new",
+      "y": 660,
+      "at": "biggest blind spots",
+      "out": [
+       "A major US study",
+       -0.1
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "A MAJOR US STUDY",
+      "y": 660,
+      "style": "caps",
+      "size": 28,
+      "bg": "sand",
+      "at": "A major US study"
+     },
+     {
       "type": "big",
       "text": "10–80",
       "x": 90,
