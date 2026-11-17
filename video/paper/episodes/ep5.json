@@ -64,12 +64,21 @@
       "type": "head",
       "lines": [
        {
-        "s": "LEED",
-        "c": "ochre"
+        "s": "LEED"
        }
       ],
       "size": 210,
       "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "1 OF 4 · BY USGBC",
+      "y": 560,
+      "style": "caps",
+      "size": 26,
+      "bg": "ochre",
+      "fg": "ink",
+      "at": 0.5
      },
      {
       "type": "check",
@@ -112,12 +121,21 @@
       "type": "head",
       "lines": [
        {
-        "s": "EDGE",
-        "c": "moss"
+        "s": "EDGE"
        }
       ],
       "size": 210,
       "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "2 OF 4 · BY IFC",
+      "y": 560,
+      "style": "caps",
+      "size": 26,
+      "bg": "moss",
+      "fg": "ink",
+      "at": 0.5
      },
      {
       "type": "check",
@@ -161,12 +179,21 @@
       "type": "head",
       "lines": [
        {
-        "s": "IGBC",
-        "c": "terra"
+        "s": "IGBC"
        }
       ],
       "size": 210,
       "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "3 OF 4 · BY CII",
+      "y": 560,
+      "style": "caps",
+      "size": 26,
+      "bg": "terra",
+      "fg": "white",
+      "at": 0.5
      },
      {
       "type": "check",
@@ -204,12 +231,21 @@
       "type": "head",
       "lines": [
        {
-        "s": "GRIHA",
-        "c": "sand"
+        "s": "GRIHA"
        }
       ],
       "size": 210,
       "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "4 OF 4 · BY TERI",
+      "y": 560,
+      "style": "caps",
+      "size": 26,
+      "bg": "sand",
+      "fg": "ink",
+      "at": 0.5
      },
      {
       "type": "check",
