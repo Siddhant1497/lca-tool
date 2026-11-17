@@ -1,0 +1,123 @@
+{
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {
+      "name": "ep1_cut",
+      "seed": 100,
+      "prompt": "a cutaway cross-section of a finished modern building showing grey concrete foundations, columns and steel reinforcement bars beneath a tidy lobby floor, soil layers below"
+    },
+    {
+      "name": "ep1_solar",
+      "seed": 107,
+      "prompt": "a flat building rooftop covered with rows of solar panels, a vintage camera on a tripod pointing at them, a forgotten stack of papers on the parapet"
+    },
+    {
+      "name": "ep1_timber",
+      "seed": 114,
+      "prompt": "a mass timber building under construction, stacked cross laminated timber panels and glulam beams, a small crane, the timber frame rising"
+    },
+    {
+      "name": "ep1_lobby",
+      "seed": 121,
+      "prompt": "a calm finished building lobby interior with tall windows, indoor plants, a polished grey concrete floor and a reception desk"
+    },
+    {
+      "name": "ep2_tower",
+      "seed": 128,
+      "prompt": "a sleek modern glass office tower with a rooftop solar array and a small wind turbine, surrounded by trees"
+    },
+    {
+      "name": "ep2_scale",
+      "seed": 135,
+      "prompt": "a large old-fashioned balance scale, one pan holding a single small solar panel, the other pan weighed down low by heavy concrete blocks, steel beams and glass panes"
+    },
+    {
+      "name": "ep2_car",
+      "seed": 142,
+      "prompt": "a small shiny car on a winding road through rolling hills, a car factory with chimneys in the distance"
+    },
+    {
+      "name": "ep2_shelf",
+      "seed": 149,
+      "prompt": "a grocery store shelf of colourful cereal boxes, one box turned around to show its ingredients panel"
+    },
+    {
+      "name": "ep3_old",
+      "seed": 156,
+      "prompt": "a charming modest 1980s brick office building with ivy on the walls and old trees, sturdy and well kept"
+    },
+    {
+      "name": "ep3_new",
+      "seed": 163,
+      "prompt": "a gleaming brand new glass office tower with a solar panel roof and a sleek glass facade, a freshly landscaped plaza"
+    },
+    {
+      "name": "ep3_retrofit",
+      "seed": 170,
+      "prompt": "an old brick office building being renovated with scaffolding, new insulated facade panels and new windows being fitted, a green roof"
+    },
+    {
+      "name": "ep4_ac",
+      "seed": 177,
+      "prompt": "an outdoor air conditioner unit mounted on the wall of a small house at dusk, long shadows"
+    },
+    {
+      "name": "ep4_pipes",
+      "seed": 184,
+      "prompt": "a cutaway air conditioner unit revealing coiled copper refrigerant pipes and a compressor, a faint wisp escaping from one joint"
+    },
+    {
+      "name": "ep4_heatpump",
+      "seed": 191,
+      "prompt": "a modern heat pump unit beside a cosy house in winter snow, warm glowing windows, pine trees"
+    },
+    {
+      "name": "ep5_street",
+      "seed": 198,
+      "prompt": "a lively night street food market lane with paper stalls, hanging lanterns, steaming cooking pots and string lights, no people"
+    },
+    {
+      "name": "ep5_leed",
+      "seed": 205,
+      "prompt": "a famous food stall with a long row of waiting empty stools, a tall international city skyline behind it at dusk"
+    },
+    {
+      "name": "ep5_edge",
+      "seed": 212,
+      "prompt": "efficient affordable housing blocks in a fast growing city, a small food cart in front, warm evening light"
+    },
+    {
+      "name": "ep5_igbc",
+      "seed": 219,
+      "prompt": "a modern Indian apartment complex with balconies, palm trees and a courtyard garden, a small tea stall at the gate"
+    },
+    {
+      "name": "ep5_griha",
+      "seed": 226,
+      "prompt": "a dignified Indian government building with stone jaali screens, deep shaded verandas and a lawn, a modest snack stall nearby"
+    },
+    {
+      "name": "ep6_clip",
+      "seed": 233,
+      "prompt": "a clipboard with a checklist and a pencil resting on rolled architectural drawings on a wooden desk"
+    },
+    {
+      "name": "ep6_plans",
+      "seed": 240,
+      "prompt": "architectural blueprint drawings spread open beside a finished scale model of the same building"
+    },
+    {
+      "name": "ep6_ceiling",
+      "seed": 247,
+      "prompt": "looking up at an office ceiling with grid tiles and light fittings, one empty round hole where a sensor should be"
+    },
+    {
+      "name": "ep6_done",
+      "seed": 254,
+      "prompt": "a finished modern green building with planted terraces, solar shading and trees at golden hour"
+    }
+  ]
+}

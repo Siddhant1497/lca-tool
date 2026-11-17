@@ -1,0 +1,182 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Paper Earth episode engine: draws any episode from a JSON spec (paper/episodes/epN.json). -->
+<style>
+@font-face{font-family:Fraunces;font-weight:500;src:url(fonts/fraunces-latin-500-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:600;src:url(fonts/fraunces-latin-600-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:700;src:url(fonts/fraunces-latin-700-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:900;src:url(fonts/fraunces-latin-900-normal.woff2)}
+@font-face{font-family:Fraunces;font-weight:500;font-style:italic;src:url(fonts/fraunces-latin-500-italic.woff2)}
+@font-face{font-family:Fraunces;font-weight:700;font-style:italic;src:url(fonts/fraunces-latin-700-italic.woff2)}
+@font-face{font-family:Fraunces;font-weight:900;font-style:italic;src:url(fonts/fraunces-latin-900-italic.woff2)}
+@font-face{font-family:Caveat;font-weight:500;src:url(fonts/caveat-latin-500-normal.woff2)}
+@font-face{font-family:Caveat;font-weight:700;src:url(fonts/caveat-latin-700-normal.woff2)}
+html,body{margin:0;background:#111}canvas{display:block}
+</style></head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script src="kit.js"></script>
+<script>
+// ───────────── episode interpreter ─────────────
+// A spec has scenes; each scene has a backdrop (a paper diorama plate, or a cream/forest page) and items.
+// Item times are a narration phrase, [phrase, offset], or seconds after the scene starts.
+const COL = c => P[c] || c || P.white;
+const EPC = ['ochre', 'terra', 'clay', 'moss', 'forest', 'ink'];
+let SPEC, SC = [], RUNS = [];
+const TR0 = .38, TR1 = .5;
+function tt(v, sc) { if (v === undefined || v === null) return undefined; if (typeof v === 'number') return sc.t0c + v; if (Array.isArray(v)) return at(v[0], v[1] || 0); return at(v); }
+function fade(g, t, o, fn) { const q = o ? eio(seg(t, o, o + .3)) : 0; if (q >= 1) return; g.save(); g.globalAlpha *= 1 - q; fn(); g.restore(); }
+const fmt = v => Math.round(v).toLocaleString('en-US');
+
+function drawItem(g, t, it, sc, i) {
+  const flat = !!sc.page, dark = sc.page === 'cream', T0 = it.t, O = it.o;
+  if (t < T0 - .05) return;
+  switch (it.type) {
+    case 'kicker': caps(g, t, T0, it.text, it.x ?? 88, it.y ?? 262, { out: O, color: dark ? P.forest : COL(it.color || 'white'), shadow: !flat, size: it.size || 26, ls: '7px' }); break;
+    case 'head': headline(g, t, T0, it.lines, it.x ?? 82, it.y ?? 440, { lh: it.lh ?? .96, out: O, shadow: !flat, color: dark ? P.forest : P.white, align: it.align, stagger: it.stagger }); break;
+    case 'tag': { const st = it.style || 'serif', size = it.size || (st === 'caps' ? 28 : 36);
+      tag(g, t, T0, it.x ?? 92, it.y, it.text, { bg: COL(it.bg || 'white'), fg: COL(it.fg || 'ink'), rot: it.rot ?? (hash(i, sc.i) - .5) * .06, size, out: O, ax: it.ax, chip: it.chip && COL(it.chip),
+        font: st === 'serif' ? `italic 700 ${size + 4}px Fraunces` : `800 ${size}px Inter`, ls: st === 'caps' ? '3px' : '0px' }); break; }
+    case 'note': note(g, t, T0, it.text, it.x ?? 96, it.y, it.size || 70, { rot: it.rot ?? -.035, color: COL(it.color || (dark ? 'terra' : 'white')), shadow: !flat, align: it.align, out: O }); break;
+    case 'wave': fade(g, t, O, () => inkLine(g, wave(it.x0, it.x1, it.y, it.amp ?? 6), eo(seg(t, T0, T0 + .6)), { w: it.w || 6, seed: i + 3, color: COL(it.color || 'ochre'), shadow: !flat })); break;
+    case 'circle': fade(g, t, O, () => inkLine(g, ell(it.x, it.y, it.rx, it.ry, 1.12, it.a0 ?? -2.3), eo(seg(t, T0, T0 + .7)), { w: it.w || 7, seed: i + 5, color: COL(it.color || 'ochre'), shadow: !flat })); break;
+    case 'line': fade(g, t, O, () => inkLine(g, it.pts, eo(seg(t, T0, T0 + (it.dur || .5))), { w: it.w || 6, seed: i + 7, color: COL(it.color || (dark ? 'ink' : 'white')), shadow: !flat })); break;
+    case 'arrow': fade(g, t, O, () => arrow(g, it.from, it.via, it.to, seg(t, T0, T0 + .6), { w: it.w || 6, seed: i + 9, color: COL(it.color || (dark ? 'ink' : 'white')), shadow: !flat, head: it.head || 26 })); break;
+    case 'dial': { const k = eio(seg(t, it.land - 1.1, it.land)), r = it.r || 215;
+      fade(g, t, O, () => placed(g, t, T0, it.x, it.y, it.rot ?? -.03, sh => {
+        const disc = new Path2D(); disc.arc(0, 0, r, 0, 7); paperShape(g, disc, P.white, sh);
+        const wd = new Path2D(); wd.moveTo(0, 0); wd.arc(0, 0, r * .91, -Math.PI / 2, -Math.PI / 2 + 6.283 * (it.frac ?? it.value / 100) * k + .001); wd.closePath(); if (k > 0) paperShape(g, wd, COL(it.color || 'terra'), 4);
+        const hub = new Path2D(); hub.arc(0, 0, r * .64, 0, 7); paperShape(g, hub, P.paper, 5);
+        g.fillStyle = P.ink; g.textAlign = 'center'; g.font = `900 ${Math.round(r * .48)}px Fraunces`; g.fillText((it.prefix ?? '~') + fmt(it.value * k) + (it.suffix ?? '%'), 0, r * .1);
+        g.font = `700 ${Math.round(r * .118)}px Inter`; g.fillStyle = 'rgba(31,42,36,.8)'; g.fillText(it.label || '', 0, r * .31);
+      })); break; }
+    case 'big': { const k = it.value !== undefined ? eio(seg(t, it.land - 1.1, it.land)) : 1, s = it.value !== undefined ? (it.prefix || '') + fmt(it.value * k) + (it.suffix || '') : it.text;
+      headline(g, t, T0, [{ s, size: it.size || 260, color: COL(it.color || 'ochre'), italic: it.italic }], it.x ?? 540, it.y, { align: it.align || 'center', shadow: !flat, out: O }); break; }
+    case 'ribbon': placed(g, t, T0, it.x ?? 520, it.y, it.rot ?? -.04, sh => {
+      g.font = `900 ${it.size || 64}px Fraunces`; g.letterSpacing = '5px'; const w = g.measureText(it.text).width + 150, h = (it.size || 64) * 1.8;
+      const p = new Path2D(); p.moveTo(-w / 2, -h / 2); p.lineTo(w / 2, -h / 2); p.lineTo(w / 2 - 44, 0); p.lineTo(w / 2, h / 2); p.lineTo(-w / 2, h / 2); p.lineTo(-w / 2 + 44, 0); p.closePath();
+      paperShape(g, p, COL(it.color || 'terra'), sh); g.fillStyle = P.white; g.textAlign = 'center'; g.fillText(it.text, 3, (it.size || 64) * .36); g.letterSpacing = '0px';
+    }, O); break;
+    case 'confetti': confetti(g, t, { x: it.x ?? 540, y: it.y ?? 1200, spread: it.spread ?? 600, t0: T0, t1: it.until !== undefined ? tt(it.until, sc) : sc.t1 + .4, rate: it.rate ?? 9, speed: it.speed ?? 140 }); break;
+    case 'check': it.rows.forEach((r, j) => {
+      const rt = r.t, y = (it.y ?? 700) + j * (it.gap ?? 100), x = it.x ?? 92, mark = r.mark || it.mark || 'check';
+      if (t < rt) return;
+      fade(g, t, O, () => {
+        placed(g, t, rt, x + 34, y, 0, sh => { const d = new Path2D(); d.arc(0, 0, 34, 0, 7); paperShape(g, d, mark === 'cross' ? P.terra : P.forest, sh); });
+        const pk = seg(t, rt + .25, rt + .6), mc = P.white;
+        if (mark === 'cross') { inkLine(g, [[x + 22, y - 12], [x + 46, y + 12]], pk, { w: 6, color: mc, shadow: false }); inkLine(g, [[x + 46, y - 12], [x + 22, y + 12]], seg(t, rt + .45, rt + .75), { w: 6, color: mc, shadow: false }); }
+        else inkLine(g, [[x + 19, y + 1], [x + 30, y + 13], [x + 50, y - 13]], pk, { w: 6, color: mc, shadow: false });
+        tag(g, t, rt + .06, x + 86, y, r.text, { bg: COL(r.bg || it.bg || 'white'), fg: COL(r.fg || 'ink'), rot: (hash(j, sc.i + 4) - .5) * .03, size: it.size || 34, font: `${it.serif === false ? '' : 'italic '}700 ${(it.size || 34) + (it.serif === false ? 0 : 4)}px ${it.serif === false ? 'Inter' : 'Fraunces'}` });
+      }); }); break;
+    case 'bars': it.rows.forEach((r, j) => {
+      const rt = r.t, y = (it.y ?? 700) + j * (it.gap ?? 150), x = it.x ?? 92, W2 = (it.w ?? 760) * r.value / it.max, k = Math.max(0, Math.min(1.04, sp(t - rt - .1)));
+      if (t < rt) return;
+      fade(g, t, O, () => {
+        caps(g, t, rt, r.label, x, y - 22, { size: 24, ls: '3px', shadow: !flat, color: dark ? P.ink : P.white });
+        if (k > 0) paperShape(g, rectPath(x, y, Math.max(8, W2 * k), 70, 8), COL(r.color || 'terra'), 7);
+        g.save(); g.globalAlpha *= seg(t, rt + .3, rt + .6); g.font = '900 52px Fraunces'; g.fillStyle = dark ? P.ink : P.white; g.textAlign = 'left'; if (!flat) { g.shadowColor = 'rgba(8,22,15,.6)'; g.shadowBlur = 12; }
+        g.fillText(r.text, x + W2 * k + 22, y + 54); g.restore();
+      }); }); break;
+    case 'card': placed(g, t, T0, it.x, it.y, it.rot ?? (hash(i, sc.i) - .5) * .04, sh => {
+      const w = it.w || 440, h = it.h || 300; paperShape(g, rectPath(-w / 2, -h / 2, w, h, 14), P.white, sh);
+      g.save(); g.clip(rectPath(-w / 2, -h / 2, w, h, 14)); g.fillStyle = COL(it.color || 'terra'); g.fillRect(-w / 2, -h / 2, w, 76); g.restore();
+      g.fillStyle = it.color === 'ochre' || it.color === 'sand' ? P.ink : P.white; g.font = '800 28px Inter'; g.letterSpacing = '4px'; g.textAlign = 'center'; g.fillText(it.title, 2, -h / 2 + 50); g.letterSpacing = '0px';
+      g.fillStyle = P.ink; g.font = `600 ${it.bodySize || 38}px Fraunces`; (it.body || '').split('\n').forEach((ln, j) => g.fillText(ln, 0, -h / 2 + 140 + j * (it.bodySize || 38) * 1.25));
+    }, O); break;
+  }
+}
+
+function backdrop(g, t, sc) {
+  if (sc.page) { g.drawImage(sc.page === 'forest' ? PAGE_FOREST : PAGE_CREAM, 0, 0); return; }
+  plate(g, sc.plate, cam(t, sc.t0c, Object.assign({ ph: sc.i * 1.37, f1: .5 }, sc.cam || {})));
+  const s = sc.scrim || [.7, .45, 720]; scrim(g, s[0], s[1], s[2]); lightSweep(g, t);
+}
+function drawScene(g, t, sc) { backdrop(g, t, sc); sc.items.forEach((it, i) => drawItem(g, t, it, sc, i)); }
+
+function endCard(g, t) {
+  g.drawImage(PAGE_CREAM, 0, 0); const t0 = T.end + .35, n = SPEC.ep, list = D.series || [];
+  caps(g, t, t0, "THE CARBON YOU CAN'T SEE", 96, 262, { color: P.forest, shadow: false, size: 26, ls: '7px' });
+  const lines = n < list.length ? [{ s: 'Next:', italic: true, w: 700, size: 96, color: P.terra }, ...SPEC.nextLines] : [{ s: 'That’s the' }, { s: 'series.', italic: true, color: P.terra }];
+  headline(g, t, t0 + .1, lines, 90, 430, { size: 150, lh: 1.0, shadow: false, color: P.forest });
+  const y0 = 1000;
+  list.forEach((title, i) => placed(g, t, t0 + .8 + i * D.beat / 4, 96, y0 + i * 88, (hash(i, 50) - .5) * .02, sh => {
+    const isNext = i === n || (n >= list.length && i === 0);
+    paperShape(g, rectPath(0, -34, 72, 68, 8), i === n - 1 ? P.forest : isNext ? P.terra : P.white, sh);
+    g.fillStyle = i === n - 1 || isNext ? P.white : P.ink; g.font = '900 36px Fraunces'; g.textAlign = 'center'; g.fillText(String(i + 1), 36, 13);
+    g.fillStyle = isNext ? P.terra : P.ink; g.globalAlpha *= i === n - 1 ? .55 : 1; g.font = `${isNext ? 'italic 700' : '600'} 40px Fraunces`; g.textAlign = 'left'; g.fillText(title, 100, 14);
+  }));
+  const nt = n < list.length ? n : 0;
+  note(g, t, t0 + 2.2, n < list.length ? '← up next' : '← start again', 760, y0 + nt * 88 + 14, 50, { color: P.terra, shadow: false, rot: -.03 });
+  tag(g, t, t0 + 2.6, 540, 1640, 'FOLLOW THE SERIES', { ax: .5, bg: P.forest, fg: P.white, size: 30, ls: '5px', font: '800 30px Inter' });
+}
+function epTabs(g, t) {
+  if (t < T.tabs || t > T.end + .5) return; const n = (D.series || []).length || 6;
+  for (let i = 0; i < n; i++) {
+    const p = Math.min(1.06, sp(t - T.tabs - i * D.beat / 4)) * (1 - eio(seg(t, T.end - .2 + i * .04, T.end + .2 + i * .04))); if (p <= 0) continue;
+    const on = i === SPEC.ep - 1, vis = on ? 112 : 70, x = W - FB - vis + (1 - p) * 170, y = 700 + i * 96;
+    paperShape(g, rectPath(x, y, 220, 80, 14), on ? COL(EPC[i]) : P.white, 6);
+    g.fillStyle = on && EPC[i] !== 'ochre' ? P.white : P.ink; g.font = `${on ? 900 : 700} ${on ? 30 : 30}px ${on ? 'Fraunces' : 'Inter'}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(on ? 'EP ' + (i + 1) : String(i + 1), x + vis / 2 + 3, y + 42); g.textBaseline = 'alphabetic';
+  }
+}
+function badge(g, t) {
+  if (t > T.end - .2) return;
+  tag(g, t, .1, 92, 150, "THE CARBON YOU CAN'T SEE · EP " + SPEC.ep, { bg: 'rgba(251,247,238,.94)', fg: P.ink, size: 21, ls: '3px', font: '800 21px Inter', rot: -.01, chip: COL(EPC[SPEC.ep - 1]), padY: 26 });
+}
+function speakers(g, t) {
+  for (const r of RUNS) { const nm = (SPEC.names || {})[r.who]; if (!nm) continue;
+    tag(g, t, r.t0 - .15, 540, 1340, nm.label, { ax: .5, bg: COL(nm.color || 'forest'), fg: P.white, size: 26, ls: '4px', font: '800 26px Inter', rot: (r.who.length % 2 ? -1 : 1) * .02, out: r.t1 + .1 }); }
+}
+
+function build() {
+  SPEC = D.spec; const sents = D.sentences, last = sents[sents.length - 1];
+  T.end = last.t1 + .7;
+  SC = SPEC.scenes.map((s, i) => Object.assign({}, s, { i }));
+  SC.forEach((sc, i) => { sc.t0 = i === 0 ? -9 : at(sc.at) - .3; sc.t0c = i === 0 ? 0 : sc.t0; });
+  SC.forEach((sc, i) => { sc.t1 = i + 1 < SC.length ? SC[i + 1].t0 : T.end; });
+  T.tabs = SPEC.tabsAt ? at(SPEC.tabsAt) : 1.2;
+  const E = (t, kind, dur) => EV.push(dur ? { t, kind, dur } : { t, kind });
+  SC.forEach((sc, i) => {
+    if (i) E(sc.t0 - TR0 + .05, 'paper');
+    sc.items.forEach(it => {
+      it.t = tt(it.at, sc) ?? (sc.t0c + .25); it.o = tt(it.out, sc);
+      if (it.rows) it.rows.forEach((r, j) => { r.t = tt(r.at, sc) ?? it.t + j * .4; });
+      if (it.type === 'head' || it.type === 'big') it.lines = it.lines && it.lines.map(l => typeof l === 'string' ? { s: l } : { s: l.s, italic: !!l.i, color: l.c && COL(l.c), w: l.w, size: l.size });
+      if (it.type === 'head') { const base = it.size || 168; it.lines.forEach(l => { l.size = l.size || fit(l.s, it.maxW || 900, base, `${l.italic ? 'italic ' : ''}900`); }); }
+      if (it.value !== undefined) { it.land = snap(it.t + (it.count ?? 1.0), 2); E(it.land, 'chime'); }
+      const k = it.type;
+      if (k === 'tag' || k === 'card') E(it.t, 'tock'); else if (k === 'ribbon') E(it.t, 'thump');
+      else if (['note', 'wave', 'circle', 'line', 'arrow'].includes(k)) E(it.t, 'scratch', k === 'note' ? .5 : .4);
+      else if (k === 'head' && it.thump) E(it.t, 'thump');
+      if (it.rows) it.rows.forEach(r => { E(r.t, 'tock'); E(r.t + .25, 'scratch', .3); });
+    });
+  });
+  SPEC.nextLines = (SPEC.next || '').split('|').map((s, j) => ({ s, size: fit(s, 880, 130, '900'), italic: j % 2 === 1, color: j % 2 ? P.terra : undefined }));
+  E(SC[0].items.find(x => x.type === 'head')?.t ?? .5, 'thump'); E(T.tabs, 'tock');
+  E(T.end - TR0 + .05, 'paper'); E(T.end + .45, 'thump'); for (let i = 0; i < 6; i++) E(T.end + 1.15 + i * D.beat / 4, 'tock'); E(T.end + 2.6, 'tock');
+  RUNS = []; for (const s of sents) { if (!s.speaker) continue; const r = RUNS[RUNS.length - 1]; if (r && r.who === s.speaker && s.t0 - r.t1 < .8) r.t1 = s.t1; else RUNS.push({ who: s.speaker, t0: s.t0, t1: s.t1 }); }
+  RUNS.forEach(r => E(r.t0 - .15, 'tock'));
+  S = [...SC.map(sc => ({ t0: sc.t0, draw: (g, t) => drawScene(g, t, sc) })), { t0: T.end, draw: endCard, dir: 'up' }];
+  buildCaps(); EV.sort((a, b) => a.t - b.t);
+}
+window.setData = d => { D = d; };
+window.loadAssets = async () => {
+  await Promise.all(['900 40px Fraunces', '700 40px Fraunces', '600 40px Fraunces', '500 40px Fraunces', 'italic 900 40px Fraunces', 'italic 700 40px Fraunces', 'italic 500 40px Fraunces', '700 40px Caveat', '500 40px Caveat'].map(f => document.fonts.load(f)));
+  const load = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => { console.warn('missing ' + src); res(null); }; im.src = src; });
+  glInit();
+  const flat = document.createElement('canvas'); flat.width = flat.height = 2; flat.getContext('2d').fillStyle = '#808080'; flat.getContext('2d').fillRect(0, 0, 2, 2);
+  for (const n of new Set(D.spec.scenes.filter(s => s.plate).map(s => s.plate))) { IMG[n] = (await load(`gen/${n}.jpg`)) || flat; /* a missing plate renders flat grey instead of failing */ const d = await load(`gen/${n}_d.png`); TEX[n] = { c: tex(IMG[n], true), d: tex(d || flat, false) }; }
+  PAGE_CREAM = makePage(P.paper, '120,95,60', '150,110,60'); PAGE_FOREST = makePage('#1C4234', '230,240,220', '255,255,255'); GRAIN = makeGrain();
+  const tile = document.createElement('canvas'); tile.width = tile.height = 256; tile.getContext('2d').drawImage(PAGE_CREAM, 300, 300, 256, 256, 0, 0, 256, 256); PAT = ctx.createPattern(tile, 'repeat');
+  FRAME = makeFrame(); OFF = document.createElement('canvas'); OFF.width = W; OFF.height = H; OG = OFF.getContext('2d');
+  build();
+};
+window.events = () => EV;
+window.render = t => {
+  NOW = t; let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].t0 - TR0) i = k;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  const p = i > 0 ? seg(t, S[i].t0 - TR0, S[i].t0 + TR1) : 1;
+  if (p < 1) { S[i - 1].draw(ctx, t); OG.setTransform(1, 0, 0, 1, 0, 0); OG.globalAlpha = 1; S[i].draw(OG, t); tear(ctx, OFF, p, S[i].dir, i * 7.3); } else S[i].draw(ctx, t);
+  badge(ctx, t); epTabs(ctx, t); ctx.drawImage(FRAME, 0, 0); speakers(ctx, t); captions(ctx, t);
+  ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .10; const j = Math.floor(t * 12); ctx.drawImage(GRAIN, -hash(j, 1) * 40, -hash(j, 2) * 40, W + 40, H + 40); ctx.restore();
+  const vg = ctx.createRadialGradient(W / 2, H * .46, H * .32, W / 2, H * .5, H * .78); vg.addColorStop(0, 'rgba(20,14,6,0)'); vg.addColorStop(1, 'rgba(20,14,6,.26)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+};
+</script></body></html>

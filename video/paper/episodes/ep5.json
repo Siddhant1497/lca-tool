@@ -1,0 +1,340 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep5",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {},
+ "narration": [
+  "Ranking green building certifications like street food stalls.",
+  "LEED. By the US Green Building Council, the most recognised name worldwide. The famous biryani place with a queue round the block. Bring patience.",
+  "EDGE. By IFC, part of the World Bank Group, for emerging markets. At least twenty percent less energy, water and embodied energy. The stall with no signboard every local swears by.",
+  "IGBC. The Indian Green Building Council, set up by CII, built around Indian codes and climate. The hometown favourite.",
+  "GRIHA. Developed by TERI, India's national rating system. The place your uncle swears by, and he's usually right.",
+  "None is universally better. Pick the one that fits your project. Otherwise it's biryani at a sushi bar.",
+  "Which one should I break down next? Comment below."
+ ],
+ "spec": {
+  "ep": 5,
+  "tabsAt": "street food stalls",
+  "next": "What a green|building audit finds",
+  "scenes": [
+   {
+    "plate": "ep5_street",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "A TASTE TEST"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Rated like",
+       {
+        "s": "street food.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "opinion, served hot",
+      "y": 770,
+      "at": [
+       "street food stalls",
+       0.3
+      ]
+     }
+    ]
+   },
+   {
+    "at": "LEED",
+    "plate": "ep5_leed",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       {
+        "s": "LEED",
+        "c": "ochre"
+       }
+      ],
+      "size": 210,
+      "thump": 1
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "US Green Building Council",
+        "at": "US Green Building"
+       },
+       {
+        "text": "most recognised worldwide",
+        "at": "most recognised"
+       }
+      ],
+      "y": 700,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "the famous biryani place",
+      "y": 950,
+      "size": 62,
+      "color": "sand",
+      "at": "famous biryani"
+     },
+     {
+      "type": "tag",
+      "text": "bring patience",
+      "y": 1050,
+      "bg": "terra",
+      "fg": "white",
+      "at": "Bring patience"
+     }
+    ]
+   },
+   {
+    "at": "EDGE",
+    "plate": "ep5_edge",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       {
+        "s": "EDGE",
+        "c": "moss"
+       }
+      ],
+      "size": 210,
+      "thump": 1
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "IFC · World Bank Group",
+        "at": "By IFC"
+       },
+       {
+        "text": "built for emerging markets",
+        "at": "emerging markets"
+       },
+       {
+        "text": "≥20% less energy and water",
+        "at": "At least twenty"
+       },
+       {
+        "text": "≥20% less embodied energy",
+        "at": "embodied energy"
+       }
+      ],
+      "y": 680,
+      "gap": 100,
+      "size": 32
+     },
+     {
+      "type": "note",
+      "text": "no signboard, locals swear by it",
+      "y": 1110,
+      "size": 54,
+      "color": "sand",
+      "at": "no signboard"
+     }
+    ]
+   },
+   {
+    "at": "IGBC",
+    "plate": "ep5_igbc",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       {
+        "s": "IGBC",
+        "c": "terra"
+       }
+      ],
+      "size": 210,
+      "thump": 1
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "Indian Green Building Council",
+        "at": "Indian Green"
+       },
+       {
+        "text": "set up by CII",
+        "at": "set up by CII"
+       },
+       {
+        "text": "Indian codes and climate",
+        "at": "Indian codes"
+       }
+      ],
+      "y": 700,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "the hometown favourite",
+      "y": 1040,
+      "color": "sand",
+      "at": "hometown favourite"
+     }
+    ]
+   },
+   {
+    "at": "GRIHA",
+    "plate": "ep5_griha",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       {
+        "s": "GRIHA",
+        "c": "sand"
+       }
+      ],
+      "size": 210,
+      "thump": 1
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "developed by TERI",
+        "at": "Developed by TERI"
+       },
+       {
+        "text": "India's national rating system",
+        "at": "national rating"
+       }
+      ],
+      "y": 700,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "your uncle's pick (usually right)",
+      "y": 940,
+      "size": 58,
+      "color": "sand",
+      "at": "your uncle"
+     }
+    ]
+   },
+   {
+    "at": "None is universally",
+    "plate": "ep5_street",
+    "items": [
+     {
+      "type": "tag",
+      "text": "none is universally better",
+      "y": 740,
+      "at": 0.2
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Pick the one",
+       {
+        "s": "that fits.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "Pick the one"
+     },
+     {
+      "type": "note",
+      "text": "not biryani at a sushi bar",
+      "y": 850,
+      "color": "sand",
+      "size": 62,
+      "at": "biryani at a sushi"
+     }
+    ]
+   },
+   {
+    "at": "Which one should I",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "YOUR CALL"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Which one",
+       {
+        "s": "next?",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "LEED",
+      "y": 780,
+      "style": "caps",
+      "bg": "ochre",
+      "size": 46,
+      "at": 0.6
+     },
+     {
+      "type": "tag",
+      "text": "EDGE",
+      "y": 780,
+      "x": 330,
+      "style": "caps",
+      "bg": "moss",
+      "size": 46,
+      "at": 0.8
+     },
+     {
+      "type": "tag",
+      "text": "IGBC",
+      "y": 900,
+      "style": "caps",
+      "bg": "terra",
+      "fg": "white",
+      "size": 46,
+      "at": 1.0
+     },
+     {
+      "type": "tag",
+      "text": "GRIHA",
+      "y": 900,
+      "x": 330,
+      "style": "caps",
+      "bg": "sand",
+      "size": 46,
+      "at": 1.2
+     },
+     {
+      "type": "note",
+      "text": "comment below ↓",
+      "y": 1060,
+      "size": 70,
+      "at": "Comment below"
+     }
+    ]
+   }
+  ]
+ }
+}

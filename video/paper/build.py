@@ -5,6 +5,7 @@
   python3 paper/build.py --still 12.5          # one frame   -> out/<out>/still.png
   python3 paper/build.py --voice bf_emma --speed 0.98
   python3 paper/build.py --timing              # print sentence timings only
+  python3 paper/build.py --project paper/episodes/ep1.json   # a series episode (engine: ep.html)
 """
 import argparse
 import json
@@ -40,12 +41,14 @@ def main():
     os.makedirs(engine.CACHE, exist_ok=True)
 
     t, sents, chunks = 0.7, [], []
+    voices = proj.get("voices", {})  # "NAME: line" narration uses voices[NAME]
     for pi, para in enumerate(proj["narration"]):
         t = math.ceil(t / sound.BEAT - 1e-6) * sound.BEAT  # every paragraph starts on a beat of the score
-        for s in engine.sentences(para):
-            a = engine.tts(s, voice, speed)
+        who, _, text = para.partition(": ") if para.split(": ", 1)[0] in voices else (None, "", para)
+        for s in engine.sentences(text):
+            a = engine.tts(s, voices.get(who, voice), speed)
             d = len(a) / engine.SR
-            sents.append({"text": s, "t0": round(t, 3), "t1": round(t + d, 3), "para": pi})
+            sents.append({"text": s, "t0": round(t, 3), "t1": round(t + d, 3), "para": pi, "speaker": who})
             chunks.append((t, a))
             t += d + 0.26
         t += 0.3
@@ -55,7 +58,9 @@ def main():
             print(f"{s['t0']:6.2f} {s['t1']:6.2f}  {s['text']}")
         print("total", total)
         return
-    data = {"total": total, "sentences": sents, "size": proj["size"], "beat": sound.BEAT}
+    data = {"total": total, "sentences": sents, "size": proj["size"], "beat": sound.BEAT, "spec": proj.get("spec", {})}
+    if proj.get("series_file"):  # episode titles, for the end card
+        data["series"] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(args.project)), proj["series_file"]), encoding="utf-8"))
     dpath = os.path.join(out, "data.json")
     json.dump(data, open(dpath, "w"))
 

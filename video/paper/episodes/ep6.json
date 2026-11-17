@@ -1,0 +1,301 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep6",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {},
+ "narration": [
+  "I audit green buildings for a living. People picture a clipboard and a few approving nods. It's not that.",
+  "Most of the job is finding the gap between what the drawings say and what was actually installed. And there's almost always a gap.",
+  "The occupancy sensor that's on the plan, but not on the ceiling. The low-flow fixture swapped late to save a few dollars a unit. The solar array that looks beautiful on paper, and nowhere else.",
+  "Nobody here is a villain. A sustainability decision made in a design meeting has to survive a construction site, a budget cut, and subcontractors who've never worked to that standard.",
+  "So the job isn't approving good intentions. It's verifying they survived contact with reality.",
+  "Certification isn't a trophy. It's proof that something that could easily have been cut, wasn't."
+ ],
+ "spec": {
+  "ep": 6,
+  "tabsAt": "for a living",
+  "next": "",
+  "scenes": [
+   {
+    "plate": "ep6_clip",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "I audit",
+       {
+        "s": "green buildings.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "a clipboard and approving nods?",
+      "y": 740,
+      "at": "People picture"
+     },
+     {
+      "type": "line",
+      "pts": [
+       [
+        92,
+        742
+       ],
+       [
+        700,
+        738
+       ]
+      ],
+      "color": "terra",
+      "w": 8,
+      "at": "It's not that"
+     },
+     {
+      "type": "note",
+      "text": "not that.",
+      "y": 860,
+      "size": 90,
+      "color": "sand",
+      "at": [
+       "It's not that",
+       0.2
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Most of the job",
+    "plate": "ep6_plans",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE REAL JOB"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Find",
+       {
+        "s": "the gap.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "what the drawings say",
+      "y": 730,
+      "at": "drawings say"
+     },
+     {
+      "type": "tag",
+      "text": "what was installed",
+      "y": 830,
+      "x": 180,
+      "at": "actually installed"
+     },
+     {
+      "type": "note",
+      "text": "there's almost always a gap",
+      "y": 950,
+      "size": 62,
+      "color": "sand",
+      "at": "almost always"
+     }
+    ]
+   },
+   {
+    "at": "The occupancy sensor",
+    "plate": "ep6_ceiling",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WHAT I FIND"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "On paper.",
+       {
+        "s": "Not on site.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "sensor: on the plan, not the ceiling",
+        "at": "occupancy sensor"
+       },
+       {
+        "text": "low-flow fixture: swapped late",
+        "at": "low-flow fixture"
+       },
+       {
+        "text": "solar array: on paper only",
+        "at": "solar array"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "size": 30,
+      "mark": "cross"
+     }
+    ]
+   },
+   {
+    "at": "Nobody here is a villain",
+    "plate": "site",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "NOBODY'S A VILLAIN"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "It has to",
+       {
+        "s": "survive.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "a design meeting",
+      "y": 730,
+      "at": "design meeting"
+     },
+     {
+      "type": "tag",
+      "text": "a construction site",
+      "y": 825,
+      "x": 180,
+      "at": "construction site"
+     },
+     {
+      "type": "tag",
+      "text": "a budget cut",
+      "y": 920,
+      "x": 268,
+      "bg": "terra",
+      "fg": "white",
+      "at": "budget cut"
+     },
+     {
+      "type": "tag",
+      "text": "new subcontractors",
+      "y": 1015,
+      "x": 356,
+      "at": "subcontractors"
+     }
+    ]
+   },
+   {
+    "at": "So the job isn't",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "SO THE JOB",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Not approving",
+       {
+        "s": "intentions.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "out": [
+       "It's verifying",
+       -0.15
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Verifying",
+       {
+        "s": "they survived.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "It's verifying",
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "…contact with reality",
+      "y": 820,
+      "at": "contact with reality"
+     }
+    ]
+   },
+   {
+    "at": "Certification isn't a trophy",
+    "plate": "ep6_done",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Not a",
+       {
+        "s": "trophy.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "out": [
+       "It's proof",
+       -0.15
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "It's",
+       {
+        "s": "proof.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "It's proof",
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "that what could be cut, wasn't",
+      "y": 770,
+      "size": 60,
+      "color": "sand",
+      "at": "could easily"
+     }
+    ]
+   }
+  ]
+ }
+}

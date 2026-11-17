@@ -1,0 +1,331 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep4",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {},
+ "narration": [
+  "Your air conditioner is lying to you right now. It's acting innocent. It is not.",
+  "Running buildings uses about thirty percent of the world's final energy.",
+  "But the sneaky part is the refrigerant. A common one, R-410A, traps around two thousand times more heat than CO2.",
+  "If a home system's full charge escapes, that's roughly a year of driving.",
+  "The fix? A heat pump. An AC that also runs in reverse, giving three to four units of heat for every unit of electricity.",
+  "It costs more upfront, and the payback depends on your climate and energy prices.",
+  "The villain was never the AC. It was never upgrading it, or servicing it."
+ ],
+ "spec": {
+  "ep": 4,
+  "tabsAt": "acting innocent",
+  "next": "Certifications,|rated like street food",
+  "scenes": [
+   {
+    "plate": "ep4_ac",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Your AC",
+       {
+        "s": "is lying.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "acting innocent…",
+      "y": 770,
+      "at": "acting innocent"
+     },
+     {
+      "type": "tag",
+      "text": "it is not.",
+      "y": 880,
+      "bg": "terra",
+      "fg": "white",
+      "at": "It is not"
+     }
+    ]
+   },
+   {
+    "at": "Running buildings",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "FIRST, THE ENERGY"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Running",
+       {
+        "s": "buildings.",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "dial",
+      "x": 540,
+      "y": 1000,
+      "r": 250,
+      "value": 30,
+      "label": "of global final energy",
+      "at": "about thirty"
+     },
+     {
+      "type": "note",
+      "text": "source: IEA",
+      "y": 1330,
+      "x": 540,
+      "align": "center",
+      "size": 44,
+      "at": "final energy"
+     }
+    ]
+   },
+   {
+    "at": "But the sneaky part",
+    "plate": "ep4_pipes",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE SNEAKY PART"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "The",
+       {
+        "s": "refrigerant.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "R-410A",
+      "y": 730,
+      "style": "caps",
+      "bg": "sand",
+      "size": 32,
+      "at": "R-410A"
+     },
+     {
+      "type": "big",
+      "value": 2088,
+      "prefix": "×",
+      "x": 90,
+      "align": "left",
+      "y": 960,
+      "size": 200,
+      "at": "two thousand times"
+     },
+     {
+      "type": "tag",
+      "text": "TIMES THE HEAT OF CO₂ · GWP, IPCC AR4",
+      "y": 1050,
+      "style": "caps",
+      "size": 22,
+      "at": [
+       "more heat",
+       0.4
+      ]
+     }
+    ]
+   },
+   {
+    "at": "If a home system",
+    "plate": "ep2_car",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "IF IT ALL ESCAPES"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "A year",
+       {
+        "s": "of driving.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "roughly a year"
+     },
+     {
+      "type": "tag",
+      "text": "full charge: 2.7–5.4 kg",
+      "y": 730,
+      "style": "plain",
+      "size": 32,
+      "at": "full charge"
+     },
+     {
+      "type": "tag",
+      "text": "≈ 5.6–11.3 t CO₂e",
+      "y": 830,
+      "style": "plain",
+      "size": 32,
+      "bg": "terra",
+      "fg": "white",
+      "at": "escapes"
+     },
+     {
+      "type": "tag",
+      "text": "a car ≈ 4.6 t CO₂ a year · EPA",
+      "y": 930,
+      "style": "plain",
+      "size": 30,
+      "at": "year of driving"
+     }
+    ]
+   },
+   {
+    "at": "The fix? A heat pump",
+    "plate": "ep4_heatpump",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE FIX"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "A heat",
+       {
+        "s": "pump.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "1 unit of electricity in",
+      "y": 730,
+      "style": "plain",
+      "size": 32,
+      "at": "runs in reverse"
+     },
+     {
+      "type": "big",
+      "text": "3–4×",
+      "x": 90,
+      "align": "left",
+      "y": 930,
+      "size": 200,
+      "at": "three to four"
+     },
+     {
+      "type": "tag",
+      "text": "UNITS OF HEAT OUT · IEA",
+      "y": 1010,
+      "style": "caps",
+      "size": 26,
+      "at": [
+       "three to four",
+       0.6
+      ]
+     }
+    ]
+   },
+   {
+    "at": "It costs more upfront",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE CATCH"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Costs more",
+       {
+        "s": "upfront.",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "higher upfront cost",
+        "at": "costs more upfront",
+        "mark": "cross"
+       },
+       {
+        "text": "payback depends on climate",
+        "at": "your climate"
+       },
+       {
+        "text": "…and on energy prices",
+        "at": "energy prices"
+       }
+      ],
+      "y": 760,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "The villain was never",
+    "plate": "ep4_ac",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Not the AC.",
+       {
+        "s": "The neglect.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.2,
+      "thump": 1
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "upgrade it",
+        "at": "upgrading"
+       },
+       {
+        "text": "service it",
+        "at": "servicing"
+       },
+       {
+        "text": "check it for leaks",
+        "at": [
+         "servicing it",
+         0.5
+        ]
+       }
+      ],
+      "y": 760,
+      "gap": 105
+     }
+    ]
+   }
+  ]
+ }
+}

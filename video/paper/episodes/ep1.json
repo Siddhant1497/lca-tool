@@ -1,0 +1,385 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep1",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {},
+ "narration": [
+  "The concrete under your feet already finished polluting. Before the building even opened.",
+  "Cement and steel produce around fifteen percent of global CO2. Not construction emissions. All emissions.",
+  "That's roughly seven times all of aviation, at about two percent.",
+  "And it happens before day one. The building has spent a big chunk of its lifetime carbon just by existing as material.",
+  "This is embodied carbon, and most net zero marketing leaves it out. Solar panels make a better photo than a spreadsheet about fly ash.",
+  "The fix exists. Blended cements with fly ash or slag, mass timber where it fits, and recycled steel.",
+  "Nobody in a finished lobby asks what the concrete used to be. Now you will."
+ ],
+ "spec": {
+  "ep": 1,
+  "tabsAt": "Before the building",
+  "next": "Why “net zero”|can mislead you",
+  "scenes": [
+   {
+    "plate": "ep1_cut",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Already",
+       {
+        "s": "polluted.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "before opening day",
+      "y": 770,
+      "at": "Before the building"
+     },
+     {
+      "type": "wave",
+      "x0": 96,
+      "x1": 640,
+      "y": 795,
+      "at": [
+       "Before the building",
+       0.4
+      ]
+     },
+     {
+      "type": "confetti",
+      "x": 540,
+      "y": 1250,
+      "spread": 520,
+      "rate": 10,
+      "at": "finished polluting"
+     }
+    ]
+   },
+   {
+    "at": "Cement and steel",
+    "plate": "quarry",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE MATERIALS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Cement",
+       {
+        "s": "+ steel",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "dial",
+      "x": 330,
+      "y": 900,
+      "value": 15,
+      "label": "of global CO₂",
+      "at": "around fifteen"
+     },
+     {
+      "type": "tag",
+      "text": "cement ≈ 7%",
+      "y": 790,
+      "x": 600,
+      "style": "plain",
+      "size": 30,
+      "chip": "clay",
+      "at": "produce"
+     },
+     {
+      "type": "tag",
+      "text": "steel ≈ 8%",
+      "y": 880,
+      "x": 600,
+      "style": "plain",
+      "size": 30,
+      "chip": "ink",
+      "at": [
+       "produce",
+       0.35
+      ]
+     },
+     {
+      "type": "note",
+      "text": "ALL emissions",
+      "y": 1010,
+      "x": 600,
+      "size": 76,
+      "color": "sand",
+      "at": "All emissions"
+     },
+     {
+      "type": "note",
+      "text": "source: IEA",
+      "y": 1090,
+      "x": 610,
+      "size": 44,
+      "at": [
+       "All emissions",
+       0.5
+      ]
+     }
+    ]
+   },
+   {
+    "at": "That's roughly seven",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "FOR SCALE",
+      "color": "sand"
+     },
+     {
+      "type": "big",
+      "value": 7,
+      "prefix": "×",
+      "x": 540,
+      "y": 700,
+      "size": 330,
+      "at": "seven times"
+     },
+     {
+      "type": "bars",
+      "x": 110,
+      "y": 880,
+      "w": 640,
+      "max": 15,
+      "gap": 170,
+      "rows": [
+       {
+        "label": "CEMENT + STEEL",
+        "value": 15,
+        "text": "~15%",
+        "color": "terra",
+        "at": "That's roughly"
+       },
+       {
+        "label": "ALL OF AVIATION",
+        "value": 2,
+        "text": "~2%",
+        "color": "sand",
+        "at": "at about two"
+       }
+      ]
+     },
+     {
+      "type": "note",
+      "text": "sources: IEA, ATAG",
+      "y": 1300,
+      "x": 110,
+      "size": 44,
+      "at": [
+       "about two percent",
+       0.4
+      ]
+     }
+    ]
+   },
+   {
+    "at": "And it happens before day one",
+    "plate": "site",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE TIMING"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Before",
+       {
+        "s": "day one.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "ribbon",
+      "text": "OPENING DAY",
+      "y": 760,
+      "at": [
+       "before day one",
+       0.2
+      ]
+     },
+     {
+      "type": "note",
+      "text": "already spent",
+      "y": 905,
+      "x": 520,
+      "align": "center",
+      "size": 96,
+      "at": "lifetime carbon"
+     },
+     {
+      "type": "circle",
+      "x": 520,
+      "y": 880,
+      "rx": 320,
+      "ry": 80,
+      "color": "sand",
+      "at": [
+       "just by existing",
+       0
+      ]
+     },
+     {
+      "type": "confetti",
+      "x": 520,
+      "y": 1250,
+      "spread": 760,
+      "rate": 20,
+      "speed": 190,
+      "at": "spent a big"
+     },
+     {
+      "type": "tag",
+      "text": "UPFRONT CARBON · A1–A5",
+      "y": 1040,
+      "x": 520,
+      "ax": 0.5,
+      "style": "caps",
+      "size": 30,
+      "at": "existing as material"
+     }
+    ]
+   },
+   {
+    "at": "This is embodied carbon",
+    "plate": "ep1_solar",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THIS IS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Embodied",
+       {
+        "s": "carbon.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "note",
+      "text": "…left out of the marketing",
+      "y": 720,
+      "size": 64,
+      "color": "sand",
+      "at": "leaves it out"
+     },
+     {
+      "type": "tag",
+      "text": "solar panels: great photo",
+      "y": 830,
+      "at": "Solar panels"
+     },
+     {
+      "type": "tag",
+      "text": "fly ash spreadsheet: ignored",
+      "y": 930,
+      "x": 140,
+      "at": "spreadsheet"
+     }
+    ]
+   },
+   {
+    "at": "The fix exists",
+    "plate": "ep1_timber",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "GOOD NEWS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "The fix",
+       {
+        "s": "exists.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "blended cement: fly ash, slag",
+        "at": "Blended cements"
+       },
+       {
+        "text": "mass timber, where it fits",
+        "at": "mass timber"
+       },
+       {
+        "text": "recycled steel",
+        "at": "recycled steel"
+       }
+      ],
+      "y": 740,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "Nobody in a finished lobby",
+    "plate": "ep1_lobby",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Nobody",
+       {
+        "s": "asks.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "out": [
+       "Now you will",
+       -0.2
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Now",
+       {
+        "s": "you will.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "Now you will",
+      "thump": 1
+     }
+    ]
+   }
+  ]
+ }
+}

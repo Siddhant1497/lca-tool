@@ -1,0 +1,324 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep2",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {},
+ "narration": [
+  "When a building says net zero, ask one question before you believe it.",
+  "Net zero what? Operational, or embodied?",
+  "A building can be net zero on the energy it uses every day, and still carry a large carbon debt in its concrete, steel and glass from the day it was built.",
+  "Most net zero claims only count the first one. That's not exactly dishonest. It's incomplete. Like a car ad bragging about mileage that says nothing about how the car was made.",
+  "The most credible projects report both numbers, ideally as whole-life carbon. If a project only shows you one, ask about the other.",
+  "Not saying don't trust green buildings. Ask which carbon they're counting, like reading the ingredients, not just the front of the box.",
+  "Save this for the next time someone says net zero in a sales pitch."
+ ],
+ "spec": {
+  "ep": 2,
+  "tabsAt": "ask one question",
+  "next": "Old building|vs LEED Platinum",
+  "scenes": [
+   {
+    "plate": "ep2_tower",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "“Net",
+       {
+        "s": "zero”?",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "ask one question first",
+      "y": 770,
+      "at": "ask one question"
+     },
+     {
+      "type": "wave",
+      "x0": 96,
+      "x1": 700,
+      "y": 795,
+      "at": [
+       "ask one question",
+       0.4
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Net zero what",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE QUESTION"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Net zero",
+       {
+        "s": "what?",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "card",
+      "x": 290,
+      "y": 990,
+      "w": 400,
+      "h": 330,
+      "title": "OPERATIONAL",
+      "body": "energy used\nevery day\n(B6)",
+      "color": "ochre",
+      "at": "Operational"
+     },
+     {
+      "type": "card",
+      "x": 760,
+      "y": 1020,
+      "w": 400,
+      "h": 330,
+      "title": "EMBODIED",
+      "body": "materials and\nconstruction\n(A1–A5)",
+      "color": "terra",
+      "at": "or embodied"
+     }
+    ]
+   },
+   {
+    "at": "A building can be net zero",
+    "plate": "ep2_scale",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "SAME BUILDING"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Two",
+       {
+        "s": "numbers.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "everyday energy: net zero",
+      "y": 730,
+      "bg": "moss",
+      "at": "the energy it uses"
+     },
+     {
+      "type": "tag",
+      "text": "concrete, steel, glass: carbon debt",
+      "y": 830,
+      "bg": "terra",
+      "fg": "white",
+      "at": "carbon debt"
+     },
+     {
+      "type": "note",
+      "text": "from day one",
+      "y": 950,
+      "color": "sand",
+      "at": "from the day it was built"
+     }
+    ]
+   },
+   {
+    "at": "Most net zero claims",
+    "plate": "ep2_car",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "MOST CLAIMS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Count only",
+       {
+        "s": "one.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "out": [
+       "That's not exactly",
+       -0.15
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Not dishonest.",
+       {
+        "s": "Incomplete.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "That's not exactly"
+     },
+     {
+      "type": "tag",
+      "text": "mileage: amazing",
+      "y": 760,
+      "at": "bragging about mileage"
+     },
+     {
+      "type": "tag",
+      "text": "how it was made: ?",
+      "y": 860,
+      "bg": "terra",
+      "fg": "white",
+      "at": "how the car was made"
+     }
+    ]
+   },
+   {
+    "at": "The most credible projects",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WHAT GOOD LOOKS LIKE"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Report",
+       {
+        "s": "both.",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "operational carbon",
+        "at": "report both"
+       },
+       {
+        "text": "embodied carbon",
+        "at": [
+         "report both",
+         0.5
+        ]
+       },
+       {
+        "text": "ideally: whole-life carbon",
+        "at": "whole-life carbon"
+       }
+      ],
+      "y": 760,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "only one? ask about the other",
+      "y": 1150,
+      "size": 60,
+      "at": "ask about the other"
+     }
+    ]
+   },
+   {
+    "at": "Not saying don't trust",
+    "plate": "ep2_shelf",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "READ THE LABEL"
+     },
+     {
+      "type": "tag",
+      "text": "not anti green building",
+      "y": 740,
+      "at": 0.3,
+      "out": [
+       "Ask which carbon",
+       -0.1
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Which carbon",
+       {
+        "s": "counts?",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "Ask which carbon"
+     },
+     {
+      "type": "note",
+      "text": "ingredients, not the front of the box",
+      "y": 760,
+      "size": 56,
+      "at": "reading the ingredients"
+     }
+    ]
+   },
+   {
+    "at": "Save this",
+    "plate": "ep2_tower",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Save",
+       {
+        "s": "this.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.2,
+      "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "OPERATIONAL OR EMBODIED?",
+      "y": 730,
+      "style": "caps",
+      "bg": "sand",
+      "size": 30,
+      "at": "says net zero"
+     },
+     {
+      "type": "note",
+      "text": "for the next sales pitch",
+      "y": 850,
+      "at": "sales pitch"
+     }
+    ]
+   }
+  ]
+ }
+}

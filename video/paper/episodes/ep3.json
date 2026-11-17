@@ -1,0 +1,321 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep3",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series.json",
+ "voices": {
+  "OLD": "am_adam",
+  "NEW": "bm_lewis"
+ },
+ "narration": [
+  "OLD: I've been standing since 1987. I don't need your fancy solar panels.",
+  "NEW: I'm LEED Platinum. Solar roof, smart glass, and my panels cover every kilowatt I use.",
+  "OLD: Cool. I needed zero new concrete. Zero new steel. My construction carbon was spent decades ago. You just poured yours, and you'll spend years paying it back.",
+  "NEW: Okay. But I have really nice windows.",
+  "Joke aside, this is one of the industry's biggest blind spots. A major US study found a new energy-efficient building can take ten to eighty years to make up for the impacts of building it.",
+  "So reusing and retrofitting what's already standing often wins on total carbon. Not always. It depends on what the retrofit uses.",
+  "We just don't market renovations, because there's no ribbon-cutting photo."
+ ],
+ "spec": {
+  "ep": 3,
+  "tabsAt": "standing since",
+  "next": "Your AC is a|climate supervillain",
+  "names": {
+   "OLD": {
+    "label": "OLD BUILDING · SINCE 1987",
+    "color": "clay"
+   },
+   "NEW": {
+    "label": "NEW BUILDING · LEED PLATINUM",
+    "color": "forest"
+   }
+  },
+  "scenes": [
+   {
+    "plate": "ep3_old",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "ROUND ONE"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Since",
+       {
+        "s": "1987.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "no fancy solar needed",
+      "y": 770,
+      "at": "fancy solar"
+     }
+    ]
+   },
+   {
+    "at": "I'm LEED Platinum",
+    "plate": "ep3_new",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE CHALLENGER"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "LEED",
+       {
+        "s": "Platinum.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "solar roof",
+      "y": 730,
+      "at": "Solar roof"
+     },
+     {
+      "type": "tag",
+      "text": "smart glass",
+      "y": 730,
+      "x": 360,
+      "at": "smart glass"
+     },
+     {
+      "type": "tag",
+      "text": "covers every kilowatt",
+      "y": 830,
+      "at": "every kilowatt"
+     }
+    ]
+   },
+   {
+    "at": "Cool.",
+    "plate": "ep3_old",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE COMEBACK"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Zero",
+       {
+        "s": "new concrete.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "new concrete: 0",
+        "at": "zero new concrete"
+       },
+       {
+        "text": "new steel: 0",
+        "at": "Zero new steel"
+       }
+      ],
+      "y": 740,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "carbon spent decades ago",
+      "y": 990,
+      "color": "sand",
+      "size": 64,
+      "at": "spent decades ago"
+     },
+     {
+      "type": "note",
+      "text": "yours: years of payback",
+      "y": 1090,
+      "size": 64,
+      "at": "years paying it back"
+     }
+    ]
+   },
+   {
+    "at": "But I have really",
+    "plate": "ep3_new",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Okay.",
+       {
+        "s": "But…",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.15
+     },
+     {
+      "type": "note",
+      "text": "really nice windows",
+      "y": 780,
+      "size": 88,
+      "color": "sand",
+      "at": "really nice windows"
+     },
+     {
+      "type": "circle",
+      "x": 430,
+      "y": 755,
+      "rx": 380,
+      "ry": 85,
+      "color": "white",
+      "at": [
+       "nice windows",
+       0.3
+      ]
+     }
+    ]
+   },
+   {
+    "at": "Joke aside",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "JOKE ASIDE",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "A blind",
+       {
+        "s": "spot.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "size": 150
+     },
+     {
+      "type": "big",
+      "text": "10–80",
+      "x": 90,
+      "align": "left",
+      "y": 900,
+      "size": 240,
+      "at": "ten to eighty"
+     },
+     {
+      "type": "kicker",
+      "text": "YEARS TO MAKE UP FOR BUILDING NEW",
+      "y": 980,
+      "size": 24,
+      "at": [
+       "ten to eighty",
+       0.6
+      ]
+     },
+     {
+      "type": "note",
+      "text": "source: Preservation Green Lab, 2011",
+      "y": 1100,
+      "size": 44,
+      "at": "impacts of building it"
+     }
+    ]
+   },
+   {
+    "at": "So reusing and retrofitting",
+    "plate": "ep3_retrofit",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE TAKEAWAY"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Reuse",
+       {
+        "s": "often wins.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "not always",
+      "y": 730,
+      "bg": "terra",
+      "fg": "white",
+      "at": "Not always"
+     },
+     {
+      "type": "tag",
+      "text": "depends on the retrofit",
+      "y": 830,
+      "at": "It depends"
+     }
+    ]
+   },
+   {
+    "at": "We just don't market",
+    "plate": "ep3_new",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Renovations",
+       {
+        "s": "get no ribbon.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "ribbon",
+      "text": "GRAND OPENING",
+      "y": 800,
+      "color": "forest",
+      "at": "ribbon-cutting"
+     },
+     {
+      "type": "note",
+      "text": "…only new builds get one",
+      "y": 930,
+      "x": 540,
+      "align": "center",
+      "color": "sand",
+      "size": 62,
+      "at": [
+       "ribbon-cutting",
+       0.6
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}
