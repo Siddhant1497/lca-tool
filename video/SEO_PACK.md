@@ -82,7 +82,7 @@ A green building site audit checks that what was built matches what was certifie
 
 ## Full-series video (new, a regular upload with chapters)
 
-File: `out/the-carbon-you-cant-see/Full_Series_The_Carbon_You_Cant_See.mp4` (5:56, vertical, all six episodes joined). Upload it as a normal video; at 5:56 it is long enough to count as a regular video, not a Short.
+File: `out/paper-series/Full_Series_The_Carbon_You_Cant_See.mp4` (6:17, vertical, all six paper episodes joined). Upload it as a normal video; at over 3 minutes it counts as a regular video, not a Short.
 
 **Title:** Embodied Carbon, Net Zero and Green Building Certifications Explained (Full Series)
 
@@ -91,11 +91,11 @@ Six short explainers on the carbon in buildings that most claims leave out: embo
 
 Chapters:
 0:00 What is embodied carbon?
-0:56 Is a "net zero" building really net zero?
-1:57 Renovate or rebuild?
-2:56 Why AC refrigerant matters
-3:49 LEED vs EDGE vs IGBC vs GRIHA
-4:55 What a green building audit finds
+1:00 Is a "net zero" building really net zero?
+2:04 Renovate or rebuild?
+3:07 Why AC refrigerant matters
+4:02 LEED vs EDGE vs IGBC vs GRIHA
+5:12 What a green building audit finds
 
 (Then paste the sources from all six episodes and the shared credits block.)
 
