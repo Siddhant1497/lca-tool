@@ -6,6 +6,7 @@
   python3 paper/build.py --voice bf_emma --speed 0.98
   python3 paper/build.py --timing              # print sentence timings only
   python3 paper/build.py --project paper/episodes/ep1.json   # a series episode (engine: ep.html)
+  python3 paper/build.py --project paper/episodes/g60_1.json --recording my_take.m4a --music track.mp3
 """
 import argparse
 import json
@@ -24,6 +25,7 @@ sys.path.insert(0, VIDEO)
 sys.path.insert(0, HERE)
 import engine  # noqa: E402  (narration + sentence splitting, shared with the other films)
 import sound  # noqa: E402
+import voice as myvoice  # noqa: E402  (your own recording and music)
 
 
 def main():
@@ -33,6 +35,8 @@ def main():
     ap.add_argument("--speed", type=float)
     ap.add_argument("--still", type=float)
     ap.add_argument("--timing", action="store_true")
+    ap.add_argument("--recording", help="your narration: one take, or a folder of one file per paragraph")
+    ap.add_argument("--music", help="a music file to use instead of the built-in score")
     args = ap.parse_args()
     proj = json.load(open(args.project, encoding="utf-8"))
     voice, speed, fps = args.voice or proj["voice"], args.speed or proj["speed"], int(proj["fps"])
@@ -40,13 +44,26 @@ def main():
     os.makedirs(out, exist_ok=True)
     os.makedirs(engine.CACHE, exist_ok=True)
 
+    base = os.path.dirname(os.path.abspath(args.project))
+    rel = lambda p: p if not p or os.path.isabs(p) else os.path.join(base, p)
+    recording, music_file = args.recording or rel(proj.get("recording")), args.music or rel(proj.get("music_file"))
+    beat = sound.BEAT
+    if music_file:  # cut to the beat of your track
+        est = proj.get("music_bpm") or myvoice.bpm(myvoice.load(music_file, engine.SR, clean=False)[:engine.SR * 60], engine.SR)
+        if est:
+            beat = 60 / est
+            print(f"music tempo ≈ {est:.0f} bpm")
+    rec_paras = myvoice.paragraphs(recording, engine.SR, len(proj["narration"])) if recording else None
+
     t, sents, chunks = 0.7, [], []
     voices = proj.get("voices", {})  # "NAME: line" narration uses voices[NAME]
     for pi, para in enumerate(proj["narration"]):
-        t = math.ceil(t / sound.BEAT - 1e-6) * sound.BEAT  # every paragraph starts on a beat of the score
+        t = math.ceil(t / beat - 1e-6) * beat  # every paragraph starts on a beat of the music
         who, _, text = para.partition(": ") if para.split(": ", 1)[0] in voices else (None, "", para)
-        for s in engine.sentences(text):
-            a = engine.tts(s, voices.get(who, voice), speed)
+        parts = engine.sentences(text)
+        clips = myvoice.split(rec_paras[pi], engine.SR, len(parts), min_gap=0.12) if rec_paras else None
+        for si, s in enumerate(parts):
+            a = clips[si] if clips else engine.tts(s, voices.get(who, voice), speed)
             d = len(a) / engine.SR
             sents.append({"text": s, "t0": round(t, 3), "t1": round(t + d, 3), "para": pi, "speaker": who})
             chunks.append((t, a))
@@ -58,7 +75,7 @@ def main():
             print(f"{s['t0']:6.2f} {s['t1']:6.2f}  {s['text']}")
         print("total", total)
         return
-    data = {"total": total, "sentences": sents, "size": proj["size"], "beat": sound.BEAT, "spec": proj.get("spec", {})}
+    data = {"total": total, "sentences": sents, "size": proj["size"], "beat": beat, "spec": proj.get("spec", {})}
     if proj.get("series_file"):  # episode titles, for the end card
         data["series"] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(args.project)), proj["series_file"]), encoding="utf-8"))
     dpath = os.path.join(out, "data.json")
@@ -78,7 +95,8 @@ def main():
         narration[k:k + len(a)] += a[:n - k]
     narration *= 0.85 / (np.abs(narration).max() + 1e-9)
     events = json.load(open(dpath.replace(".json", ".events.json")))
-    mixed = narration + sound.score(total, narration, engine.SR) + sound.sfx(events, n, engine.SR)
+    bed = myvoice.music_bed(music_file, total, narration, engine.SR) if music_file else sound.score(total, narration, engine.SR)
+    mixed = narration + bed + sound.sfx(events, n, engine.SR)
     wav = os.path.join(out, "audio.wav")
     sf.write(wav, mixed / max(1.0, np.abs(mixed).max()), engine.SR)
 

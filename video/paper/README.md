@@ -11,6 +11,16 @@ python3 paper/build.py --still 24.8     # one frame -> out/life-of-a-building/st
 python3 paper/build.py --voice bf_emma  # another narrator (any Kokoro voice); --speed 1.0 to slow down
 ```
 
+## Your own voice and music
+
+```
+python3 paper/build.py --project paper/episodes/g60_1.json --recording g60_1.m4a              # your narration (one take)
+python3 paper/build.py --project paper/episodes/g60_1.json --recording takes/ --music track.mp3 # folder of paragraph files + your track
+python3 paper/script_sheet.py paper/episodes/g60_1.json > sheet.md                            # what to record
+```
+
+A take is cleaned (rumble filter, noise reduction, compression), cut at its longest pauses into paragraphs and then sentences, and the visuals are re-timed to it. A music file is looped or trimmed, faded and ducked under the voice; its tempo is estimated so scene changes land on its beats (set `music_bpm` in the episode file to override). Both can also be set in the episode file as `recording` and `music_file`. See `video/RECORDING_GUIDE.md`.
+
 ## Files
 
 | File | What it is |
