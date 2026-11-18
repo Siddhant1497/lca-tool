@@ -28,7 +28,7 @@ DARK = (8, 11, 18)
 PRONOUNCE = [(r"\bU\.S\.", "U S"), (r"\bCO2\b", "C O two"), (r"\bLEED\b", "Leed"), (r"\bEDGE\b", "Edge"), (r"\bIGBC\b", "I G B C"),
              (r"\bGRIHA\b", "Gri-ha"), (r"\bTERI\b", "Terry"), (r"\bCII\b", "C I I"), (r"\bIFC\b", "I F C"),
              (r"\bR-410A\b", "R four-ten A"), (r"\bAC\b", "A C"), (r"\bHVAC\b", "H-vac"), (r"\b1987\b", "nineteen eighty-seven"),
-             (r"\b1850\b", "eighteen fifty"), (r"\b2050\b", "twenty fifty"), (r"\bG20\b", "G twenty")]
+             (r"\b1850\b", "eighteen fifty"), (r"\b2050\b", "twenty fifty"), (r"\bG20\b", "G twenty"), (r"\bAAC\b", "A A C"), (r"\bLow-e\b", "Low E")]
 
 FORMATS = {
     "9:16": dict(W=1080, H=1920, fps=30, lead=0.2, gap=0.16, para=0.32, tail=0.35, xfade=0.3, short=True),

@@ -18,6 +18,7 @@ Everything here is ready to paste. It uses the new paper-style episodes (`out/pa
 | 12 | **Ep 6** What a green building audit finds | Your expertise. It closes the series and sets up the audit-findings video. |
 | 14 | **The Life of a Building** | The big-picture film tying it together (whole-life carbon, EN 15978). |
 | 16 | **Full series** (regular video with chapters) | Catches viewers who want it all at once, and gives Google chapters to show. |
+| 19 | **Bonus: 10 gaps an EDGE audit finds** | Your firsthand expertise, on a question nobody else answers (see `SEO_PACK.md`). Post it on LinkedIn the same day. |
 
 **Time of day:** start with weekday evenings, 7 to 9 pm IST, when professionals scroll after work. After the first three uploads, open YouTube Studio → Analytics → Audience → "When your viewers are on YouTube" and move to the times it shows.
 
@@ -33,7 +34,7 @@ Everything here is ready to paste. It uses the new paper-style episodes (`out/pa
 4. **Captions:** in Studio, Subtitles → Add → Upload file → With timing, and pick that episode's `captions.srt`.
 5. **Altered or synthetic content:** answer **Yes**. The voice and the background art are AI-generated. Saying so costs nothing and avoids doubt.
 6. **Audience:** "No, it's not made for kids". **Category:** Education. **Tags:** paste from section 4.
-7. **Cover:** pick the frame where the title has fully landed (around second 1 to 2).
+7. **Cover:** pick the frame where the title has fully landed (around second 1 to 2). For the full-series video (a regular upload), use the custom thumbnail `out/paper-series/thumbnail.png` instead.
 8. **Related video** (Shorts only): link each episode to the next one. Once the full-series video is up, link Episode 6 and the film to it.
 9. After publishing, **post and pin the pinned comment** from section 4.
 10. **For the first hour, reply to every comment.** Early replies are the cheapest boost a Short can get.
@@ -174,3 +175,15 @@ Use the title, description and tags in `paper/YOUTUBE_DESCRIPTION.md`, with the 
 ### Full series (regular video)
 **Title:** Embodied Carbon, Net Zero and Green Building Certifications Explained (Full Series)
 **Description:** use the one in `SEO_PACK.md`, with the chapter times listed in `out/paper-series/CHAPTERS.txt`, and paste the sources from all six episodes.
+
+### Bonus: 10 gaps an EDGE audit finds
+**Title:** EDGE Certification Site Audit: 10 Gaps I Keep Finding (Design vs Site)
+**Description:**
+An EDGE site audit checks that the finished building matches what was certified at design stage. These are ten gaps I see again and again: low-e glass swapped for plain glass, shading fins cut short, thin or missing roof insulation, cool-roof paint never applied, low-flow taps swapped late, less efficient ACs, missing occupancy sensors, a smaller solar array, red brick in place of AAC blocks, and missing datasheets, invoices and photos. Most of it is value engineering nobody told the model about. Update the model before the audit, not after.
+
+Examples are generic and illustrative, not from any specific project or client. EDGE is a trademark of IFC; this video is not affiliated with or endorsed by IFC or any EDGE certification provider.
+
+#shorts #EDGE #greenbuilding #audit #construction #sustainability
+**Tags:** EDGE certification, EDGE audit, EDGE site audit, green building audit, value engineering, low-e glass, cool roof, AAC blocks, green building India
+**Pinned comment:** Auditors and site teams: which gap would you add as number 11? 👇
+**LinkedIn:** I audit EDGE buildings. The same ten gaps between design and site keep coming back, and almost none of them are bad faith. They're value engineering nobody told the model about. Update the model before the audit, not after.

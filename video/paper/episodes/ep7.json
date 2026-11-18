@@ -1,0 +1,306 @@
+{
+ "html": "ep.html",
+ "out": "paper-ep7",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series7.json",
+ "voices": {},
+ "narration": [
+  "I audit EDGE buildings. Here are ten gaps I keep finding between the design and the site.",
+  "One. Low-e glass in the model, plain glass in the frame. Two. Shading fins, cut shorter than the drawings.",
+  "Three. Roof insulation, thinner than specified, or missing. Four. The cool roof paint that never got painted.",
+  "Five. Low-flow taps, swapped for cheaper, thirstier ones. Six. Air conditioners less efficient than the ones in the model.",
+  "Seven. Occupancy sensors on the plan, but not on the ceiling. Eight. A solar array smaller than the one in the model.",
+  "Nine. AAC blocks in the model, red brick on site. Ten. No datasheets, no invoices, no photos. If it isn't documented, it didn't happen.",
+  "Most of this isn't bad faith. It's value engineering nobody told the model about. So update the model before the audit, not after."
+ ],
+ "spec": {
+  "ep": 7,
+  "tabsAt": "Here are ten",
+  "next": "",
+  "scenes": [
+   {
+    "plate": "ep6_plans",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "EDGE SITE AUDITS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "10 gaps",
+       {
+        "s": "I keep finding.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "design vs. what got built",
+      "y": 770,
+      "at": "between the design"
+     }
+    ]
+   },
+   {
+    "at": "One.",
+    "plate": "au_glass",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE ENVELOPE"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Glass and",
+       {
+        "s": "shade.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "1 · low-e glass → plain glass",
+        "at": "plain glass"
+       },
+       {
+        "text": "2 · shading fins cut short",
+        "at": "Shading fins"
+       }
+      ],
+      "mark": "cross",
+      "serif": false,
+      "size": 30,
+      "y": 740,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "Three.",
+    "plate": "au_roof",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE ROOF"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Up on",
+       {
+        "s": "the roof.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "3 · roof insulation thin or missing",
+        "at": "Roof insulation"
+       },
+       {
+        "text": "4 · cool-roof paint never applied",
+        "at": "cool roof paint"
+       }
+      ],
+      "mark": "cross",
+      "serif": false,
+      "size": 30,
+      "y": 740,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "Five.",
+    "plate": "au_tap",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WATER AND COOLING"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Swapped",
+       {
+        "s": "late.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "5 · low-flow taps → thirstier taps",
+        "at": "Low-flow taps"
+       },
+       {
+        "text": "6 · AC less efficient than modelled",
+        "at": "Air conditioners"
+       }
+      ],
+      "mark": "cross",
+      "serif": false,
+      "size": 30,
+      "y": 740,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "Seven.",
+    "plate": "ep6_ceiling",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "CONTROLS AND ENERGY"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "On the plan,",
+       {
+        "s": "not on site.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "7 · occupancy sensors missing",
+        "at": "Occupancy sensors"
+       },
+       {
+        "text": "8 · smaller solar array",
+        "at": "solar array"
+       }
+      ],
+      "mark": "cross",
+      "serif": false,
+      "size": 30,
+      "y": 740,
+      "gap": 105
+     }
+    ]
+   },
+   {
+    "at": "Nine.",
+    "plate": "au_bricks",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "MATERIALS AND PROOF"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Proof",
+       {
+        "s": "matters.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "9 · AAC blocks → red brick",
+        "at": "red brick"
+       },
+       {
+        "text": "10 · no datasheets, invoices, photos",
+        "at": "No datasheets"
+       }
+      ],
+      "mark": "cross",
+      "serif": false,
+      "size": 30,
+      "y": 740,
+      "gap": 105
+     },
+     {
+      "type": "note",
+      "text": "not documented = didn't happen",
+      "y": 980,
+      "size": 60,
+      "color": "sand",
+      "at": "isn't documented"
+     }
+    ]
+   },
+   {
+    "at": "Most of this",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE FIX",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Not bad faith.",
+       {
+        "s": "Value engineering.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "out": [
+       "update the model",
+       -0.15
+      ]
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Update",
+       {
+        "s": "the model.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "update the model",
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "…before the audit, not after",
+      "y": 820,
+      "at": "before the audit"
+     }
+    ]
+   }
+  ]
+ }
+}

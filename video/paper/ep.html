@@ -19,7 +19,7 @@ html,body{margin:0;background:#111}canvas{display:block}
 // A spec has scenes; each scene has a backdrop (a paper diorama plate, or a cream/forest page) and items.
 // Item times are a narration phrase, [phrase, offset], or seconds after the scene starts.
 const COL = c => P[c] || c || P.white;
-const EPC = ['ochre', 'terra', 'clay', 'moss', 'forest', 'ink'];
+const EPC = ['ochre', 'terra', 'clay', 'moss', 'forest', 'ink', 'sand'];
 let SPEC, SC = [], RUNS = [];
 const TR0 = .38, TR1 = .5;
 function tt(v, sc) { if (v === undefined || v === null) return undefined; if (typeof v === 'number') return sc.t0c + v; if (Array.isArray(v)) return at(v[0], v[1] || 0); return at(v); }

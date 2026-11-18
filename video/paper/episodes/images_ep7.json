@@ -1,0 +1,28 @@
+{
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {
+      "name": "au_glass",
+      "seed": 300,
+      "prompt": "a building facade with large windows being fitted, spare glass panes leaning against the wall, short external shading fins above the windows"
+    },
+    {
+      "name": "au_roof",
+      "seed": 309,
+      "prompt": "a flat concrete rooftop half covered in rigid insulation boards and half painted with bright white reflective coating, a paint roller and bucket left behind"
+    },
+    {
+      "name": "au_tap",
+      "seed": 318,
+      "prompt": "a simple bathroom washbasin with a chrome tap, a spare tap still in its cardboard box beside it"
+    },
+    {
+      "name": "au_bricks",
+      "seed": 327,
+      "prompt": "a construction site with a neat stack of pale grey aerated concrete blocks next to a stack of red clay bricks and a wheelbarrow"
+    }
+  ]
+}
