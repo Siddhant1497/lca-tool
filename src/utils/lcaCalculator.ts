@@ -33,34 +33,40 @@ export const percentDiff = (baseline: ImpactValues, proposed: ImpactValues): Par
   return result;
 };
 
-/** Convert entry quantity to kg for calculation */
-const toKg = (entry: MaterialEntry): number => {
+/**
+ * Quantity in the material's declared unit. EPD values in the database are per declared unit
+ * (kg, m³ or m²), so no conversion is applied. (Converting m³ to kg here would multiply
+ * per-m³ factors by density, overstating concrete by ~2,400x.)
+ */
+const toKg = (entry: MaterialEntry): number => (getMaterialById(entry.materialId) ? entry.quantity : 0);
+
+/**
+ * Impacts of one inventory entry, split by life-cycle module.
+ * Entries in the default product stage (A1-A3) are allocated module by module from the EPD
+ * (A1-A3, A4, A5, C1-C4, D), plus replacements in B4. Entries the user assigns to another
+ * stage (e.g. A5 site waste, B4 replacement items) count the material's A1-A3 data in that stage.
+ */
+export const calculateEntryModules = (entry: MaterialEntry, projectLifespan: number): Partial<Record<LifeCycleStage, ImpactValues>> => {
   const mat = getMaterialById(entry.materialId);
-  if (!mat) return 0;
-  if (mat.unit === 'kg') return entry.quantity;
-  if (mat.unit === 'm3' && mat.density) return entry.quantity * mat.density;
-  // m2 / m / pcs: impacts declared per functional unit so pass through as-is
-  return entry.quantity;
+  const out: Partial<Record<LifeCycleStage, ImpactValues>> = {};
+  if (!mat) return out;
+  const qty = toKg(entry);
+  const put = (stage: LifeCycleStage, v: Partial<ImpactValues> | undefined, factor = qty) => {
+    if (v) out[stage] = addImpacts(out[stage] ?? { ...ZERO_IMPACTS }, scaleImpacts(v, factor));
+  };
+  if (entry.stage !== 'A1-A3') { put(entry.stage, mat.epd.A1_A3); return out; }
+  put('A1-A3', mat.epd.A1_A3); put('A4', mat.epd.A4); put('A5', mat.epd.A5); put('C1-C4', mat.epd.C1_C4); put('D', mat.epd.D);
+  if (entry.includeReplacement && mat.serviceLife < projectLifespan) {
+    const reps = Math.ceil(projectLifespan / mat.serviceLife) - 1;  // EN 15978: replacements within the study period
+    if (reps > 0) for (const v of [mat.epd.A1_A3, mat.epd.A4, mat.epd.C1_C4]) put('B4', v, qty * reps);
+  }
+  return out;
 };
 
+/** Whole-life impacts of one entry (A–C). Module D is excluded, as EN 15978 reports it separately. */
 export const calculateEntryImpacts = (entry: MaterialEntry, projectLifespan: number): ImpactValues => {
-  const mat = getMaterialById(entry.materialId);
-  if (!mat) return { ...ZERO_IMPACTS };
-
-  const qty = toKg(entry);
   let total: ImpactValues = { ...ZERO_IMPACTS };
-
-  total = addImpacts(total, scaleImpacts(mat.epd.A1_A3, qty));
-  if (mat.epd.A4)    total = addImpacts(total, scaleImpacts(mat.epd.A4,    qty));
-  if (mat.epd.A5)    total = addImpacts(total, scaleImpacts(mat.epd.A5,    qty));
-  if (mat.epd.C1_C4) total = addImpacts(total, scaleImpacts(mat.epd.C1_C4, qty));
-  if (mat.epd.D)     total = addImpacts(total, scaleImpacts(mat.epd.D,     qty));
-
-  if (entry.includeReplacement && mat.serviceLife < projectLifespan) {
-    const reps = Math.floor(projectLifespan / mat.serviceLife) - 1;
-    if (reps > 0) total = addImpacts(total, scaleImpacts(mat.epd.A1_A3, qty * reps));
-  }
-
+  for (const [stage, v] of Object.entries(calculateEntryModules(entry, projectLifespan))) if (stage !== 'D') total = addImpacts(total, v!);
   return total;
 };
 
@@ -69,15 +75,19 @@ export const calculateLCA = (entries: MaterialEntry[], project: Project): LCARes
   const byComponent: Record<string, ImpactValues> = {};
   const breakdowns: ImpactBreakdown[] = [];
   let total: ImpactValues = { ...ZERO_IMPACTS };
+  let moduleD: ImpactValues = { ...ZERO_IMPACTS };
 
   for (const entry of entries) {
     const mat = getMaterialById(entry.materialId);
     if (!mat) continue;
-    const impacts = calculateEntryImpacts(entry, project.lifespan);
+    let impacts: ImpactValues = { ...ZERO_IMPACTS };
+    for (const [s, v] of Object.entries(calculateEntryModules(entry, project.lifespan))) {
+      const stage = s as LifeCycleStage;
+      byStage[stage] = addImpacts(byStage[stage] ?? { ...ZERO_IMPACTS }, v!);
+      if (stage === 'D') moduleD = addImpacts(moduleD, v!);
+      else impacts = addImpacts(impacts, v!);
+    }
     total = addImpacts(total, impacts);
-
-    const prevStage = byStage[entry.stage] ?? { ...ZERO_IMPACTS };
-    byStage[entry.stage] = addImpacts(prevStage, impacts);
 
     const prevComp = byComponent[entry.component] ?? { ...ZERO_IMPACTS };
     byComponent[entry.component] = addImpacts(prevComp, impacts);
@@ -98,6 +108,9 @@ export const calculateLCA = (entries: MaterialEntry[], project: Project): LCARes
       GWP: operationalCarbon,
       ADP_fossil: project.energyIntensity * project.grossFloorArea * project.lifespan * 3.6,
     });
+    byStage.B6 = addImpacts(byStage.B6 ?? { ...ZERO_IMPACTS }, {
+      GWP: operationalCarbon, ADP_fossil: project.energyIntensity * project.grossFloorArea * project.lifespan * 3.6,
+    });
   }
 
   const embodiedCarbon = total.GWP - operationalCarbon;
@@ -115,12 +128,12 @@ export const calculateLCA = (entries: MaterialEntry[], project: Project): LCARes
   const perM2 = scaleImpacts(total, 1 / area);
   const perM2PerYear = scaleImpacts(perM2, 1 / project.lifespan);
 
-  return { total, byStage, byPhase, byComponent, byMaterial: breakdowns, perM2, perM2PerYear, operationalCarbon, embodiedCarbon };
+  return { total, byStage, byPhase, byComponent, byMaterial: breakdowns, perM2, perM2PerYear, operationalCarbon, embodiedCarbon, moduleD };
 };
 
 export const formatGWP = (v: number): string => {
-  if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(2)} Mt CO₂ eq`;
-  if (Math.abs(v) >= 1_000)     return `${(v / 1_000).toFixed(1)} t CO₂ eq`;
+  // 1,000 kg = 1 t; 1,000,000 kg = 1,000 t (not a megatonne)
+  if (Math.abs(v) >= 1_000) return `${(v / 1_000).toLocaleString('en-US', { maximumFractionDigits: 1 })} t CO₂ eq`;
   return `${v.toFixed(1)} kg CO₂ eq`;
 };
 

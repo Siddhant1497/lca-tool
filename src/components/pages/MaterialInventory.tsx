@@ -27,6 +27,7 @@ const MaterialInventory: React.FC = () => {
   const [cat, setCat] = useState<MaterialCategory | ''>('');
   const [tab, setTab] = useState<'proposed' | 'baseline'>('proposed');
   const [err, setErr] = useState('');
+  const [pendingDel, setPendingDel] = useState<string | null>(null);
 
   const entries = tab === 'proposed' ? state.materialEntries : state.baselineEntries;
   const cats = Array.from(new Set(MATERIALS.map((m) => m.category))) as MaterialCategory[];
@@ -64,13 +65,14 @@ const MaterialInventory: React.FC = () => {
   };
 
   const del = (id: string) => {
-    if (!confirm('Remove this material?')) return;
+    if (pendingDel !== id) { setPendingDel(id); setTimeout(() => setPendingDel((p) => (p === id ? null : p)), 3000); return; }
+    setPendingDel(null);
     dispatch(tab === 'proposed' ? { type: 'DELETE_ENTRY', id } : { type: 'DELETE_BASELINE', id });
   };
 
   const selMat = form.materialId ? getMaterialById(form.materialId) : null;
   const reps = selMat && state.project && form.rep && selMat.serviceLife < state.project.lifespan
-    ? Math.floor(state.project.lifespan / selMat.serviceLife) - 1 : 0;
+    ? Math.ceil(state.project.lifespan / selMat.serviceLife) - 1 : 0;
 
   return (
     <div>
@@ -99,7 +101,7 @@ const MaterialInventory: React.FC = () => {
           <div className="empty">
             <div className="icon">🧱</div>
             <h3>No materials in {tab === 'proposed' ? 'proposed design' : 'baseline'}</h3>
-            <p>Click "Add Material" to select from 40+ EPD-backed building materials and enter quantities.</p>
+            <p>Click "Add Material" to choose from 40+ materials with generic (ICE / industry-average EPD) values and enter quantities.</p>
             <button className="btn btn-pri" onClick={openAdd}>＋ Add Material</button>
           </div>
         </div>
@@ -124,7 +126,7 @@ const MaterialInventory: React.FC = () => {
                       <td>
                         <div className="row">
                           <button className="btn btn-out btn-sm" onClick={() => openEdit(e)}>✏️ Edit</button>
-                          <button className="btn btn-err btn-sm" onClick={() => del(e.id)}>🗑️</button>
+                          <button className="btn btn-err btn-sm" onClick={() => del(e.id)}>{pendingDel === e.id ? 'Confirm?' : '🗑️'}</button>
                         </div>
                       </td>
                     </tr>
@@ -184,7 +186,7 @@ const MaterialInventory: React.FC = () => {
                     {COMPONENTS.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
-                <div className="field"><label>Life Cycle Stage *</label>
+                <div className="field"><label>Life Cycle Stage * <span className="hint">(A1-A3 = product; its A4, C and D are added automatically)</span></label>
                   <select value={form.stage} onChange={(e) => setForm((f) => ({...f, stage: e.target.value as LifeCycleStage}))}>
                     {STAGE_OPTS.map((s) => <option key={s} value={s}>{s} – {STAGE_META[s].label}</option>)}
                   </select>

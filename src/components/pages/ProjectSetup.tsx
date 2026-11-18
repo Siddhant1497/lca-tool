@@ -19,6 +19,7 @@ const ProjectSetup: React.FC = () => {
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   });
   const [saved, setSaved] = useState(false);
+  const [armReset, setArmReset] = useState(false);
 
   useEffect(() => { if (state.project) setForm(state.project); }, []);
 
@@ -38,7 +39,7 @@ const ProjectSetup: React.FC = () => {
         <div><div className="ph-title">Project Setup</div><div className="ph-sub">Define building parameters and Reference Study Period</div></div>
         <div className="ph-actions">
           <button className="btn btn-pri" onClick={save}>{saved ? '✅ Saved' : '💾 Save Project'}</button>
-          <button className="btn btn-out" onClick={() => { if (confirm('Reset all data?')) dispatch({ type: 'RESET' }); }}>↺ Reset</button>
+          <button className="btn btn-out" onClick={() => { if (!armReset) { setArmReset(true); setTimeout(() => setArmReset(false), 3000); return; } setArmReset(false); dispatch({ type: 'RESET' }); }}>{armReset ? 'Click again to reset all data' : '↺ Reset'}</button>
         </div>
       </div>
 
@@ -95,7 +96,7 @@ const ProjectSetup: React.FC = () => {
       <div className="card" style={{ marginBottom: '14px' }}>
         <div className="sec-title">⚡ Operational Energy (Stage B6) – Optional</div>
         <p className="muted" style={{ fontSize: '.84rem', marginBottom: '12px' }}>
-          Include operational (in-use) energy for a whole-building GWP assessment. Required for LEED EA prerequisites.
+          Include operational (in-use) energy to see operational carbon (B6) alongside embodied carbon.
         </p>
         <div className="form-grid">
           <div className="field">
@@ -122,9 +123,9 @@ const ProjectSetup: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(190px,1fr))', gap: '10px' }}>
           {[
             { name: 'LEED v4 MRc1', pts: '3 pts', desc: 'Whole-building LCA credit' },
-            { name: 'LEED v4.1 MRc1', pts: '5 pts', desc: 'Updated LCA credit' },
+            { name: 'LEED v4.1 MRc1', pts: 'up to 4 pts', desc: 'Whole-building LCA (Option 2)' },
             { name: 'EN 15978:2011', pts: null, desc: 'European LCA framework' },
-            { name: 'BREEAM Mat 01', pts: '6 pts', desc: 'UK green building LCA' },
+            { name: 'BREEAM Mat 01', pts: null, desc: 'Credits not estimated' },
             { name: 'ISO 14044:2006', pts: null, desc: 'International LCA standard' },
           ].map((s) => (
             <div key={s.name} style={{ border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', padding: '11px', background: 'var(--bg)' }}>

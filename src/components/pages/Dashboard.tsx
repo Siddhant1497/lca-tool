@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
   const hasData = results !== null;
 
   const bm = project ? (EMBODIED_CARBON_BENCHMARKS[project.buildingType] ?? EMBODIED_CARBON_BENCHMARKS.other) : null;
-  const gwpM2 = results?.perM2.GWP ?? 0;
+  const gwpM2 = results ? results.embodiedCarbon / (project?.grossFloorArea || 1) : 0;
   const bmPct = bm && gwpM2 > 0 ? Math.min((gwpM2 / bm.high) * 100, 120) : 0;
 
   const phaseData = hasData
@@ -51,12 +51,12 @@ const Dashboard: React.FC = () => {
       {/* KPIs */}
       <div className="kpi-grid">
         {[
-          { lbl: 'Total GWP (A–D)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: 'Global Warming Potential', col: '#DC2626' },
-          { lbl: 'Embodied Carbon', val: hasData ? `${results!.perM2.GWP.toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA', col: '#1D4ED8' },
+          { lbl: 'Whole-life GWP (A–C)', val: hasData ? formatGWP(results!.total.GWP) : '—', sub: hasData && results!.moduleD.GWP ? `Module D (separate): ${formatGWP(results!.moduleD.GWP)}` : 'Module D reported separately', col: '#DC2626' },
+          { lbl: 'Embodied Carbon', val: hasData ? `${(results!.embodiedCarbon / (project?.grossFloorArea || 1)).toFixed(0)} kg/m²` : '—', sub: 'Per m² GFA, excl. operational', col: '#1D4ED8' },
           { lbl: 'GWP Intensity', val: hasData ? `${results!.perM2PerYear.GWP.toFixed(3)} kg/m²/yr` : '—', sub: 'Annual intensity', col: '#059669' },
           { lbl: 'Material Entries', val: String(materialEntries.length), sub: `${new Set(materialEntries.map(e=>e.component)).size} components`, col: '#6B7280' },
-          { lbl: 'LEED v4 MRc1', val: leed ? `${leed.creditPoints ?? 0}/3 pts` : '—', sub: leed?.summary ?? 'No data', col: leed?.compliant ? '#059669' : '#DC2626' },
-          { lbl: 'EN 15978', val: en ? (en.compliant ? 'Compliant' : 'Action Req.') : '—', sub: en?.summary ?? 'No data', col: en?.compliant ? '#059669' : '#DC2626' },
+          { lbl: 'LEED v4 MRc1', val: leed ? `${leed.creditPoints ?? 0}/3 pts (indicative)` : '—', sub: leed?.summary ?? 'No data', col: leed?.compliant ? '#059669' : '#DC2626' },
+          { lbl: 'EN 15978', val: en ? (en.compliant ? 'Modules reported' : 'Action Req.') : '—', sub: en?.summary ?? 'No data', col: en?.compliant ? '#059669' : '#DC2626' },
         ].map((k) => (
           <div className="kpi" key={k.lbl}>
             <div className="kpi-lbl">{k.lbl}</div>
@@ -114,9 +114,9 @@ const Dashboard: React.FC = () => {
           {/* Benchmark */}
           {bm && (
             <div className="card" style={{ marginBottom: '16px' }}>
-              <div className="card-title">📏 Embodied Carbon Benchmark</div>
+              <div className="card-title">📏 Embodied Carbon (illustrative range)</div>
               <div className="muted" style={{ fontSize: '.84rem', marginBottom: '10px' }}>
-                Typical range for {project?.buildingType.replace(/_/g,' ')} buildings (kg CO₂ eq/m² GFA, A1-A3)
+                Illustrative range for {project?.buildingType.replace(/_/g,' ')} buildings (kg CO₂ eq/m² GFA, embodied). Not an official benchmark.
               </div>
               <div className="row" style={{ marginBottom: '6px' }}>
                 <span style={{ fontSize: '1.3rem', fontWeight: 700, color: bmPct > 100 ? 'var(--err)' : bmPct > 60 ? 'var(--warn)' : 'var(--acc)' }}>
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
             <div className="card-title">🌍 All Impact Categories – Summary</div>
             <div className="tbl-wrap">
               <table>
-                <thead><tr><th>Impact Category</th><th>Unit</th><th>Total (A–D)</th><th>Per m²</th><th>Per m²/yr</th></tr></thead>
+                <thead><tr><th>Impact Category</th><th>Unit</th><th>Total (A–C)</th><th>Per m²</th><th>Per m²/yr</th></tr></thead>
                 <tbody>
                   {(Object.keys(IMPACT_META) as (keyof typeof IMPACT_META)[]).map((k) => (
                     <tr key={k}>

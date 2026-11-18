@@ -135,3 +135,16 @@ tbody tr:hover { background: #F8FAFC; }
 .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 ::-webkit-scrollbar { width: 5px; height: 5px; } ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+/* ── Phones ── */
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+  .header { flex-wrap: wrap; padding: 10px 16px; gap: 6px; }
+  .header .sub { margin-left: 0; width: 100%; }
+  .sidebar { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border); padding: 0; }
+  .nav-sect { display: none; }
+  .nav-item { white-space: nowrap; border-right: 0; padding: 10px 12px; }
+  .main { padding: 16px; }
+  .main div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  .modal { width: calc(100vw - 24px) !important; max-width: none !important; }
+}

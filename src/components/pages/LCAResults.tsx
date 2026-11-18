@@ -34,7 +34,7 @@ const LCAResults: React.FC = () => {
       <div className="ph">
         <div>
           <div className="ph-title">LCA Results</div>
-          <div className="ph-sub">Total: {formatGWP(results.total.GWP)} · {results.perM2.GWP.toFixed(0)} kg CO₂/m² · {results.perM2PerYear.GWP.toFixed(3)} kg CO₂/m²/yr</div>
+          <div className="ph-sub">Whole-life (A–C): {formatGWP(results.total.GWP)} · Module D, reported separately: {formatGWP(results.moduleD.GWP)} · {results.perM2.GWP.toFixed(0)} kg CO₂/m² · {results.perM2PerYear.GWP.toFixed(3)} kg CO₂/m²/yr</div>
         </div>
       </div>
 
@@ -151,7 +151,7 @@ const LCAResults: React.FC = () => {
                     );
                   })}
                   <tr style={{ fontWeight:700, background:'var(--bg)' }}>
-                    <td colSpan={2}>TOTAL</td>
+                    <td colSpan={2}>TOTAL (A–C, excl. Module D)</td>
                     <td className="mono">{results.total.GWP.toFixed(2)}</td>
                     <td className="mono">{results.total.AP.toFixed(4)}</td>
                     <td className="mono">{results.total.ADP_fossil.toFixed(2)}</td>
@@ -247,7 +247,7 @@ const LCAResults: React.FC = () => {
               <div className="card-title">📊 Proposed vs. Baseline – All Impact Categories</div>
               <div className="tbl-wrap">
                 <table>
-                  <thead><tr><th>Impact Category</th><th>Unit</th><th>Baseline</th><th>Proposed</th><th>Change</th><th>LEED 10% Target</th></tr></thead>
+                  <thead><tr><th>Impact Category</th><th>Unit</th><th>Baseline</th><th>Proposed</th><th>Change</th><th>10% reduction?</th></tr></thead>
                   <tbody>
                     {KEYS.map((k) => {
                       const d = diff?.[k] ?? 0;

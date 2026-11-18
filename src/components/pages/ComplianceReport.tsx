@@ -94,16 +94,16 @@ const ComplianceReport: React.FC = () => {
   return (
     <div>
       <div className="ph">
-        <div><div className="ph-title">Compliance Report</div><div className="ph-sub">Assessment against LEED v4 · LEED v4.1 · EN 15978 · BREEAM · ISO 14044</div></div>
+        <div><div className="ph-title">Compliance Report</div><div className="ph-sub">Screening checks against LEED v4 · LEED v4.1 · EN 15978 · BREEAM · ISO 14044. *Credit points are indicative, not a certification result.</div></div>
       </div>
 
       <div className="kpi-grid" style={{ marginBottom:'20px' }}>
         {[
           { lbl: 'Standards Met', val: `${pass}/${complianceResults.length}`, sub: 'fully compliant', col: pass>0?'#059669':'#DC2626' },
-          { lbl: 'LEED v4 MRc1', val: `${leedV4?.creditPoints??0}/3 pts`, sub: leedV4?.summary??'—', col: leedV4?.compliant?'#059669':'#DC2626' },
-          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/5 pts`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'#059669':'#DC2626' },
-          { lbl: 'BREEAM Mat 01', val: `${breeam?.creditPoints??0}/6 pts`, sub: breeam?.summary??'—', col: breeam?.compliant?'#7C3AED':'#DC2626' },
-          { lbl: 'EN 15978', val: en?.compliant?'Compliant':'Action Req.', sub: en?.summary??'—', col: en?.compliant?'#059669':'#DC2626' },
+          { lbl: 'LEED v4 MRc1', val: `${leedV4?.creditPoints??0}/3 pts*`, sub: leedV4?.summary??'—', col: leedV4?.compliant?'#059669':'#DC2626' },
+          { lbl: 'LEED v4.1 MRc1', val: `${leedV41?.creditPoints??0}/4 pts*`, sub: leedV41?.summary??'—', col: leedV41?.compliant?'#059669':'#DC2626' },
+          { lbl: 'BREEAM Mat 01', val: 'Not estimated', sub: breeam?.summary??'—', col: '#6B7280' },
+          { lbl: 'EN 15978', val: en?.compliant?'Modules reported':'Action Req.', sub: en?.summary??'—', col: en?.compliant?'#059669':'#DC2626' },
         ].map((k) => (
           <div className="kpi" key={k.lbl}><div className="kpi-lbl">{k.lbl}</div><div className="kpi-val" style={{ fontSize:'1.1rem', color:k.col }}>{k.val}</div><div className="kpi-sub">{k.sub}</div></div>
         ))}

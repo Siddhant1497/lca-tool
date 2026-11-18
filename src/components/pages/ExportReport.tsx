@@ -8,13 +8,20 @@ const ExportReport: React.FC = () => {
   const { state, results, baselineResults, complianceResults } = useLCA();
   const { project, materialEntries } = state;
   const [done, setDone] = useState<string | null>(null);
+  const [msg, setMsg] = useState('');
 
-  const dl = (filename: string, content: string) => {
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
+  const dl = (filename: string, content: string, type = 'text/csv;charset=utf-8;') => {
+    try {
+      const url = URL.createObjectURL(new Blob([content], { type }));
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch { /* downloads blocked */ }
+    // Some embedded viewers block downloads, so also copy the data: paste it into Excel or a text file.
+    navigator.clipboard?.writeText(content).then(
+      () => setMsg(`${filename}: if no download started, the data is copied to your clipboard. Paste it into Excel or a text file.`),
+      () => setMsg(`${filename}: download started where your browser allows it.`),
+    );
   };
 
   const now = new Date().toISOString().slice(0,10);
@@ -27,6 +34,7 @@ const ExportReport: React.FC = () => {
     for (const k of Object.keys(IMPACT_META) as (keyof ImpactValues)[]) {
       csv += `"${IMPACT_META[k].label}",${results.total[k]},${results.perM2[k]},${results.perM2PerYear[k]},${IMPACT_META[k].unit}\n`;
     }
+    csv += `Module D (reported separately; not in totals),${results.moduleD.GWP},kg CO2eq\n`;
     csv += '\n=== MATERIAL INVENTORY ===\nMaterial,Component,Stage,Qty,Unit,GWP (kg CO2eq),AP (kg SO2eq),ADP_fossil (MJ)\n';
     for (const b of results.byMaterial) {
       csv += `"${b.name}","${b.component}",${b.stage},${b.quantity},${b.unit},${b.impacts.GWP.toFixed(4)},${b.impacts.AP.toFixed(6)},${b.impacts.ADP_fossil.toFixed(4)}\n`;
@@ -77,11 +85,7 @@ const ExportReport: React.FC = () => {
   };
 
   const saveJSON = () => {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `LCA_${proj}_${now}.json`; a.click();
-    URL.revokeObjectURL(url);
+    dl(`LCA_${proj}_${now}.json`, JSON.stringify(state, null, 2), 'application/json');
     setDone('json'); setTimeout(() => setDone(null), 2500);
   };
 
@@ -94,8 +98,8 @@ const ExportReport: React.FC = () => {
         if (parsed.project && parsed.materialEntries) {
           localStorage.setItem('lca_tool_v1', JSON.stringify(parsed));
           window.location.reload();
-        } else alert('Invalid LCA Tool project file.');
-      } catch { alert('Failed to parse file.'); }
+        } else setMsg('That file is not an LCA Tool project.');
+      } catch { setMsg('Could not read that file.'); }
     };
     reader.readAsText(file);
   };
@@ -147,6 +151,7 @@ const ExportReport: React.FC = () => {
         ))}
       </div>
 
+      {msg && <div className="card" style={{ marginBottom:'14px', background:'var(--pri-lt)', color:'var(--pri-dk)', fontSize:'.86rem' }}>{msg}</div>}
       <div className="card" style={{ marginBottom:'14px' }}>
         <div className="card-title">💾 Save / Load Project</div>
         <p className="muted" style={{ fontSize:'.86rem', marginBottom:'13px' }}>Save the entire project as JSON to share or continue in another session.</p>
@@ -163,7 +168,7 @@ const ExportReport: React.FC = () => {
         <div className="card-title">ℹ️ Data Sources & Disclaimer</div>
         <ul style={{ paddingLeft:'16px', fontSize:'.82rem', color:'var(--muted)', lineHeight:1.9 }}>
           <li>EPD data sourced from: ICE Database v3.0 (University of Bath), World Steel Association EPDs, European Aluminium EPDs, Glass for Europe EPDs, ROCKWOOL/EURIMA EPDs, and other published industry EPDs.</li>
-          <li>Values are indicative. For formal LEED/BREEAM submissions, use project-specific certified EPDs from EC3, OKOBAUDAT, EPD International, or manufacturer EPD portals.</li>
+          <li>This is a screening tool with generic data. LEED credit estimates are indicative and BREEAM credits are not estimated. Values are indicative. For formal LEED/BREEAM submissions, use project-specific certified EPDs from EC3, OKOBAUDAT, EPD International, or manufacturer EPD portals.</li>
           <li>LEED v4/v4.1 MRc1 credit requires a study prepared by a qualified professional and submitted for USGBC review.</li>
           <li>EN 15978:2011 requires declaration of all life cycle stages, or documentation of why any stage was excluded (Module Not Assessed – MNA).</li>
           <li>Biogenic carbon in timber: GWP values for timber products include biogenic carbon sequestration per EN 16449 / ISO 21930.</li>

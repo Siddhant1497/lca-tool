@@ -18,7 +18,7 @@ export const IMPACT_META: Record<keyof ImpactValues, { label: string; unit: stri
   ADP_fossil: { label: 'Abiotic Depletion (Fossil)',   unit: 'MJ',           color: '#6B7280', description: 'Consumption of non-renewable fossil fuel resources' },
 };
 
-export const LIFECYCLE_STAGES = ['A1-A3','A4','A5','B1','B2','B3','B4','B5','B6','B7','C1','C2','C3','C4','D'] as const;
+export const LIFECYCLE_STAGES = ['A1-A3','A4','A5','B1','B2','B3','B4','B5','B6','B7','C1','C2','C3','C4','C1-C4','D'] as const;
 export type LifeCycleStage = typeof LIFECYCLE_STAGES[number];
 
 export const STAGE_META: Record<LifeCycleStage, { label: string; phase: 'production'|'construction'|'use'|'eol'|'beyond'; description: string }> = {
@@ -36,6 +36,7 @@ export const STAGE_META: Record<LifeCycleStage, { label: string; phase: 'product
   'C2':    { label: 'Transport (EoL)',        phase: 'eol',          description: 'Transport of waste to processing facilities' },
   'C3':    { label: 'Waste Processing',       phase: 'eol',          description: 'Recycling, energy recovery or processing' },
   'C4':    { label: 'Disposal',               phase: 'eol',          description: 'Landfill or final disposal' },
+  'C1-C4': { label: 'End of Life (C1–C4)',   phase: 'eol',          description: 'Deconstruction, transport, waste processing and disposal (EPD aggregate)' },
   'D':     { label: 'Beyond System Boundary', phase: 'beyond',       description: 'Net benefits from reuse, recovery & recycling' },
 };
 
@@ -140,6 +141,8 @@ export interface LCAResults {
   perM2PerYear: ImpactValues;
   operationalCarbon: number;
   embodiedCarbon: number;
+  /** Module D (benefits beyond the system boundary). Reported separately and NOT included in total, per EN 15978. */
+  moduleD: ImpactValues;
 }
 
 export type StandardType = 'LEED_v4_MRc1'|'LEED_v4_1_MRc1'|'EN_15978'|'BREEAM_Mat01'|'ISO_14044';

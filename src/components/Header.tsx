@@ -8,7 +8,7 @@ const Header: React.FC = () => {
       <span className="logo">🏗️ LCA<span>Tool</span></span>
       <span style={{ color: '#93C5FD' }}>|</span>
       <span style={{ fontSize: '.88rem', color: '#BFDBFE' }}>{state.project?.name ?? 'LCA Tool'}</span>
-      <span className="sub">LEED · EN 15978 · ISO 14044 · BREEAM</span>
+      <span className="sub">Free screening LCA · generic data · EN 15978 modules</span>
     </header>
   );
 };

@@ -66,6 +66,12 @@ Everything here is ready to paste. It uses the new paper-style episodes (`out/pa
 
 ## 4. Paste-ready text
 
+**Tool link (add above the credits on every video):**
+```
+🧮 Try the free building LCA tool (embodied + operational carbon by EN 15978 module): https://claude.ai/artifact/SXtQ4FterycLRxTJ9sZJNQ
+```
+The tool page starts **private**. Before the first upload, open it on claude.ai and set sharing to public, or the link won't work for viewers.
+
 **Credits block (under every description):**
 ```
 Part of the series "The Carbon You Can't See".
