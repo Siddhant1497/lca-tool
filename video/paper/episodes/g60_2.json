@@ -70,7 +70,7 @@
       "y": 800,
       "size": 230,
       "color": "forest",
-      "at": "hundred"
+      "at": 0.15
      },
      {
       "type": "big",
@@ -102,7 +102,8 @@
       "align": "left",
       "y": 800,
       "size": 280,
-      "at": "you need 170"
+      "at": 0.15,
+      "count": 1.6
      },
      {
       "type": "tag",
@@ -137,7 +138,7 @@
       "y": 800,
       "size": 280,
       "color": "terra",
-      "at": "250"
+      "at": 0.15
      },
      {
       "type": "tag",

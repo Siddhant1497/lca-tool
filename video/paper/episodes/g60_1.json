@@ -192,7 +192,10 @@
       "title": "INSULATED",
       "body": "heat slowed\ndown",
       "color": "moss",
-      "at": "living room"
+      "at": [
+       "Thin walls",
+       1.2
+      ]
      }
     ]
    },
