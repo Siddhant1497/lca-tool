@@ -113,7 +113,7 @@ function epTabs(g, t) {
     const p = Math.min(1.06, sp(t - T.tabs - i * D.beat / 4)) * (1 - eio(seg(t, T.end - .2 + i * .04, T.end + .2 + i * .04))); if (p <= 0) continue;
     const on = i === SPEC.ep - 1, vis = on ? 112 : 70, x = W - FB - vis + (1 - p) * 170, y = 700 + i * 96;
     paperShape(g, rectPath(x, y, 220, 80, 14), on ? COL(EPC[i]) : P.white, 6);
-    g.fillStyle = on && EPC[i] !== 'ochre' ? P.white : P.ink; g.font = `${on ? 900 : 700} ${on ? 30 : 30}px ${on ? 'Fraunces' : 'Inter'}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = on && !['ochre', 'sand'].includes(EPC[i]) ? P.white : P.ink; g.font = `${on ? 900 : 700} ${on ? 30 : 30}px ${on ? 'Fraunces' : 'Inter'}`; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText(on ? 'EP ' + (i + 1) : String(i + 1), x + vis / 2 + 3, y + 42); g.textBaseline = 'alphabetic';
   }
 }
