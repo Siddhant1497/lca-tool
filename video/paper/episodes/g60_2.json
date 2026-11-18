@@ -1,0 +1,261 @@
+{
+ "html": "ep.html",
+ "out": "g60-2-leed-ga",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "Thinking about the LEED Green Associate exam? Here are five things to know before you book it.",
+  "One. It's a hundred multiple-choice questions, in two hours.",
+  "Two. It's scored from 125 to 200, and you need 170 to pass. That's a scaled score, not a percentage.",
+  "Three. The fee is 250 US dollars, with a lower fee for USGBC members and students.",
+  "Four. The exam is moving to LEED version 5. Check which version applies to your exam date before you start studying.",
+  "Five. It rewards understanding over memorising. Know why each category exists: location, sites, water, energy, materials and indoor quality.",
+  "Then book a date, and do timed practice tests in the last two weeks."
+ ],
+ "spec": {
+  "ep": 2,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "five things",
+  "next": "What is|an EPD?",
+  "scenes": [
+   {
+    "plate": "ga_desk",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE EXAM"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "LEED Green",
+       {
+        "s": "Associate.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "5 things to know first",
+      "y": 770,
+      "at": "five things"
+     }
+    ]
+   },
+   {
+    "at": "One.",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THING 1"
+     },
+     {
+      "type": "big",
+      "text": "100 Qs",
+      "x": 90,
+      "align": "left",
+      "y": 800,
+      "size": 230,
+      "color": "forest",
+      "at": "hundred"
+     },
+     {
+      "type": "big",
+      "text": "2 hours",
+      "x": 90,
+      "align": "left",
+      "y": 1060,
+      "size": 170,
+      "color": "terra",
+      "at": "two hours"
+     }
+    ]
+   },
+   {
+    "at": "Two.",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THING 2",
+      "color": "sand"
+     },
+     {
+      "type": "big",
+      "value": 170,
+      "prefix": "",
+      "suffix": "",
+      "x": 90,
+      "align": "left",
+      "y": 800,
+      "size": 280,
+      "at": "you need 170"
+     },
+     {
+      "type": "tag",
+      "text": "TO PASS · SCALE 125–200",
+      "y": 880,
+      "style": "caps",
+      "bg": "sand",
+      "size": 28,
+      "at": "you need 170"
+     },
+     {
+      "type": "note",
+      "text": "scaled score, not a %",
+      "y": 1010,
+      "at": "scaled score"
+     }
+    ]
+   },
+   {
+    "at": "Three.",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THING 3"
+     },
+     {
+      "type": "big",
+      "text": "$250",
+      "x": 90,
+      "align": "left",
+      "y": 800,
+      "size": 280,
+      "color": "terra",
+      "at": "250"
+     },
+     {
+      "type": "tag",
+      "text": "$200 USGBC members · $100 students",
+      "y": 900,
+      "style": "plain",
+      "size": 30,
+      "at": "lower fee"
+     }
+    ]
+   },
+   {
+    "at": "Four.",
+    "plate": "ep2_tower",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THING 4"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "v4 →",
+       {
+        "s": "v5.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "the exam is moving to LEED v5",
+      "y": 730,
+      "at": "moving to LEED"
+     },
+     {
+      "type": "note",
+      "text": "check your exam date's version",
+      "y": 840,
+      "size": 62,
+      "color": "sand",
+      "at": "Check which version"
+     }
+    ]
+   },
+   {
+    "at": "Five.",
+    "plate": "ga_desk",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THING 5"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Understand,",
+       {
+        "s": "don't memorise.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "location + sites",
+        "at": "location"
+       },
+       {
+        "text": "water + energy",
+        "at": "water"
+       },
+       {
+        "text": "materials + indoor quality",
+        "at": "materials"
+       }
+      ],
+      "y": 760,
+      "gap": 105,
+      "serif": false,
+      "size": 32
+     }
+    ]
+   },
+   {
+    "at": "Then book a date",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE PLAN",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Book it.",
+       {
+        "s": "Then practise.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.2,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "timed tests, last two weeks",
+      "y": 770,
+      "at": "timed practice"
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,273 @@
+{
+ "html": "ep.html",
+ "out": "g60-1-hot-flat",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "Same building. Same AC. So why is your flat so much hotter than your neighbour's?",
+  "First, the sun. West-facing flats take the harshest sun in the afternoon, right when the day is hottest.",
+  "Second, the glass. Big, unshaded windows let the heat straight in. Clear glass with no shade is the worst combination.",
+  "Third, the roof. Top-floor flats sit under a slab that bakes all day and gives that heat back all night.",
+  "Fourth, the walls. Thin walls with no insulation pass the outside heat straight into your living room.",
+  "The fixes are simpler than you think. Shade the west windows from outside, add a white reflective roof coating, and run the ceiling fan before the AC.",
+  "Green buildings solve this on paper, before anyone moves in. So before you buy, ask which way the flat faces."
+ ],
+ "spec": {
+  "ep": 1,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "harshest sun",
+  "next": "LEED Green Associate:|5 things to know",
+  "scenes": [
+   {
+    "plate": "life",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Same building.",
+       {
+        "s": "Hotter flat?",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "why yours, not theirs",
+      "y": 770,
+      "at": "hotter than your"
+     }
+    ]
+   },
+   {
+    "at": "First, the sun",
+    "plate": "hb_sun",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "REASON 1"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "The",
+       {
+        "s": "west sun.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "afternoon sun, hottest hours",
+      "y": 730,
+      "at": "harshest sun"
+     },
+     {
+      "type": "note",
+      "text": "west = worst",
+      "y": 840,
+      "color": "sand",
+      "at": "hottest"
+     }
+    ]
+   },
+   {
+    "at": "Second, the glass",
+    "plate": "hb_window",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "REASON 2"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Unshaded",
+       {
+        "s": "glass.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "big windows, no shade",
+      "y": 730,
+      "at": "Big, unshaded"
+     },
+     {
+      "type": "tag",
+      "text": "clear glass + no shade = worst",
+      "y": 830,
+      "bg": "terra",
+      "fg": "white",
+      "at": "worst combination"
+     }
+    ]
+   },
+   {
+    "at": "Third, the roof",
+    "plate": "au_roof",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "REASON 3"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "The top",
+       {
+        "s": "floor.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "roof slab bakes all day",
+      "y": 730,
+      "at": "bakes all day"
+     },
+     {
+      "type": "note",
+      "text": "…and gives it back all night",
+      "y": 840,
+      "color": "sand",
+      "at": "all night"
+     }
+    ]
+   },
+   {
+    "at": "Fourth, the walls",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "REASON 4"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Thin",
+       {
+        "s": "walls.",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "card",
+      "x": 290,
+      "y": 1000,
+      "w": 400,
+      "h": 300,
+      "title": "UNINSULATED",
+      "body": "heat passes\nstraight\nthrough",
+      "color": "terra",
+      "at": "Thin walls"
+     },
+     {
+      "type": "card",
+      "x": 760,
+      "y": 1030,
+      "w": 400,
+      "h": 300,
+      "title": "INSULATED",
+      "body": "heat slowed\ndown",
+      "color": "moss",
+      "at": "living room"
+     }
+    ]
+   },
+   {
+    "at": "The fixes are simpler",
+    "plate": "hb_fan",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE FIXES"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Simpler than",
+       {
+        "s": "you think.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "shade west windows from outside",
+        "at": "Shade the west"
+       },
+       {
+        "text": "white reflective roof coating",
+        "at": "white reflective"
+       },
+       {
+        "text": "ceiling fan before the AC",
+        "at": "ceiling fan"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "serif": false,
+      "size": 32
+     }
+    ]
+   },
+   {
+    "at": "Green buildings solve",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "BEFORE YOU BUY",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Ask which way",
+       {
+        "s": "it faces.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "ask which way",
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "green buildings plan this on paper",
+      "y": 760,
+      "at": "on paper"
+     }
+    ]
+   }
+  ]
+ }
+}

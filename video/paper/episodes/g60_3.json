@@ -1,0 +1,261 @@
+{
+ "html": "ep.html",
+ "out": "g60-3-epd",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "That bag of cement has a carbon footprint. An EPD is how you read it.",
+  "EPD stands for Environmental Product Declaration. Think of it as a nutrition label for a building product.",
+  "It reports the product's impacts, like its carbon, measured with a life cycle assessment.",
+  "For construction products it follows EN 15804, and it's checked by an independent verifier before it's published.",
+  "Most EPDs are valid for five years. Always check the date, and the declared unit: per kilo, per square metre or per cubic metre.",
+  "Why it matters: LEED rewards products with EPDs, and whole-building LCA tools use them as their data.",
+  "So next time a supplier says low carbon, ask one thing. Can I see the EPD?"
+ ],
+ "spec": {
+  "ep": 3,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "how you read it",
+  "next": "",
+  "scenes": [
+   {
+    "plate": "epd_bag",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Every product",
+       {
+        "s": "has a footprint.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "an EPD is how you read it",
+      "y": 770,
+      "at": "how you read it"
+     }
+    ]
+   },
+   {
+    "at": "EPD stands for",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE NAME"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Environmental",
+       {
+        "s": "Product",
+        "i": 1,
+        "c": "terra"
+       },
+       "Declaration"
+      ],
+      "size": 130
+     },
+     {
+      "type": "card",
+      "x": 540,
+      "y": 1080,
+      "w": 620,
+      "h": 280,
+      "title": "LIKE A NUTRITION LABEL",
+      "body": "for a building\nproduct",
+      "color": "forest",
+      "at": "nutrition label"
+     }
+    ]
+   },
+   {
+    "at": "It reports the product",
+    "plate": "epd_shelf",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WHAT'S INSIDE"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Impacts,",
+       {
+        "s": "measured.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "carbon (GWP) and other impacts",
+      "y": 730,
+      "at": "like its carbon"
+     },
+     {
+      "type": "tag",
+      "text": "from a life cycle assessment",
+      "y": 830,
+      "at": "life cycle assessment"
+     }
+    ]
+   },
+   {
+    "at": "For construction products",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE RULES",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "EN 15804.",
+       {
+        "s": "Verified.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "follows EN 15804 (ISO 14025, Type III)",
+        "at": "EN 15804"
+       },
+       {
+        "text": "checked by an independent verifier",
+        "at": "independent verifier"
+       }
+      ],
+      "y": 760,
+      "gap": 110,
+      "serif": false,
+      "size": 30
+     }
+    ]
+   },
+   {
+    "at": "Most EPDs are valid",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "CHECK TWO THINGS"
+     },
+     {
+      "type": "big",
+      "text": "5 yrs",
+      "x": 90,
+      "align": "left",
+      "y": 760,
+      "size": 230,
+      "color": "terra",
+      "at": "five years"
+     },
+     {
+      "type": "tag",
+      "text": "usual validity: check the date",
+      "y": 850,
+      "style": "plain",
+      "size": 30,
+      "at": "check the date"
+     },
+     {
+      "type": "tag",
+      "text": "declared unit: kg · m² · m³",
+      "y": 960,
+      "style": "plain",
+      "size": 30,
+      "bg": "sand",
+      "at": "declared unit"
+     }
+    ]
+   },
+   {
+    "at": "Why it matters",
+    "plate": "epd_shelf",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WHY IT MATTERS"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Credits",
+       {
+        "s": "and data.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "LEED rewards products with EPDs",
+      "y": 730,
+      "at": "LEED rewards"
+     },
+     {
+      "type": "tag",
+      "text": "LCA tools use EPDs as data",
+      "y": 830,
+      "at": "LCA tools"
+     }
+    ]
+   },
+   {
+    "at": "So next time",
+    "plate": "epd_bag",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "“Can I see",
+       {
+        "s": "the EPD?”",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": "Can I see",
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "when a supplier says “low carbon”",
+      "y": 770,
+      "size": 58,
+      "at": "says low carbon"
+     }
+    ]
+   }
+  ],
+  "endLines": [
+   "More every",
+   "week."
+  ]
+ }
+}

@@ -1,0 +1,38 @@
+{
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {
+      "name": "hb_sun",
+      "seed": 500,
+      "prompt": "a mid-rise apartment block at late afternoon with harsh low sun hitting its west face, long shadows on the other side, a few trees"
+    },
+    {
+      "name": "hb_window",
+      "seed": 511,
+      "prompt": "a living room with a big unshaded window, a hot patch of harsh sunlight on the floor and sofa, an air conditioner on the wall"
+    },
+    {
+      "name": "hb_fan",
+      "seed": 522,
+      "prompt": "a cool calm living room with a ceiling fan, light curtains drawn over the window, external shading louvres outside, potted plants"
+    },
+    {
+      "name": "ga_desk",
+      "seed": 533,
+      "prompt": "a tidy study desk with stacked books, an open laptop, a notebook, a cup of tea and a small plant, a window behind"
+    },
+    {
+      "name": "epd_bag",
+      "seed": 544,
+      "prompt": "stacked cement bags on a wooden pallet in a warehouse, one bag with a blank paper tag tied to it"
+    },
+    {
+      "name": "epd_shelf",
+      "seed": 555,
+      "prompt": "warehouse shelves of building products: rolls of insulation, stacks of tiles, coiled pipes and boxed panels"
+    }
+  ]
+}

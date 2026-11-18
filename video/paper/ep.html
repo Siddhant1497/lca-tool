@@ -93,8 +93,8 @@ function drawScene(g, t, sc) { backdrop(g, t, sc); sc.items.forEach((it, i) => d
 
 function endCard(g, t) {
   g.drawImage(PAGE_CREAM, 0, 0); const t0 = T.end + .35, n = SPEC.ep, list = D.series || [];
-  caps(g, t, t0, "THE CARBON YOU CAN'T SEE", 96, 262, { color: P.forest, shadow: false, size: 26, ls: '7px' });
-  const lines = n < list.length ? [{ s: 'Next:', italic: true, w: 700, size: 96, color: P.terra }, ...SPEC.nextLines] : [{ s: 'That’s the' }, { s: 'series.', italic: true, color: P.terra }];
+  caps(g, t, t0, SPEC.seriesName || "THE CARBON YOU CAN'T SEE", 96, 262, { color: P.forest, shadow: false, size: 26, ls: '7px' });
+  const lines = n < list.length ? [{ s: 'Next:', italic: true, w: 700, size: 96, color: P.terra }, ...SPEC.nextLines] : (SPEC.endLines ? SPEC.endLines.map((l, j) => ({ s: l, italic: j % 2 === 1, color: j % 2 ? P.terra : undefined })) : [{ s: 'That’s the' }, { s: 'series.', italic: true, color: P.terra }]);
   headline(g, t, t0 + .1, lines, 90, 430, { size: 150, lh: 1.0, shadow: false, color: P.forest });
   const y0 = 1000;
   list.forEach((title, i) => placed(g, t, t0 + .8 + i * D.beat / 4, 96, y0 + i * 88, (hash(i, 50) - .5) * .02, sh => {
@@ -119,7 +119,7 @@ function epTabs(g, t) {
 }
 function badge(g, t) {
   if (t > T.end - .2) return;
-  tag(g, t, .1, 92, 150, "THE CARBON YOU CAN'T SEE · EP " + SPEC.ep, { bg: 'rgba(251,247,238,.94)', fg: P.ink, size: 21, ls: '3px', font: '800 21px Inter', rot: -.01, chip: COL(EPC[SPEC.ep - 1]), padY: 26 });
+  tag(g, t, .1, 92, 150, (SPEC.seriesName || "THE CARBON YOU CAN'T SEE") + ' · ' + (SPEC.badgeLabel || 'EP ' + SPEC.ep), { bg: 'rgba(251,247,238,.94)', fg: P.ink, size: 21, ls: '3px', font: '800 21px Inter', rot: -.01, chip: COL(EPC[SPEC.ep - 1]), padY: 26 });
 }
 function speakers(g, t) {
   for (const r of RUNS) { const nm = (SPEC.names || {})[r.who]; if (!nm) continue;
