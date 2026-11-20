@@ -4,6 +4,8 @@
 - Every frame is a pure function of time: `window.render(t)` draws second t. No CSS transitions, timers or Math.random; use `hash()`/seeded noise.
 - Timing follows the narration: anchor visuals to phrases with `at('phrase')`. Every paragraph starts on a beat of the score (`sound.BEAT`); big numbers land on a beat.
 - Narration: Kokoro voices (default `bm_george`, speed 1.06). Music and sound effects are synthesised in `paper/sound.py`.
+- Every final mix is normalised to -14 LUFS, true peak -1.5 dB (`paper/voice.py: loudnorm`). Fix older files with `paper/normalize.py`.
+- Plates get the paper-layer lighting from the depth map (cast shadows, lit edges, far haze); set `cam.layer` to 0 to turn it off.
 
 ## Look (house style: "Paper Earth")
 - Paper-relief dioramas (Flux.1-Schnell via AI Horde, prompts in `paper/images.json` / `paper/episodes/images.json`), moved with the depth camera.

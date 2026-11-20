@@ -99,6 +99,9 @@ def main():
     mixed = narration + bed + sound.sfx(events, n, engine.SR)
     wav = os.path.join(out, "audio.wav")
     sf.write(wav, mixed / max(1.0, np.abs(mixed).max()), engine.SR)
+    loud = os.path.join(out, "audio_lufs.wav")
+    myvoice.loudnorm(wav, loud)  # -14 LUFS, the level YouTube and Instagram play at
+    wav = loud
 
     final = os.path.join(out, f"{proj['out']}.mp4")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", silent, "-i", wav, "-c:v", "libx264", "-preset", "slow", "-crf", "20",

@@ -15,7 +15,9 @@ import subprocess
 
 import numpy as np
 
-CLEAN = "highpass=f=80,afftdn=nr=12:nf=-50,acompressor=threshold=-21dB:ratio=3:attack=5:release=120"  # no low-pass: at 24 kHz it would sit on the Nyquist limit
+CLEAN = ("highpass=f=80,afftdn=nr=12:nf=-50,"                       # rumble and hiss
+         "equalizer=f=160:t=q:w=1:g=2,equalizer=f=3500:t=q:w=1.2:g=1.5,"  # warmth and presence for phone mics
+         "deesser=i=0.4,acompressor=threshold=-21dB:ratio=3:attack=5:release=120")  # no low-pass: at 24 kHz it would sit on the Nyquist limit
 
 
 def load(path, sr, clean=True):
@@ -108,3 +110,15 @@ def music_bed(path, total, narration, sr, level=0.12):
     duck = np.convolve(duck, np.ones(sr // 6) / (sr // 6), mode="same")
     m = m * env * duck
     return (m / (np.abs(m).max() + 1e-9) * level).astype(np.float32)
+
+
+def loudnorm(src, dst, target=-14.0, peak=-1.5):
+    """Two-pass EBU R128 normalisation to the loudness YouTube and Instagram play at (about -14 LUFS)."""
+    import json as _json
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", src, "-af", f"loudnorm=I={target}:TP={peak}:LRA=11:print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    m = _json.loads(r.stderr[r.stderr.rindex("{"):r.stderr.rindex("}") + 1])
+    af = (f"loudnorm=I={target}:TP={peak}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+          f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", af, "-ar", "48000", dst], check=True)
+    return float(m["input_i"])

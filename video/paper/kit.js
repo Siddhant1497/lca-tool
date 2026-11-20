@@ -27,13 +27,23 @@ const VS = `#version 300 es
 in vec2 a; out vec2 v; void main(){ v = a*.5+.5; v.y = 1.-v.y; gl_Position = vec4(a,0.,1.); }`;
 const FS = `#version 300 es
 precision highp float;
-uniform sampler2D uC, uD; uniform vec2 uShift, uPan, uCover; uniform float uZoom, uFocus, uDof, uSat, uSky; uniform vec3 uTint, uOrbCol; uniform vec4 uOrb;
+uniform sampler2D uC, uD; uniform vec2 uShift, uPan, uCover; uniform float uZoom, uFocus, uDof, uSat, uSky; uniform vec3 uTint, uOrbCol; uniform vec4 uOrb; uniform float uLayer;
 in vec2 v; out vec4 o;
 void main(){
   vec2 uv = (v-.5)*uCover/uZoom + .5 + uPan, p = uv;
   for(int i=0;i<4;i++){ float d = texture(uD,p).r; p = uv + uShift*(d-uFocus); }
   float d = texture(uD,p).r;
   vec3 c = textureLod(uC, p, clamp(abs(d-uFocus)*uDof, 0., 3.5)).rgb;
+  // paper layers: nearer layers cast a soft shadow down-right onto farther ones (light from the upper left),
+  // their lit edges catch a little light, and far layers sit in a faint warm haze
+  if(uLayer > 0.){
+    float dl = texture(uD, p + vec2(-.009,-.012)).r;
+    float shadow = smoothstep(.03, .12, dl - d);
+    float rim = smoothstep(.04, .12, d - texture(uD, p + vec2(-.0025,-.0035)).r);
+    c *= 1. - .34*shadow*uLayer;
+    c = mix(c, c*1.08 + .02, .4*rim*uLayer);
+    c = mix(c, vec3(.95,.92,.86), (1. - smoothstep(.12, .65, d))*.16*uLayer);
+  }
   float l = dot(c, vec3(.299,.587,.114));
   c = mix(vec3(l), c, uSat) * uTint;
   if(uOrb.w > 0.){
@@ -51,7 +61,7 @@ function glInit() {
   prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
   const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  for (const n of ['uC', 'uD', 'uShift', 'uPan', 'uCover', 'uZoom', 'uFocus', 'uDof', 'uSat', 'uSky', 'uTint', 'uOrbCol', 'uOrb']) U[n] = gl.getUniformLocation(prog, n);
+  for (const n of ['uLayer', 'uC', 'uD', 'uShift', 'uPan', 'uCover', 'uZoom', 'uFocus', 'uDof', 'uSat', 'uSky', 'uTint', 'uOrbCol', 'uOrb']) U[n] = gl.getUniformLocation(prog, n);
   gl.uniform1i(U.uC, 0); gl.uniform1i(U.uD, 1); gl.viewport(0, 0, W, H);
 }
 function tex(src, mip) {
@@ -65,7 +75,7 @@ function plate(g, name, c) {
   const im = IMG[name], cA = W / H, iA = im.width / im.height;
   gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, TEX[name].c); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, TEX[name].d);
   gl.uniform2f(U.uCover, Math.min(1, cA / iA), Math.min(1, iA / cA)); gl.uniform2f(U.uShift, c.shift[0], c.shift[1]); gl.uniform2f(U.uPan, c.pan[0], c.pan[1]);
-  gl.uniform1f(U.uZoom, c.zoom); gl.uniform1f(U.uFocus, c.focus); gl.uniform1f(U.uDof, c.dof); gl.uniform1f(U.uSat, c.sat); gl.uniform1f(U.uSky, c.sky ?? .12);
+  gl.uniform1f(U.uZoom, c.zoom); gl.uniform1f(U.uFocus, c.focus); gl.uniform1f(U.uDof, c.dof); gl.uniform1f(U.uSat, c.sat); gl.uniform1f(U.uSky, c.sky ?? .12); gl.uniform1f(U.uLayer, c.layer ?? 1);
   gl.uniform3f(U.uTint, ...c.tint); const o = c.orb || [0, 0, 0, 0]; gl.uniform4f(U.uOrb, ...o); gl.uniform3f(U.uOrbCol, ...(c.orbCol || [1, 1, 1]));
   gl.drawArrays(gl.TRIANGLES, 0, 3); g.drawImage(glc, 0, 0);
 }
