@@ -1,0 +1,13 @@
+{
+  "model": "Qwen-Image_fp8",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {
+      "name": "edge_home_qwen",
+      "seed": 752,
+      "prompt": "an affordable housing apartment block with solar water heaters on the roof, shaded windows and trees, warm morning light"
+    }
+  ]
+}

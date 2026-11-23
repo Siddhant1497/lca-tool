@@ -13,6 +13,7 @@
 @font-face{font-family:Caveat;font-weight:700;src:url(fonts/caveat-latin-700-normal.woff2)}
 html,body{margin:0;background:#111}canvas{display:block}
 </style></head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script src="vendor/lottie_canvas.min.js"></script>
 <script src="kit.js"></script>
 <script>
 // ───────────── episode interpreter ─────────────
@@ -20,7 +21,7 @@ html,body{margin:0;background:#111}canvas{display:block}
 // Item times are a narration phrase, [phrase, offset], or seconds after the scene starts.
 const COL = c => P[c] || c || P.white;
 const EPC = ['ochre', 'terra', 'clay', 'moss', 'forest', 'ink', 'sand'];
-let SPEC, SC = [], RUNS = [];
+let SPEC, SC = [], RUNS = [], LOT = {};
 const TR0 = .38, TR1 = .5;
 function tt(v, sc) { if (v === undefined || v === null) return undefined; if (typeof v === 'number') return sc.t0c + v; if (Array.isArray(v)) return at(v[0], v[1] || 0); return at(v); }
 function fade(g, t, o, fn) { const q = o ? eio(seg(t, o, o + .3)) : 0; if (q >= 1) return; g.save(); g.globalAlpha *= 1 - q; fn(); g.restore(); }
@@ -75,6 +76,13 @@ function drawItem(g, t, it, sc, i) {
         g.save(); g.globalAlpha *= seg(t, rt + .3, rt + .6); g.font = '900 52px Fraunces'; g.fillStyle = dark ? P.ink : P.white; g.textAlign = 'left'; if (!flat) { g.shadowColor = 'rgba(8,22,15,.6)'; g.shadowBlur = 12; }
         g.fillText(r.text, x + W2 * k + 22, y + 54); g.restore();
       }); }); break;
+    case 'lottie': {  // animated emoji (Noto Emoji Animation, CC BY 4.0), played frame-exactly by lottie-web
+      const L = LOT[it.key]; if (!L) break;
+      const lt = t - T0, fr = L.anim.frameRate, tot = L.anim.totalFrames - 1;
+      L.anim.goToAndStop(it.loop === false ? Math.min(tot, lt * fr) : (lt * fr) % tot, true);
+      const sz = (it.size || 220) / 512, s = Math.min(1.08, sp(lt)) * sz, q = O ? eio(seg(t, O, O + .3)) : 0; if (q >= 1) break;
+      g.save(); g.globalAlpha *= seg(t, T0, T0 + .08) * (1 - q); g.translate(it.x ?? 860, it.y ?? 760); g.rotate(it.rot ?? 0); g.scale(s, s);
+      g.shadowColor = 'rgba(12,24,17,.35)'; g.shadowBlur = 30; g.shadowOffsetY = 14; g.drawImage(L.c, -256, -256); g.restore(); break; }
     case 'card': placed(g, t, T0, it.x, it.y, it.rot ?? (hash(i, sc.i) - .5) * .04, sh => {
       const w = it.w || 440, h = it.h || 300; paperShape(g, rectPath(-w / 2, -h / 2, w, h, 14), P.white, sh);
       g.save(); g.clip(rectPath(-w / 2, -h / 2, w, h, 14)); g.fillStyle = COL(it.color || 'terra'); g.fillRect(-w / 2, -h / 2, w, 76); g.restore();
@@ -155,6 +163,12 @@ function build() {
   RUNS = []; for (const s of sents) { if (!s.speaker) continue; const r = RUNS[RUNS.length - 1]; if (r && r.who === s.speaker && s.t0 - r.t1 < .8) r.t1 = s.t1; else RUNS.push({ who: s.speaker, t0: s.t0, t1: s.t1 }); }
   RUNS.forEach(r => E(r.t0 - .15, 'tock'));
   S = [...SC.map(sc => ({ t0: sc.t0, draw: (g, t) => drawScene(g, t, sc) })), { t0: T.end, draw: endCard, dir: 'up' }];
+  EMPH = new Set((SPEC.emph || []).map(w => w.toLowerCase()));
+  SC.forEach(sc => sc.items.forEach((it, j) => { if (it.type !== 'lottie' || !D.lottie?.[it.code]) return;
+    const c = document.createElement('canvas'); c.width = c.height = 512;
+    it.key = sc.i + ':' + j; E(it.t, 'tock');
+    LOT[it.key] = { c, anim: lottie.loadAnimation({ renderer: 'canvas', loop: false, autoplay: false, animationData: JSON.parse(JSON.stringify(D.lottie[it.code])),
+      rendererSettings: { context: c.getContext('2d'), clearCanvas: true } }) }; }));
   buildCaps(); EV.sort((a, b) => a.t - b.t);
 }
 window.setData = d => { D = d; };

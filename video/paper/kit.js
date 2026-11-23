@@ -4,6 +4,7 @@ const W = 1080, H = 1920, cv = document.getElementById('c'), ctx = cv.getContext
 const P = { paper: '#F3ECDD', white: '#FBF7EE', ink: '#1F2A24', forest: '#1D4636', moss: '#7F9C5C', terra: '#C5623B', ochre: '#DDA53C', clay: '#8B5B45', sand: '#F1D9A0' };
 let D = null, S = [], T = {}, EV = [], CAPS = [], IMG = {}, TEX = {}, NOW = 0;
 let PAGE_CREAM, PAGE_FOREST, GRAIN, PAT, FRAME, OFF, OG;
+let EMPH = null;  // words that get kinetic emphasis in captions (set by the episode spec)
 
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const seg = (t, a, b) => clamp((t - a) / (b - a));
@@ -228,7 +229,15 @@ function captions(g, t) {
   g.globalAlpha = eo(p) * (1 - q); g.translate(W / 2, 1436); g.rotate(-.01); g.scale(1, .7 + .3 * eo(p));
   paperShape(g, rectPath(-w / 2, -50, w, 100, 10), P.white, 9);
   let x = -tw / 2; g.textAlign = 'left'; g.textBaseline = 'middle';
-  c.words.forEach((wd, i) => { g.fillStyle = t >= wd.t1 ? P.ink : t >= wd.t0 - .03 ? '#B4481F' : 'rgba(31,42,36,.34)'; g.fillText(wd.w, x, 3); x += ws[i] + sp; });
+  c.words.forEach((wd, i) => {
+    const key = EMPH && EMPH.has(wd.w.toLowerCase().replace(/[^\p{L}\p{N}°%₂–-]/gu, ''));
+    if (key && t >= wd.t0 - .03) {  // kinetic emphasis: a highlighter chip and a small pop on key words
+      const k = seg(t, wd.t0 - .03, wd.t0 + .12), s = 1 + .14 * Math.sin(Math.min(1, (t - wd.t0 + .03) / .32) * Math.PI);
+      g.save(); g.globalAlpha *= k; g.fillStyle = '#F1D9A0'; g.beginPath(); g.roundRect(x - 8, -30, (ws[i] + 16) * k, 64, 8); g.fill(); g.restore();
+      g.save(); g.translate(x + ws[i] / 2, 3); g.scale(s, s); g.fillStyle = P.ink; g.fillText(wd.w, -ws[i] / 2, 0); g.restore();
+    } else { g.fillStyle = t >= wd.t1 ? P.ink : t >= wd.t0 - .03 ? '#B4481F' : 'rgba(31,42,36,.34)'; g.fillText(wd.w, x, 3); }
+    x += ws[i] + sp;
+  });
   g.restore();
 }
 function tear(g, B, p, dir, seed) {

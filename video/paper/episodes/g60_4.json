@@ -1,0 +1,303 @@
+{
+ "html": "ep.html",
+ "out": "g60-4-ac-24",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "Most people switch on the AC and drop it straight to eighteen. Here's why that's costing you.",
+  "Since January 2020, star-labelled room ACs sold in India must ship with a default setting of 24 degrees.",
+  "That's not random. The Bureau of Energy Efficiency estimated that moving from 20 to 24 degrees can cut an AC's electricity use by about 24 percent.",
+  "And setting it colder doesn't cool the room any faster. The AC just keeps running longer, chasing a colder target.",
+  "So start at 24. Switch on the ceiling fan, and close the curtains on the sunny side.",
+  "In summer, clean the filters every few weeks, and get the unit serviced before the heat arrives.",
+  "Twenty-four isn't about being uncomfortable. It's about paying only for the cooling you actually feel."
+ ],
+ "spec": {
+  "ep": 4,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "default setting",
+  "next": "IGBC AP|or LEED AP?",
+  "emph": [
+   "18",
+   "eighteen",
+   "24",
+   "20",
+   "percent",
+   "faster",
+   "longer"
+  ],
+  "scenes": [
+   {
+    "plate": "ac_room",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Set to 18?",
+       {
+        "s": "Here's the cost.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "lottie",
+      "code": "2744_fe0f",
+      "x": 850,
+      "y": 720,
+      "size": 230,
+      "at": "eighteen",
+      "out": "costing you"
+     },
+     {
+      "type": "lottie",
+      "code": "1f4b8",
+      "x": 850,
+      "y": 720,
+      "size": 240,
+      "at": "costing you"
+     }
+    ]
+   },
+   {
+    "at": "Since January 2020",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE RULE"
+     },
+     {
+      "type": "big",
+      "text": "24 °C",
+      "x": 90,
+      "align": "left",
+      "y": 800,
+      "size": 260,
+      "color": "terra",
+      "at": 0.15
+     },
+     {
+      "type": "tag",
+      "text": "default for star-labelled room ACs",
+      "y": 890,
+      "style": "plain",
+      "size": 30,
+      "at": "star-labelled"
+     },
+     {
+      "type": "tag",
+      "text": "BEE · since January 2020",
+      "y": 990,
+      "style": "caps",
+      "bg": "sand",
+      "size": 26,
+      "at": "default setting"
+     }
+    ]
+   },
+   {
+    "at": "That's not random",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE SAVING",
+      "color": "sand"
+     },
+     {
+      "type": "dial",
+      "x": 540,
+      "y": 980,
+      "r": 250,
+      "value": 24,
+      "label": "less AC electricity, 20 → 24 °C",
+      "at": "cut an AC"
+     },
+     {
+      "type": "note",
+      "text": "BEE estimate",
+      "y": 1310,
+      "x": 540,
+      "align": "center",
+      "size": 46,
+      "at": "about 24 percent"
+     }
+    ]
+   },
+   {
+    "at": "And setting it colder",
+    "plate": "ac_city",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE MYTH"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Colder ≠",
+       {
+        "s": "faster.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "same cooling speed",
+      "y": 730,
+      "at": "any faster"
+     },
+     {
+      "type": "tag",
+      "text": "it just runs longer",
+      "y": 830,
+      "bg": "terra",
+      "fg": "white",
+      "at": "running longer"
+     },
+     {
+      "type": "lottie",
+      "code": "1f975",
+      "x": 860,
+      "y": 1000,
+      "size": 220,
+      "at": "chasing"
+     }
+    ]
+   },
+   {
+    "at": "So start at 24",
+    "plate": "hb_fan",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE FIX"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Start",
+       {
+        "s": "at 24.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "start at 24 °C",
+        "at": "start at 24"
+       },
+       {
+        "text": "ceiling fan on",
+        "at": "ceiling fan"
+       },
+       {
+        "text": "curtains on the sunny side",
+        "at": "curtains"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "serif": false,
+      "size": 32
+     }
+    ]
+   },
+   {
+    "at": "In summer, clean",
+    "plate": "ac_room",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "MAINTENANCE"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Clean.",
+       {
+        "s": "Service.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "clean filters every few weeks",
+        "at": "clean the filters"
+       },
+       {
+        "text": "service before the heat arrives",
+        "at": "serviced"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "serif": false,
+      "size": 32
+     },
+     {
+      "type": "lottie",
+      "code": "2705",
+      "x": 880,
+      "y": 1010,
+      "size": 200,
+      "at": "serviced"
+     }
+    ]
+   },
+   {
+    "at": "Twenty-four isn't",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THE POINT"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Pay for cooling",
+       {
+        "s": "you feel.",
+        "i": 1,
+        "c": "terra"
+       }
+      ],
+      "at": 0.2,
+      "thump": 1
+     },
+     {
+      "type": "lottie",
+      "code": "1f4a1",
+      "x": 540,
+      "y": 1050,
+      "size": 300,
+      "at": "paying only"
+     }
+    ]
+   }
+  ]
+ }
+}

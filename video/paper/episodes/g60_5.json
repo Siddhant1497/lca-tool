@@ -1,0 +1,301 @@
+{
+ "html": "ep.html",
+ "out": "g60-5-igbc-leed-ap",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "IGBC AP or LEED AP? If you're starting a green building career in India, here's the honest difference.",
+  "IGBC AP comes from the Indian Green Building Council. It's built around Indian practice, and the exam isn't tied to a single rating system.",
+  "Students and freshers can start with the IGBC AP Associate level.",
+  "LEED AP comes from GBCI, the body that certifies LEED. It's a specialty credential, such as Building Design and Construction, that builds on the LEED Green Associate.",
+  "So which one? Mostly Indian projects and clients: IGBC AP is a practical start. International firms or multinational clients: LEED carries more weight.",
+  "Plenty of consultants end up holding both. Start with the one your next project needs.",
+  "And check the current exam format and fees on the official websites before you book."
+ ],
+ "spec": {
+  "ep": 5,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "honest difference",
+  "next": "How to read|an EDGE certificate",
+  "emph": [
+   "igbc",
+   "leed",
+   "associate",
+   "both",
+   "india",
+   "international"
+  ],
+  "scenes": [
+   {
+    "plate": "career_paths",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "IGBC AP",
+       {
+        "s": "or LEED AP?",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.3,
+      "thump": 1
+     },
+     {
+      "type": "note",
+      "text": "the honest difference",
+      "y": 770,
+      "at": "honest difference"
+     },
+     {
+      "type": "lottie",
+      "code": "1f914",
+      "x": 860,
+      "y": 960,
+      "size": 230,
+      "at": "starting a green"
+     }
+    ]
+   },
+   {
+    "at": "IGBC AP comes from",
+    "plate": "ep5_igbc",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "IGBC AP"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "India-",
+       {
+        "s": "focused.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "Indian Green Building Council (CII)",
+        "at": "Indian Green"
+       },
+       {
+        "text": "built around Indian practice",
+        "at": "Indian practice"
+       },
+       {
+        "text": "not tied to one rating system",
+        "at": "single rating"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "serif": false,
+      "size": 31
+     }
+    ]
+   },
+   {
+    "at": "Students and freshers",
+    "plate": "ga_desk",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "STARTING OUT"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Start as an",
+       {
+        "s": "Associate.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "tag",
+      "text": "IGBC AP Associate: students and freshers",
+      "y": 740,
+      "style": "plain",
+      "size": 30,
+      "at": "IGBC AP Associate"
+     },
+     {
+      "type": "lottie",
+      "code": "1f393",
+      "x": 860,
+      "y": 960,
+      "size": 240,
+      "at": "Students"
+     }
+    ]
+   },
+   {
+    "at": "LEED AP comes from",
+    "plate": "ep2_tower",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "LEED AP"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Global",
+       {
+        "s": "specialty.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "check",
+      "rows": [
+       {
+        "text": "issued by GBCI",
+        "at": "GBCI"
+       },
+       {
+        "text": "specialties: BD+C, O+M and more",
+        "at": "specialty credential"
+       },
+       {
+        "text": "builds on LEED Green Associate",
+        "at": "builds on"
+       }
+      ],
+      "y": 740,
+      "gap": 105,
+      "serif": false,
+      "size": 31
+     },
+     {
+      "type": "lottie",
+      "code": "1f30f",
+      "x": 870,
+      "y": 1110,
+      "size": 200,
+      "at": "specialty credential"
+     }
+    ]
+   },
+   {
+    "at": "So which one?",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "WHICH ONE?"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "It depends",
+       {
+        "s": "on your work.",
+        "i": 1,
+        "c": "terra"
+       }
+      ]
+     },
+     {
+      "type": "card",
+      "x": 290,
+      "y": 1020,
+      "w": 410,
+      "h": 310,
+      "title": "INDIA-FOCUSED",
+      "body": "IGBC AP\nis a practical\nstart",
+      "color": "terra",
+      "at": "Mostly Indian"
+     },
+     {
+      "type": "card",
+      "x": 770,
+      "y": 1050,
+      "w": 410,
+      "h": 310,
+      "title": "INTERNATIONAL",
+      "body": "LEED AP\ncarries more\nweight",
+      "color": "forest",
+      "at": "International firms"
+     }
+    ]
+   },
+   {
+    "at": "Plenty of consultants",
+    "plate": "career_paths",
+    "items": [
+     {
+      "type": "head",
+      "lines": [
+       "Many hold",
+       {
+        "s": "both.",
+        "i": 1,
+        "c": "sand"
+       }
+      ]
+     },
+     {
+      "type": "note",
+      "text": "start with what your next project needs",
+      "y": 760,
+      "size": 58,
+      "color": "sand",
+      "at": "next project"
+     }
+    ]
+   },
+   {
+    "at": "And check the current",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "BEFORE YOU BOOK",
+      "color": "sand"
+     },
+     {
+      "type": "head",
+      "lines": [
+       "Check the",
+       {
+        "s": "official sites.",
+        "i": 1,
+        "c": "sand"
+       }
+      ],
+      "at": 0.2,
+      "thump": 1
+     },
+     {
+      "type": "tag",
+      "text": "igbc.in · usgbc.org",
+      "y": 760,
+      "style": "caps",
+      "bg": "sand",
+      "size": 30,
+      "at": "official websites"
+     }
+    ]
+   }
+  ]
+ }
+}

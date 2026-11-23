@@ -45,7 +45,17 @@ a missing phrase prints `phrase not found` during the render.
 | Life-cycle stages A1–A3, A4–A5, B1–B7, C1–C4 and D | EN 15978 |
 | Upfront carbon is expected to be about half of new construction's carbon footprint between now and 2050 | WorldGBC, *Bringing Embodied Carbon Upfront* (2019) |
 
+## Facts on screen: Green Building in 60 Seconds, week 2
+
+| Claim | Source |
+|---|---|
+| Star-labelled room ACs must ship with a 24 °C default (from 1 Jan 2020) | BEE energy performance standards for room ACs; PIB / Ministry of Power |
+| Moving from 20 °C to 24 °C can cut AC electricity use by about 24% | BEE estimate (Ministry of Power advisory, 2018) |
+| IGBC AP exam is not tied to a single rating system; IGBC AP Associate for students and freshers | igbc.in |
+| LEED AP specialty credentials build on LEED Green Associate (GBCI) | USGBC / GBCI credential pages |
+| EDGE Certified ≥20% energy, water and embodied energy in materials; EDGE Advanced ≥40% energy; Zero Carbon adds renewables | edgebuildings.com, EDGE certification protocol |
+
 ## Credits
 
 Scene art: generated with Flux.1-Schnell (Apache-2.0) via AI Horde. Depth: Depth Anything V2 Small (Apache-2.0).
-Fonts: Fraunces, Caveat (OFL), Inter. Narration: Kokoro (AI voice). Music and effects: original.
+Fonts: Fraunces, Caveat (OFL), Inter. Animated emoji: Noto Emoji Animation by Google (CC BY 4.0), played with lottie-web (MIT). Narration: Kokoro (AI voice). Music and effects: original.

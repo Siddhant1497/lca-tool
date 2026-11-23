@@ -76,6 +76,14 @@ def main():
         print("total", total)
         return
     data = {"total": total, "sentences": sents, "size": proj["size"], "beat": beat, "spec": proj.get("spec", {})}
+    codes = {it["code"] for sc in proj.get("spec", {}).get("scenes", []) for it in sc.get("items", []) if it.get("type") == "lottie"}
+    if codes:  # animated emoji: Noto Emoji Animation (Google, CC BY 4.0), cached in paper/lottie/
+        data["lottie"] = {}
+        for c in codes:
+            f = os.path.join(HERE, "lottie", c + ".json")
+            if not os.path.exists(f):
+                subprocess.run(["curl", "-sSf", "-m", "30", "-o", f, f"https://fonts.gstatic.com/s/e/notoemoji/latest/{c}/lottie.json"], check=True)
+            data["lottie"][c] = json.load(open(f))
     if proj.get("series_file"):  # episode titles, for the end card
         data["series"] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(args.project)), proj["series_file"]), encoding="utf-8"))
     dpath = os.path.join(out, "data.json")

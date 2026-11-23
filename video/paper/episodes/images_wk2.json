@@ -1,0 +1,33 @@
+{
+  "model": "Flux.1-Schnell fp8 (Compact)",
+  "width": 768,
+  "height": 1344,
+  "style": "layered cut paper art diorama, handcrafted paper craft illustration, many overlapping paper layers with soft drop shadows, textured recycled paper, muted earthy palette of forest green, terracotta, ochre and warm cream, soft warm studio light, elegant minimal composition, large calm empty sky in the upper third, vertical format, exquisite detail, no text",
+  "images": [
+    {
+      "name": "ac_room",
+      "seed": 700,
+      "prompt": "a bedroom at night with a split air conditioner on the wall, a remote control on the bedside table, cool blue window light"
+    },
+    {
+      "name": "ac_city",
+      "seed": 713,
+      "prompt": "a dense city apartment facade covered with many outdoor air conditioner units under a blazing summer sun"
+    },
+    {
+      "name": "career_paths",
+      "seed": 726,
+      "prompt": "two paper paths diverging from one point, one winding towards an Indian city with domes and apartment towers, the other towards an international skyline of glass towers"
+    },
+    {
+      "name": "edge_cert",
+      "seed": 739,
+      "prompt": "a blank framed certificate with a green ribbon rosette seal hanging on a wall above a small desk with a plant, no writing on it"
+    },
+    {
+      "name": "edge_home",
+      "seed": 752,
+      "prompt": "an affordable housing apartment block with solar water heaters on the roof, shaded windows and trees, warm morning light"
+    }
+  ]
+}
