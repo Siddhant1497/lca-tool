@@ -227,27 +227,13 @@
    },
    {
     "at": "One more thing",
-    "plate": "edge_cert",
     "items": [
      {
       "type": "kicker",
       "text": "DESIGN vs FINAL"
-     },
-     {
-      "type": "tag",
-      "text": "design stage: a prediction",
-      "y": 740,
-      "at": "prediction"
-     },
-     {
-      "type": "tag",
-      "text": "final: an auditor checked the site",
-      "y": 840,
-      "bg": "terra",
-      "fg": "white",
-      "at": "auditor checked"
      }
-    ]
+    ],
+    "page": "cream"
    }
   ],
   "endLines": [

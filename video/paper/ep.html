@@ -112,9 +112,9 @@ function endCard(g, t) {
     g.fillStyle = i === n - 1 || isNext ? P.white : P.ink; g.font = '900 36px Fraunces'; g.textAlign = 'center'; g.fillText(String(i + 1), 36, 13);
     g.fillStyle = isNext ? P.terra : P.ink; g.globalAlpha *= i === n - 1 ? .55 : 1; g.font = `${isNext ? 'italic 700' : '600'} 40px Fraunces`; g.textAlign = 'left'; g.fillText(title, 100, 14);
   }));
-  const nt = n < list.length ? n : 0;
-  note(g, t, t0 + 2.2, n < list.length ? '← up next' : '← start again', 760, y0 + nt * 88 + 14, 50, { color: P.terra, shadow: false, rot: -.03 });
-  tag(g, t, t0 + 2.6, 540, 1640, 'FOLLOW THE SERIES', { ax: .5, bg: P.forest, fg: P.white, size: 30, ls: '5px', font: '800 30px Inter' });
+  const ny = y0 + list.length * 88 + 34;  // under the list, so it never runs into a title
+  note(g, t, t0 + 2.2, n < list.length ? `↑ up next: episode ${n + 1}` : '↑ start again from episode 1', 100, ny, 50, { color: P.terra, shadow: false, rot: -.02 });
+  tag(g, t, t0 + 2.6, 540, Math.max(1640, ny + 96), 'FOLLOW THE SERIES', { ax: .5, bg: P.forest, fg: P.white, size: 30, ls: '5px', font: '800 30px Inter' });
 }
 function epTabs(g, t) {
   if (t < T.tabs || t > T.end + .5) return; const n = (D.series || []).length || 6;
