@@ -5,7 +5,7 @@
 - Timing follows the narration: anchor visuals to phrases with `at('phrase')`. Every paragraph starts on a beat of the score (`sound.BEAT`); big numbers land on a beat.
 - Narration: Kokoro voices (default `bm_george`, speed 1.06). Music and sound effects are synthesised in `paper/sound.py`.
 - Every final mix is normalised to -14 LUFS, true peak -1.5 dB (`paper/voice.py: loudnorm`). Fix older files with `paper/normalize.py`.
-- Animated emoji: `lottie` items play Noto Emoji Animation (CC BY 4.0, credit it in the description) frame-exactly through lottie-web; use one per scene at most.
+- Animated emoji: `lottie` items play Noto Emoji Animation (CC BY 4.0, credit it in the description) frame-exactly through lottie-web; use them sparingly: one per scene, or a small set when they label items.
 - Kinetic captions: words listed in the episode's `spec.emph` get a highlighter chip and a small pop. Keep it to key numbers and terms.
 - Plates get the paper-layer lighting from the depth map (cast shadows, lit edges, far haze); set `cam.layer` to 0 to turn it off.
 

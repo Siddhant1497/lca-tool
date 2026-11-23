@@ -123,7 +123,8 @@
       "r": 250,
       "value": 24,
       "label": "less AC electricity, 20 → 24 °C",
-      "at": "cut an AC"
+      "at": 0.3,
+      "landAt": "about 24 percent"
      },
      {
       "type": "note",
@@ -151,7 +152,7 @@
        {
         "s": "faster.",
         "i": 1,
-        "c": "sand"
+        "c": "white"
        }
       ]
      },

@@ -41,7 +41,7 @@ function drawItem(g, t, it, sc, i) {
     case 'circle': fade(g, t, O, () => inkLine(g, ell(it.x, it.y, it.rx, it.ry, 1.12, it.a0 ?? -2.3), eo(seg(t, T0, T0 + .7)), { w: it.w || 7, seed: i + 5, color: COL(it.color || 'ochre'), shadow: !flat })); break;
     case 'line': fade(g, t, O, () => inkLine(g, it.pts, eo(seg(t, T0, T0 + (it.dur || .5))), { w: it.w || 6, seed: i + 7, color: COL(it.color || (dark ? 'ink' : 'white')), shadow: !flat })); break;
     case 'arrow': fade(g, t, O, () => arrow(g, it.from, it.via, it.to, seg(t, T0, T0 + .6), { w: it.w || 6, seed: i + 9, color: COL(it.color || (dark ? 'ink' : 'white')), shadow: !flat, head: it.head || 26 })); break;
-    case 'dial': { const k = eio(seg(t, it.land - 1.1, it.land)), r = it.r || 215;
+    case 'dial': { const k = eio(seg(t, it.landAt ? it.t + .4 : it.land - 1.1, it.land)), r = it.r || 215;
       fade(g, t, O, () => placed(g, t, T0, it.x, it.y, it.rot ?? -.03, sh => {
         const disc = new Path2D(); disc.arc(0, 0, r, 0, 7); paperShape(g, disc, P.white, sh);
         const wd = new Path2D(); wd.moveTo(0, 0); wd.arc(0, 0, r * .91, -Math.PI / 2, -Math.PI / 2 + 6.283 * (it.frac ?? it.value / 100) * k + .001); wd.closePath(); if (k > 0) paperShape(g, wd, COL(it.color || 'terra'), 4);
@@ -149,7 +149,7 @@ function build() {
       if (it.rows) it.rows.forEach((r, j) => { r.t = tt(r.at, sc) ?? it.t + j * .4; });
       if (it.type === 'head' || it.type === 'big') it.lines = it.lines && it.lines.map(l => typeof l === 'string' ? { s: l } : { s: l.s, italic: !!l.i, color: l.c && COL(l.c), w: l.w, size: l.size });
       if (it.type === 'head') { const base = it.size || 168; it.lines.forEach(l => { l.size = l.size || fit(l.s, it.maxW || 900, base, `${l.italic ? 'italic ' : ''}900`); }); }
-      if (it.value !== undefined) { it.land = snap(it.t + (it.count ?? 1.0), 2); E(it.land, 'chime'); }
+      if (it.value !== undefined) { it.land = it.landAt ? snap(at(it.landAt) + .6, 2) : snap(it.t + (it.count ?? 1.0), 2); E(it.land, 'chime'); }
       const k = it.type;
       if (k === 'tag' || k === 'card') E(it.t, 'tock'); else if (k === 'ribbon') E(it.t, 'thump');
       else if (['note', 'wave', 'circle', 'line', 'arrow'].includes(k)) E(it.t, 'scratch', k === 'note' ? .5 : .4);
