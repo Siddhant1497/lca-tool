@@ -8,7 +8,7 @@
  ],
  "voice": "bm_george",
  "speed": 1.06,
- "outro": 4.4,
+ "outro": 5.0,
  "series_file": "series_g60.json",
  "voices": {},
  "narration": [
@@ -24,7 +24,7 @@
   "ep": 3,
   "seriesName": "GREEN BUILDING IN 60 SECONDS",
   "tabsAt": "how you read it",
-  "next": "",
+  "next": "Is your AC|set too cold?",
   "scenes": [
    {
     "plate": "epd_bag",
@@ -268,10 +268,6 @@
      }
     ]
    }
-  ],
-  "endLines": [
-   "More every",
-   "week."
   ]
  }
 }

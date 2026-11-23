@@ -113,8 +113,8 @@ function endCard(g, t) {
     g.fillStyle = isNext ? P.terra : P.ink; g.globalAlpha *= i === n - 1 ? .55 : 1; g.font = `${isNext ? 'italic 700' : '600'} 40px Fraunces`; g.textAlign = 'left'; g.fillText(title, 100, 14);
   }));
   const ny = y0 + list.length * 88 + 34;  // under the list, so it never runs into a title
-  note(g, t, t0 + 2.2, n < list.length ? `↑ up next: episode ${n + 1}` : '↑ start again from episode 1', 100, ny, 50, { color: P.terra, shadow: false, rot: -.02 });
-  tag(g, t, t0 + 2.6, 540, Math.max(1640, ny + 96), 'FOLLOW THE SERIES', { ax: .5, bg: P.forest, fg: P.white, size: 30, ls: '5px', font: '800 30px Inter' });
+  note(g, t, t0 + 1.5, n < list.length ? `↑ up next: episode ${n + 1}` : '↑ start again from episode 1', 100, ny, 50, { color: P.terra, shadow: false, rot: -.02 });
+  tag(g, t, t0 + 1.8, 540, Math.max(1640, ny + 96), 'FOLLOW THE SERIES', { ax: .5, bg: P.forest, fg: P.white, size: 30, ls: '5px', font: '800 30px Inter' });
 }
 function epTabs(g, t) {
   if (t < T.tabs || t > T.end + .5) return; const n = (D.series || []).length || 6;
@@ -160,7 +160,7 @@ function build() {
   });
   SPEC.nextLines = (SPEC.next || '').split('|').map((s, j) => ({ s, size: fit(s, 880, 130, '900'), italic: j % 2 === 1, color: j % 2 ? P.terra : undefined }));
   E(SC[0].items.find(x => x.type === 'head')?.t ?? .5, 'thump'); E(T.tabs, 'tock');
-  E(T.end - TR0 + .05, 'paper'); E(T.end + .45, 'thump'); for (let i = 0; i < 6; i++) E(T.end + 1.15 + i * D.beat / 4, 'tock'); E(T.end + 2.6, 'tock');
+  E(T.end - TR0 + .05, 'paper'); E(T.end + .45, 'thump'); for (let i = 0; i < 6; i++) E(T.end + 1.15 + i * D.beat / 4, 'tock'); E(T.end + 2.15, 'tock');
   RUNS = []; for (const s of sents) { if (!s.speaker) continue; const r = RUNS[RUNS.length - 1]; if (r && r.who === s.speaker && s.t0 - r.t1 < .8) r.t1 = s.t1; else RUNS.push({ who: s.speaker, t0: s.t0, t1: s.t1 }); }
   RUNS.forEach(r => E(r.t0 - .15, 'tock'));
   S = [...SC.map(sc => ({ t0: sc.t0, draw: (g, t) => drawScene(g, t, sc) })), { t0: T.end, draw: endCard, dir: 'up' }];

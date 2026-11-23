@@ -91,7 +91,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
     .to('#sun', { opacity: 1, duration: .3 }, '<')
     .to('#sunr', { morphSVG: sunPath(), duration: 1, ease: 'back.out(1.3)' }, '<.05')
     .to('#sunc', { attr: { r: 118 }, duration: .8, ease: 'back.out(1.8)' }, '<.25')
-    .to('#hero', { x: 880, y: 1180, scale: .42, duration: .8, ease: 'power3.inOut' }, s5 - .2)
+    .to('#hero', { x: 820, y: 1310, scale: .36, duration: .8, ease: 'power3.inOut' }, s5 - .2)
     .to('#u1', { drawSVG: '0% 100%', duration: .75, ease: 'power2.out' }, at('not just the badge'))
     .to('#u1', { opacity: 0, duration: .3 }, end(5))
     .to('#hero', { scale: 0, duration: .45, ease: 'power2.in' }, s6 - .3)
