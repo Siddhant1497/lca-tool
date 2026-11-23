@@ -7,6 +7,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
   <style>
     #fx .gh{position:absolute;left:82px;top:300px;width:920px;font:900 150px/1.0 Fraunces;letter-spacing:-1px}
     #fx .gh i{display:block;font-style:italic}
+    #fx .gh div{padding:0 .06em .22em 0;margin-bottom:-.22em}  /* room for descenders inside the line masks */
     #fx .on-art{color:${C.white};text-shadow:0 8px 30px rgba(8,22,15,.55)}
     #fx .on-art i{color:${C.sand}} #fx .on-paper{color:${C.forest}} #fx .on-paper i{color:${C.terra}}
     #fx .on-forest{color:${C.white}} #fx .on-forest i{color:${C.sand}}
@@ -14,6 +15,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
   <svg id="hsvg" width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;inset:0;overflow:visible">
     <defs><filter id="ps" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="4" dy="12" stdDeviation="12" flood-color="#0c1811" flood-opacity=".35"/></filter></defs>
     <g id="hero" filter="url(#ps)">
+      <circle id="disc" r="176" fill="${C.forest}" fill-opacity=".9"/>
       <circle id="track" r="200" fill="none" stroke="${C.white}" stroke-opacity=".22" stroke-width="44"/>
       <circle id="ring" r="200" fill="none" stroke="${C.ochre}" stroke-width="44" stroke-linecap="round" transform="rotate(-90)"/>
       <path id="blob" d="M200,0 A200,200 0 1,1 -200,0 A200,200 0 1,1 200,0Z" fill="${C.ochre}"/>
@@ -57,7 +59,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
     .to(hero, { x: 540, y: 1060, scale: .9, duration: .8, ease: 'power3.inOut' }, s4 - .3)
     .to(ring, { drawSVG: '0% 100%', stroke: C.moss, duration: .9, ease: 'power2.inOut' }, at('renewable energy') - .2)
     .to(P, { v: 100, duration: .9, ease: 'power2.inOut' }, '<')
-    .to([ring, track, num], { opacity: 0, duration: .3 }, '>-.05')
+    .to([ring, track, num, '#disc'], { opacity: 0, duration: .3 }, '>-.05')
     .set(blob, { fill: C.ochre }, '<')
     .to(blob, { opacity: 1, duration: .25 }, '<')
     .to(blob, { morphSVG: sun(), rotate: 30, duration: .9, ease: 'back.out(1.4)' }, '<.1')
