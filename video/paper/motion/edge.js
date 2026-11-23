@@ -91,7 +91,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
     .to('#sun', { opacity: 1, duration: .3 }, '<')
     .to('#sunr', { morphSVG: sunPath(), duration: 1, ease: 'back.out(1.3)' }, '<.05')
     .to('#sunc', { attr: { r: 118 }, duration: .8, ease: 'back.out(1.8)' }, '<.25')
-    .to('#hero', { x: 820, y: 1310, scale: .36, duration: .8, ease: 'power3.inOut' }, s5 - .2)
+    .to('#hero', { x: 820, y: 1250, scale: .36, duration: .8, ease: 'power3.inOut' }, s5 - .2)
     .to('#u1', { drawSVG: '0% 100%', duration: .75, ease: 'power2.out' }, at('not just the badge'))
     .to('#u1', { opacity: 0, duration: .3 }, end(5))
     .to('#hero', { scale: 0, duration: .45, ease: 'power2.in' }, s6 - .3)
@@ -105,7 +105,7 @@ window.buildMotion = ({ gsap, SplitText, at, SC, T, fx, E }) => {
   E(at('not just the badge'), 'scratch', .6); E(at('A design-stage'), 'tock'); E(at('final certificate'), 'tock'); E(at('auditor checked') + .2, 'thump');
 
   // drifting paper leaves on the plain paper pages (deterministic: positions are functions of time)
-  const pages = [[st(1), end(1) + .4], [st(4), end(5) + .4]];
+  const pages = [[st(1), end(1) + .4], [st(4), end(4) + .4]];
   const dls = [...fx.querySelectorAll('.dl')], lfs = [...fx.querySelectorAll('.lf')];
   function sunPath() { let d = ''; for (let k = 0; k < 28; k++) { const a = k / 28 * 2 * Math.PI, r = k % 2 ? 150 : 205; d += (k ? 'L' : 'M') + (r * Math.cos(a)).toFixed(1) + ',' + (r * Math.sin(a)).toFixed(1); } return d + 'Z'; }
   return { tl, update(t) {
