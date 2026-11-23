@@ -225,17 +225,17 @@ function buildCaps() {
 function captions(g, t) {
   let c = null; for (const k of CAPS) if (k.t0 - .06 <= t) c = k; if (!c || t > c.t1 + .4) return;
   const p = seg(t, c.t0 - .06, c.t0 + .1), q = seg(t, c.t1 + .2, c.t1 + .4);
-  g.save(); g.font = '700 46px Inter'; const sp = g.measureText(' ').width, ws = c.words.map(w => g.measureText(w.w).width), tw = ws.reduce((a, b) => a + b, 0) + sp * (ws.length - 1), w = tw + 84;
+  g.save(); g.font = '700 46px Inter'; const sp = g.measureText(' ').width, isE = w => EMPH && EMPH.has(w.toLowerCase().replace(/[^\p{L}\p{N}°%₂–-]/gu, '')), ws = c.words.map(w => g.measureText(w.w).width + (isE(w.w) ? 18 : 0)), tw = ws.reduce((a, b) => a + b, 0) + sp * (ws.length - 1), w = tw + 84;
   g.globalAlpha = eo(p) * (1 - q); g.translate(W / 2, 1436); g.rotate(-.01); g.scale(1, .7 + .3 * eo(p));
   paperShape(g, rectPath(-w / 2, -50, w, 100, 10), P.white, 9);
   let x = -tw / 2; g.textAlign = 'left'; g.textBaseline = 'middle';
   c.words.forEach((wd, i) => {
-    const key = EMPH && EMPH.has(wd.w.toLowerCase().replace(/[^\p{L}\p{N}°%₂–-]/gu, ''));
+    const key = isE(wd.w), tw0 = g.measureText(wd.w).width, px = key ? 9 : 0;
     if (key && t >= wd.t0 - .03) {  // kinetic emphasis: a highlighter chip and a small pop on key words
       const k = seg(t, wd.t0 - .03, wd.t0 + .12), s = 1 + .14 * Math.sin(Math.min(1, (t - wd.t0 + .03) / .32) * Math.PI);
-      g.save(); g.globalAlpha *= k; g.fillStyle = '#F1D9A0'; g.beginPath(); g.roundRect(x - 8, -30, (ws[i] + 16) * k, 64, 8); g.fill(); g.restore();
-      g.save(); g.translate(x + ws[i] / 2, 3); g.scale(s, s); g.fillStyle = P.ink; g.fillText(wd.w, -ws[i] / 2, 0); g.restore();
-    } else { g.fillStyle = t >= wd.t1 ? P.ink : t >= wd.t0 - .03 ? '#B4481F' : 'rgba(31,42,36,.34)'; g.fillText(wd.w, x, 3); }
+      g.save(); g.globalAlpha *= k; g.fillStyle = '#F1D9A0'; g.beginPath(); g.roundRect(x + 1, -30, (ws[i] - 2) * k, 64, 8); g.fill(); g.restore();
+      g.save(); g.translate(x + ws[i] / 2, 3); g.scale(s, s); g.fillStyle = P.ink; g.fillText(wd.w, -tw0 / 2, 0); g.restore();
+    } else { g.fillStyle = t >= wd.t1 ? P.ink : t >= wd.t0 - .03 ? '#B4481F' : 'rgba(31,42,36,.34)'; g.fillText(wd.w, x + px, 3); }
     x += ws[i] + sp;
   });
   g.restore();

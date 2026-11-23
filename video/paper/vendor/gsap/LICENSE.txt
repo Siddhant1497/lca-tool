@@ -1,0 +1,2 @@
+GSAP 3.13.0 (GreenSock), used under the GSAP Standard 'no charge' license: https://gsap.com/standard-license
+Includes SplitText, MorphSVGPlugin and DrawSVGPlugin from the public npm package.

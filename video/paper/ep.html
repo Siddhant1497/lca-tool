@@ -12,8 +12,9 @@
 @font-face{font-family:Caveat;font-weight:500;src:url(fonts/caveat-latin-500-normal.woff2)}
 @font-face{font-family:Caveat;font-weight:700;src:url(fonts/caveat-latin-700-normal.woff2)}
 html,body{margin:0;background:#111}canvas{display:block}
-</style></head><body><canvas id="c" width="1080" height="1920"></canvas>
+</style></head><body><div id="stage" style="position:relative;width:1080px;height:1920px;overflow:hidden"><canvas id="c" width="1080" height="1920"></canvas><div id="fx" style="position:absolute;inset:0;pointer-events:none"></div></div>
 <script src="vendor/lottie_canvas.min.js"></script>
+<script src="vendor/gsap/gsap.min.js"></script><script src="vendor/gsap/SplitText.min.js"></script><script src="vendor/gsap/MorphSVGPlugin.min.js"></script><script src="vendor/gsap/DrawSVGPlugin.min.js"></script>
 <script src="kit.js"></script>
 <script>
 // ───────────── episode interpreter ─────────────
@@ -21,7 +22,7 @@ html,body{margin:0;background:#111}canvas{display:block}
 // Item times are a narration phrase, [phrase, offset], or seconds after the scene starts.
 const COL = c => P[c] || c || P.white;
 const EPC = ['ochre', 'terra', 'clay', 'moss', 'forest', 'ink', 'sand'];
-let SPEC, SC = [], RUNS = [], LOT = {};
+let SPEC, SC = [], RUNS = [], LOT = {}, MOTION = null;
 const TR0 = .38, TR1 = .5;
 function tt(v, sc) { if (v === undefined || v === null) return undefined; if (typeof v === 'number') return sc.t0c + v; if (Array.isArray(v)) return at(v[0], v[1] || 0); return at(v); }
 function fade(g, t, o, fn) { const q = o ? eio(seg(t, o, o + .3)) : 0; if (q >= 1) return; g.save(); g.globalAlpha *= 1 - q; fn(); g.restore(); }
@@ -182,6 +183,12 @@ window.loadAssets = async () => {
   const tile = document.createElement('canvas'); tile.width = tile.height = 256; tile.getContext('2d').drawImage(PAGE_CREAM, 300, 300, 256, 256, 0, 0, 256, 256); PAT = ctx.createPattern(tile, 'repeat');
   FRAME = makeFrame(); OFF = document.createElement('canvas'); OFF.width = W; OFF.height = H; OG = OFF.getContext('2d');
   build();
+  if (SPEC.motion) {  // GSAP motion layer: a paused timeline, seeked to t on every frame
+    gsap.registerPlugin(SplitText, MorphSVGPlugin, DrawSVGPlugin);
+    await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = `motion/${SPEC.motion}.js`; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+    MOTION = window.buildMotion({ gsap, SplitText, at, SC, T, D, fx: document.getElementById('fx'), W, H, E: (t, kind, dur) => EV.push(dur ? { t, kind, dur } : { t, kind }) });
+    EV.sort((a, b) => a.t - b.t);
+  }
 };
 window.events = () => EV;
 window.render = t => {
@@ -189,6 +196,7 @@ window.render = t => {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
   const p = i > 0 ? seg(t, S[i].t0 - TR0, S[i].t0 + TR1) : 1;
   if (p < 1) { S[i - 1].draw(ctx, t); OG.setTransform(1, 0, 0, 1, 0, 0); OG.globalAlpha = 1; S[i].draw(OG, t); tear(ctx, OFF, p, S[i].dir, i * 7.3); } else S[i].draw(ctx, t);
+  if (MOTION) { MOTION.tl.time(t, true); MOTION.update && MOTION.update(t); }
   badge(ctx, t); epTabs(ctx, t); ctx.drawImage(FRAME, 0, 0); speakers(ctx, t); captions(ctx, t);
   ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .10; const j = Math.floor(t * 12); ctx.drawImage(GRAIN, -hash(j, 1) * 40, -hash(j, 2) * 40, W + 40, H + 40); ctx.restore();
   const vg = ctx.createRadialGradient(W / 2, H * .46, H * .32, W / 2, H * .5, H * .78); vg.addColorStop(0, 'rgba(20,14,6,0)'); vg.addColorStop(1, 'rgba(20,14,6,.26)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);

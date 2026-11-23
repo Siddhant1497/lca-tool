@@ -21,7 +21,7 @@ const path = require("path");
     if (window.loadAssets) await window.loadAssets();
     return window.events ? window.events() : []; }, data);
   fs.writeFileSync(dataPath.replace(/\.json$/, ".events.json"), JSON.stringify(events));
-  const canvas = await page.$("#c");
+  const canvas = (await page.$("#stage")) || (await page.$("#c"));  // #stage = canvas plus a DOM/SVG motion layer
   if (stillAt > 0) {
     const t = parseFloat(process.argv[stillAt + 1]);
     await page.evaluate(t => window.render(t), t);

@@ -1,0 +1,259 @@
+{
+ "html": "ep.html",
+ "out": "g60-6-edge-certificate-v3",
+ "fps": 60,
+ "size": [
+  1080,
+  1920
+ ],
+ "voice": "bm_george",
+ "speed": 1.06,
+ "outro": 4.4,
+ "series_file": "series_g60.json",
+ "voices": {},
+ "narration": [
+  "This building has an EDGE certificate. Here's how to read what it actually says.",
+  "An EDGE certificate shows three savings, compared with a typical local building: energy, water, and the embodied energy in materials.",
+  "To be certified, each of the three has to be at least 20 percent better.",
+  "EDGE Advanced goes further, with at least 40 percent energy savings.",
+  "And EDGE Zero Carbon adds renewable energy to cover the rest. Check the current protocol for the exact rules.",
+  "So read the three numbers, not just the badge. Fifty percent energy and twenty percent water is a very different building from the reverse.",
+  "One more thing. A design-stage certificate is a prediction. The final certificate means an auditor checked the site."
+ ],
+ "spec": {
+  "ep": 6,
+  "seriesName": "GREEN BUILDING IN 60 SECONDS",
+  "tabsAt": "actually says",
+  "next": "",
+  "emph": [
+   "edge",
+   "20",
+   "40",
+   "percent",
+   "energy",
+   "water",
+   "materials",
+   "prediction",
+   "auditor"
+  ],
+  "scenes": [
+   {
+    "plate": "edge_cert",
+    "items": [
+     {
+      "type": "note",
+      "text": "what it actually says",
+      "y": 770,
+      "at": "actually says"
+     }
+    ]
+   },
+   {
+    "at": "An EDGE certificate shows",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "THREE NUMBERS"
+     },
+     {
+      "type": "lottie",
+      "code": "26a1",
+      "x": 220,
+      "y": 900,
+      "size": 200,
+      "at": "energy, water"
+     },
+     {
+      "type": "lottie",
+      "code": "1f4a7",
+      "x": 540,
+      "y": 900,
+      "size": 200,
+      "at": "water, and"
+     },
+     {
+      "type": "lottie",
+      "code": "1f3e0",
+      "x": 860,
+      "y": 900,
+      "size": 200,
+      "at": "embodied energy"
+     },
+     {
+      "type": "tag",
+      "text": "ENERGY",
+      "y": 1030,
+      "x": 220,
+      "ax": 0.5,
+      "style": "caps",
+      "size": 26,
+      "at": "energy, water"
+     },
+     {
+      "type": "tag",
+      "text": "WATER",
+      "y": 1030,
+      "x": 540,
+      "ax": 0.5,
+      "style": "caps",
+      "size": 26,
+      "at": "water, and"
+     },
+     {
+      "type": "tag",
+      "text": "MATERIALS",
+      "y": 1030,
+      "x": 860,
+      "ax": 0.5,
+      "style": "caps",
+      "size": 26,
+      "at": "embodied energy"
+     },
+     {
+      "type": "note",
+      "text": "vs a typical local building",
+      "y": 1160,
+      "x": 540,
+      "align": "center",
+      "size": 54,
+      "at": "typical local"
+     }
+    ]
+   },
+   {
+    "at": "To be certified",
+    "page": "forest",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "EDGE CERTIFIED",
+      "color": "sand"
+     },
+     {
+      "type": "tag",
+      "text": "BETTER ON ALL THREE",
+      "y": 900,
+      "style": "caps",
+      "bg": "sand",
+      "size": 28,
+      "at": "each of the three"
+     }
+    ]
+   },
+   {
+    "at": "EDGE Advanced",
+    "plate": "edge_home",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "EDGE ADVANCED"
+     },
+     {
+      "type": "tag",
+      "text": "at least 40% energy savings",
+      "y": 740,
+      "style": "plain",
+      "size": 32,
+      "at": "40 percent"
+     }
+    ]
+   },
+   {
+    "at": "And EDGE Zero Carbon",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "EDGE ZERO CARBON"
+     },
+     {
+      "type": "tag",
+      "text": "renewable energy covers the rest",
+      "y": 760,
+      "style": "plain",
+      "size": 32,
+      "at": "renewable energy"
+     },
+     {
+      "type": "note",
+      "text": "check the current protocol",
+      "y": 880,
+      "size": 60,
+      "at": "current protocol"
+     }
+    ]
+   },
+   {
+    "at": "So read the three",
+    "page": "cream",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "READ THE NUMBERS"
+     },
+     {
+      "type": "bars",
+      "x": 110,
+      "y": 820,
+      "w": 600,
+      "max": 60,
+      "gap": 150,
+      "rows": [
+       {
+        "label": "EXAMPLE A · ENERGY",
+        "value": 50,
+        "text": "50%",
+        "color": "ochre",
+        "at": "Fifty percent"
+       },
+       {
+        "label": "EXAMPLE A · WATER",
+        "value": 20,
+        "text": "20%",
+        "color": "moss",
+        "at": "twenty percent water"
+       }
+      ]
+     },
+     {
+      "type": "note",
+      "text": "…very different from the reverse",
+      "y": 1180,
+      "size": 56,
+      "at": "the reverse"
+     }
+    ]
+   },
+   {
+    "at": "One more thing",
+    "plate": "edge_cert",
+    "items": [
+     {
+      "type": "kicker",
+      "text": "DESIGN vs FINAL"
+     },
+     {
+      "type": "tag",
+      "text": "design stage: a prediction",
+      "y": 740,
+      "at": "prediction"
+     },
+     {
+      "type": "tag",
+      "text": "final: an auditor checked the site",
+      "y": 840,
+      "bg": "terra",
+      "fg": "white",
+      "at": "auditor checked"
+     }
+    ]
+   }
+  ],
+  "endLines": [
+   "More every",
+   "week."
+  ],
+  "motion": "edge"
+ }
+}
